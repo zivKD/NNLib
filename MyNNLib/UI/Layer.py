@@ -3,7 +3,7 @@ import numpy as np
 
 
 class Layer(ABC) :
-    def __init__(self, number = 0, layerType = "non", activationFunction = "default"):
+    def __init__(self, number, costFunction, activationFunction, layerType = "non"):
         self.number = number
         self.layerType = layerType
         self.activationFunction = activationFunction
