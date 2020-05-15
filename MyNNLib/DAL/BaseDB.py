@@ -2,41 +2,65 @@ from abc import ABC, abstractmethod
 
 class BaseDB(ABC):
     @abstractmethod
-    def insertWeights(self, w, layerId):
+    def saveWeights(self, w, layerId):
         pass
 
     @abstractmethod
-    def insertBiases(self, b, layerId):
+    def saveBiases(self, b, layerId):
         pass
 
     @abstractmethod
-    def insertLearningRate(self, n, layerId):
+    def saveLearningRate(self, n):
         pass
 
     @abstractmethod
-    def insertSizeOfMiniBatches(self, m, layerId):
+    def saveSizeOfMiniBatch(self, m):
         pass
 
     @abstractmethod
-    def insertRegularizationTerm(self, lambada, layerId):
+    def saveRegularizationTerm(self, lambada):
         pass
 
     @abstractmethod
-    def insertNumberOfEpoches(self, num, layerId):
+    def saveNumberOfEpoches(self, num):
         pass
 
     @abstractmethod
-    def insertLocalReceptiveSize(self, size, layerId):
+    def saveLocalReceptiveSize(self, size, layerId):
         pass
 
     @abstractmethod
-    def insertStride(self, stride, layerId):
+    def saveStride(self, stride, layerId):
         pass
 
     @abstractmethod
-    def getByLayerId(self, layerId):
+    def getWeights(self, layerId):
         pass
 
+    @abstractmethod
+    def getBiases(self, layerId):
+        pass
 
+    @abstractmethod
+    def getLearningRate(self):
+        pass
 
+    @abstractmethod
+    def getSizeOfMiniBatch(self):
+        pass
 
+    @abstractmethod
+    def getRegularizationTerm(self):
+        pass
+
+    @abstractmethod
+    def getNumberOfEpoches(self):
+        pass
+
+    @abstractmethod
+    def getLocalReceptiveSize(self, layerId):
+        pass
+
+    @abstractmethod
+    def getStride(self, layerId):
+        pass
