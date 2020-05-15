@@ -1,4 +1,4 @@
-from UI.CostFunction import CostFunction
+from BL.BaseClasses.CostFunction import CostFunction
 import numpy as np
 
 

@@ -1,10 +1,10 @@
 from BL.BaseClasses.ActivationFunction import ActivationFunction
 import numpy as np
 
-class Sigmoid(ActivationFunction):
-
+class Softmax(ActivationFunction):
     def function(self, z):
-        return 1.0 / (1.0 + np.exp(-z))
+        e_x = np.exp(z - np.max(z))
+        return e_x / e_x.sum()
 
     def derivative(self, z):
-        return self.function(z) * (1 - self.function(z))
+        return 1 - self.function(z)

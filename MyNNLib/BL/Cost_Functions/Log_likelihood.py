@@ -1,0 +1,13 @@
+from BL.Activation_Functions.Softmax import Softmax
+from BL.BaseClasses.CostFunction import CostFunction
+import numpy as np
+
+class Log_likelihood(CostFunction):
+    def __init__(self):
+        super().__init__(Softmax())
+
+    def function(self, a, y):
+        return - np.log(a)
+
+    def delta(self, z, a, y):
+       return self.activationFunction.function(z) - 1

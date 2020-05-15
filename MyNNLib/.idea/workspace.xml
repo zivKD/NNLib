@@ -2,14 +2,18 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="23865cb9-dfc5-4cf8-9bdd-3049cfc9f76f" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BL/BaseClasses/Network.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BL/Layers/Convolutional.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BL/Activation_Functions/Sigmoid.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Activation_Functions/Sigmoid.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BL/Layers/Convolutional_Layer.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Layers/Convolutional_Layer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BL/Cost_Functions/CrossEntropy.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Cost_Functions/CrossEntropy.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BL/Cost_Functions/Quadratic.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Cost_Functions/Quadratic.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BL/Layers/Convolutional_Layer.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Program.py" beforeDir="false" afterPath="$PROJECT_DIR$/Program.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/CostFunction.py" beforeDir="false" afterPath="$PROJECT_DIR$/UI/ActivationFunction.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/Layer.py" beforeDir="false" afterPath="$PROJECT_DIR$/UI/Layer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/LayerType.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/ActivationFunction.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/BaseClasses/ActivationFunction.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/CostFunction.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/BaseClasses/CostFunction.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/Layer.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/BaseClasses/Layer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/Network.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,6 +46,7 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Projects\MyNNLibGitHub\MyNNLib\BL\BaseClasses" />
       <recent name="C:\Projects\MyNNLib\BL\Layers" />
       <recent name="C:\Projects\MyNNLib\UI" />
     </key>
@@ -120,22 +125,22 @@
       <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state x="421" y="98" key="FileChooserDialogImpl/0.0.1280.680@0.0.1280.680" timestamp="1589456855208" />
-    <state width="1259" height="163" key="GridCell.Tab.0.bottom" timestamp="1589457013723">
+    <state width="1259" height="163" key="GridCell.Tab.0.bottom" timestamp="1589483552247">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="163" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1589457013723" />
-    <state width="1259" height="163" key="GridCell.Tab.0.center" timestamp="1589457013723">
+    <state width="1259" height="163" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1589483552247" />
+    <state width="1259" height="163" key="GridCell.Tab.0.center" timestamp="1589483552247">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="163" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1589457013723" />
-    <state width="1259" height="163" key="GridCell.Tab.0.left" timestamp="1589457013722">
+    <state width="1259" height="163" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1589483552247" />
+    <state width="1259" height="163" key="GridCell.Tab.0.left" timestamp="1589483552247">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="163" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1589457013722" />
-    <state width="1259" height="163" key="GridCell.Tab.0.right" timestamp="1589457013723">
+    <state width="1259" height="163" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1589483552247" />
+    <state width="1259" height="163" key="GridCell.Tab.0.right" timestamp="1589483552247">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="163" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1589457013723" />
+    <state width="1259" height="163" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1589483552247" />
     <state width="1259" height="204" key="GridCell.Tab.1.bottom" timestamp="1589443592857">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
@@ -156,10 +161,10 @@
       <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state x="349" y="168" key="com.intellij.ide.util.TipDialog/0.0.1280.680@0.0.1280.680" timestamp="1589262038699" />
-    <state x="383" y="0" key="refactoring.ChangeSignatureDialog" timestamp="1589448316134">
+    <state x="383" y="0" key="refactoring.ChangeSignatureDialog" timestamp="1589468703781">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state x="383" y="0" key="refactoring.ChangeSignatureDialog/0.0.1280.680@0.0.1280.680" timestamp="1589448316134" />
+    <state x="383" y="0" key="refactoring.ChangeSignatureDialog/0.0.1280.680@0.0.1280.680" timestamp="1589468703781" />
     <state x="303" y="1" width="672" height="678" key="search.everywhere.popup" timestamp="1589455145932">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
