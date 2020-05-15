@@ -16,7 +16,7 @@ class BaseDB(ABC):
         pass
 
     @abstractmethod
-    def insertNumberOfMiniBatches(self, m):
+    def insertSizeOfMiniBatches(self, m):
         pass
 
     @abstractmethod
@@ -24,5 +24,5 @@ class BaseDB(ABC):
         pass
 
     @abstractmethod
-    def insertLearningRate(self, n):
+    def insertNumberOfEpoches(self, n):
         pass
