@@ -3,8 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="23865cb9-dfc5-4cf8-9bdd-3049cfc9f76f" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BL/BaseClasses/GradientDecent.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/BaseClasses/GradientDecent.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BL/Gradient_Decent/Stochastic.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Gradient_Decent/Stochastic.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DAL/BaseDB.py" beforeDir="false" afterPath="$PROJECT_DIR$/DAL/BaseDB.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
