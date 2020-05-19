@@ -1,10 +1,13 @@
 from BL.Activation_Functions.Sigmoid import Sigmoid
+from BL.BaseClasses.ActivationFunction import ActivationFunction
 from BL.BaseClasses.Layer import Layer
 import numpy as np
 
+from DAL.BaseDB import BaseDB
+
 
 class MaxPooling(Layer):
-    def __init__(self, activationFunction = Sigmoid()):
+    def __init__(self, activationFunction : ActivationFunction):
         super().__init__(activationFunction, layerType="MaxPooling")
 
 
@@ -18,7 +21,7 @@ class MaxPooling(Layer):
         return self._current_activation
 
     #TODO: Understand this function
-    def backpropagate(self, error, learningRate, mini_batch_size, gradient_decent):
+    def backpropagate(self, error, learningRate, mini_batch_size, gradient_descent):
         nextError = np.zeros(self._current_input.shape)
         # Generate the indices to each of the firest dimension
         idx = np.indices(self.__currentIndices.shape)
@@ -35,5 +38,5 @@ class MaxPooling(Layer):
         nextError[tuple(indices)] = 1
         return nextError
 
-    def saveToDb(self, db):
+    def saveToDb(self, db : BaseDB):
         pass

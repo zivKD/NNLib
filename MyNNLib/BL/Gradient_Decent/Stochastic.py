@@ -1,7 +1,7 @@
-from BL.BaseClasses.GradientDecent import GradientDecent
+from BL.BaseClasses.GradientDescent import GradientDescent
 import numpy as np
 
-class Stochastic(GradientDecent):
+class Stochastic(GradientDescent):
     def changeWeights(self, w, gradient, learningRate, mini_batch_size):
         return np.subtract(w, (learningRate / mini_batch_size) * gradient)
 

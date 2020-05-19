@@ -4,6 +4,7 @@ import numpy as np
 
 from BL.Gradient_Decent.Stochastic import Stochastic
 from BL.Layers.ConvolutionalLayer.MathHelper import _MathHelper
+from DAL.BaseDB import BaseDB
 
 
 class Convolutional(Layer):
@@ -39,7 +40,7 @@ class Convolutional(Layer):
         self._current_activation = self._activationFunction.function(self._current_weighted_input)
         return self._current_activation
 
-    def backpropagate(self, error, learningRate, mini_batch_size, gradient_decent):
+    def backpropagate(self, error, learningRate, mini_batch_size, gradient_descent):
         flippedWeights = np.array([[
             list(zip(*self.weights[i][j][::-1]))
             for j in range(self.__numberOfLocalReceptiveFields)]
@@ -50,8 +51,8 @@ class Convolutional(Layer):
             self._activationFunction.derivative(self._current_weighted_input)
         )
 
-        self.biases = gradient_decent.changeBiases(self.biases, error, learningRate, mini_batch_size)
-        self.weights = gradient_decent.changeWeights(
+        self.biases = gradient_descent.changeBiases(self.biases, error, learningRate, mini_batch_size)
+        self.weights = gradient_descent.changeWeights(
             self.weights,
             self.__mathHelper.convulotion(self._current_input, error),
             learningRate,
@@ -60,5 +61,6 @@ class Convolutional(Layer):
 
         return thisLayerError
 
-    def saveToDb(self, db):
-        pass
+    def saveToDb(self, db : BaseDB):
+        super().saveToDb(db)
+        db.saveStride(self.__stride, self.number)

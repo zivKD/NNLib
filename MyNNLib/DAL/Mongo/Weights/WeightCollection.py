@@ -9,8 +9,8 @@ class _WeightCollection(_CollectionBase):
         self.getter = _Getter(self.me)
         self.saver = _Saver(self.me)
 
-    def getWeights(self, layerId):
-        return self.getter.getWeights(layerId)
+    def getWeights(self, layerId, networkId):
+        return self.getter.getWeights(layerId, networkId)
 
-    def saveWeights(self, w, layerId):
-        self.saver.saveWeights(w, layerId)
+    def saveWeights(self, w, layerId, networkId):
+        self.saver.saveWeights(w, layerId, networkId)

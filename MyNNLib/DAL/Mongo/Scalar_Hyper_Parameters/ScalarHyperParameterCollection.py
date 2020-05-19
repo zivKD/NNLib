@@ -9,32 +9,32 @@ class _ScalarHyperParameterCollection(_CollectionBase):
         self.getter = _Getter(self.me)
         self.saver = _Saver(self.me)
 
-    def getLearningRate(self):
-        return self.getter.getLearningRate()
+    def getLearningRate(self, networkId):
+        return self.getter.getLearningRate(networkId)
 
-    def getRegularizationTerm(self):
-        return self.getter.getRegularizationTerm()
+    def getRegularizationTerm(self, networkId):
+        return self.getter.getRegularizationTerm(networkId)
 
-    def getSizeOfMiniBatch(self):
-        return self.getter.getSizeOfMiniBatch()
+    def getSizeOfMiniBatch(self, networkId):
+        return self.getter.getSizeOfMiniBatch(networkId)
 
-    def getNumberOfEpoches(self):
-        return self.getter.getNumberOfEpoches()
+    def getNumberOfEpoches(self, networkId):
+        return self.getter.getNumberOfEpoches(networkId)
 
-    def getStride(self, layerId):
-        return self.getStride(layerId)
+    def getStride(self, layerId, networkId):
+        return self.getStride(layerId, networkId)
 
-    def saveLearingRate(self, n):
-        self.saver.saveLearingRate(n)
+    def saveLearingRate(self, n, networkId):
+        self.saver.saveLearingRate(n, networkId)
 
-    def saveRegularizationTerm(self, lambada):
-        self.saver.saveRegularizationTerm(lambada)
+    def saveRegularizationTerm(self, lambada, networkId):
+        self.saver.saveRegularizationTerm(lambada, networkId)
 
-    def saveSizeOfMiniBatch(self, size):
-        self.saver.saveSizeOfMiniBatch(size)
+    def saveSizeOfMiniBatch(self, size, networkId):
+        self.saver.saveSizeOfMiniBatch(size, networkId)
 
-    def saveNumberOfEpoches(self, num):
-        self.saver.saveNumberOfEpoches(num)
+    def saveNumberOfEpoches(self, num, networkId):
+        self.saver.saveNumberOfEpoches(num, networkId)
 
-    def saveStride(self, stride, layerId):
-        self.saver.saveStride(stride, layerId)
+    def saveStride(self, stride, layerId, networkId):
+        self.saver.saveStride(stride, layerId, networkId)

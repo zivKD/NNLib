@@ -9,7 +9,6 @@ from DAL.Mongo.Weights.WeightCollection import _WeightCollection
 
 class MongoDB(BaseDB):
     def _init(self, dbName):
-        super().__init__()
         myclient = pymongo.MongoClient(conf.mongo["url"])
         mydb = myclient[dbName]
         self.biasCol = _BiasCollection(mydb)
@@ -18,52 +17,52 @@ class MongoDB(BaseDB):
         self.scalarCol = _ScalarHyperParameterCollection(mydb)
         
 
-    def saveWeights(self, w, layerId):
-        self.weightCol.saveWeights(w, layerId)
+    def saveWeights(self, w, layerId, networkId):
+        self.weightCol.saveWeights(w, layerId, networkId)
 
-    def saveBiases(self, b, layerId):
-        self.biasCol.saveBiases(b, layerId)
+    def saveBiases(self, b, layerId, networkId):
+        self.biasCol.saveBiases(b, layerId, networkId)
 
-    def saveLearningRate(self, n):
-        self.scalarCol.saveLearingRate(n)
+    def saveLearningRate(self, n, networkId):
+        self.scalarCol.saveLearingRate(n, networkId)
 
-    def saveSizeOfMiniBatch(self, m):
-        self.scalarCol.saveSizeOfMiniBatch(m)
+    def saveSizeOfMiniBatch(self, m, networkId):
+        self.scalarCol.saveSizeOfMiniBatch(m, networkId)
 
-    def saveRegularizationTerm(self, lambada):
-        self.scalarCol.saveRegularizationTerm(lambada)
+    def saveRegularizationTerm(self, lambada, networkId):
+        self.scalarCol.saveRegularizationTerm(lambada, networkId)
 
-    def saveNumberOfEpoches(self, num):
-        self.scalarCol.saveNumberOfEpoches(num)
+    def saveNumberOfEpoches(self, num, networkId):
+        self.scalarCol.saveNumberOfEpoches(num, networkId)
 
-    def saveLocalReceptiveSize(self, size, layerId):
-        self.lrfsCol.saveLocalReceptiveFieldSize(size, layerId)
+    def saveLocalReceptiveSize(self, size, layerId, networkId):
+        self.lrfsCol.saveLocalReceptiveFieldSize(size, layerId, networkId)
 
-    def saveStride(self, stride, layerId):
-        self.scalarCol.saveStride(stride, layerId)
+    def saveStride(self, stride, layerId, networkId):
+        self.scalarCol.saveStride(stride, layerId, networkId)
 
-    def getWeights(self, layerId):
-        self.weightCol.getWeights(layerId)
+    def getWeights(self, layerId, networkId):
+        self.weightCol.getWeights(layerId, networkId)
 
-    def getBiases(self, layerId):
-        self.biasCol.getBiases(layerId)
+    def getBiases(self, layerId, networkId):
+        self.biasCol.getBiases(layerId, networkId)
 
-    def getLearningRate(self):
-        self.scalarCol.getLearningRate()
+    def getLearningRate(self, networkId):
+        self.scalarCol.getLearningRate(networkId)
 
-    def getSizeOfMiniBatch(self):
-        self.scalarCol.getSizeOfMiniBatch()
+    def getSizeOfMiniBatch(self, networkId):
+        self.scalarCol.getSizeOfMiniBatch(networkId)
 
-    def getRegularizationTerm(self):
-        self.scalarCol.getRegularizationTerm()
+    def getRegularizationTerm(self, networkId):
+        self.scalarCol.getRegularizationTerm(networkId)
 
-    def getNumberOfEpoches(self):
-        self.scalarCol.getNumberOfEpoches()
+    def getNumberOfEpoches(self, networkId):
+        self.scalarCol.getNumberOfEpoches(networkId)
 
-    def getLocalReceptiveSize(self, layerId):
-        self.lrfsCol.getLocalReceptiveField(layerId)
+    def getLocalReceptiveSize(self, layerId, networkId):
+        self.lrfsCol.getLocalReceptiveField(layerId, networkId)
 
-    def getStride(self, layerId):
-        self.scalarCol.getStride(layerId)
+    def getStride(self, layerId, networkId):
+        self.scalarCol.getStride(layerId, networkId)
 
 

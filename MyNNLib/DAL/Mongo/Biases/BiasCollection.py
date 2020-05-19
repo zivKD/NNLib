@@ -8,8 +8,8 @@ class _BiasCollection(_CollectionBase):
         self.getter = _Getter(self.me)
         self.saver = _Saver(self.me)
 
-    def getBiases(self, layerId):
-        return self.getter.getBiases(layerId)
+    def getBiases(self, layerId, networkId):
+        return self.getter.getBiases(layerId, networkId)
 
-    def saveBiases(self, b, layerId):
-        self.saver.saveBiases(b, layerId)
+    def saveBiases(self, b, layerId, networkId):
+        self.saver.saveBiases(b, layerId, networkId)

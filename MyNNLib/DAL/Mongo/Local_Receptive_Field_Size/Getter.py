@@ -4,6 +4,6 @@ class _Getter(_CollectionExectuer):
     def __init__(self, collection):
         super().__init__(collection)
 
-    def getLocalReceptiveFieldSize(self, layerId):
-        json = self.getScalarByLayerIdAndType(layerId, "local_receptive_field_size")
+    def getLocalReceptiveFieldSize(self, layerId, networkId):
+        json = self.getScalarByLayerIdAndType(layerId, "local_receptive_field_size", networkId)
         return [json.H, json.W]

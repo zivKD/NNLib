@@ -15,7 +15,7 @@ class FullyConnected(Layer) :
             scale=np.sqrt(1/n_out),
             size=(n_in, n_out)
         )
-        self._weights = np.random.normal(
+        self._biases = np.random.normal(
             loc=0,
             scale=1,
             size = (n_out,)
@@ -29,13 +29,11 @@ class FullyConnected(Layer) :
         self._current_activation = activation
         return activation
 
-    def backpropagate(self, error, learningRate, mini_batch_size, gradient_decent):
+    def backpropagate(self, error, learningRate, mini_batch_size, gradient_descent):
         nextError = np.multiply(np.dot(self._weights, error), self._activationFunction.derivative(self._current_weighted_input))
-        gradient_decent.changeBiases(self._biases, error, learningRate, mini_batch_size)
-        gradient_decent.changeWeights(self._weights, error, learningRate, mini_batch_size)
+        gradient_descent.changeBiases(self._biases, error, learningRate, mini_batch_size)
+        gradient_descent.changeWeights(self._weights, error, learningRate, mini_batch_size)
         return nextError
 
-    def saveToDb(self, db):
-        pass
 
 

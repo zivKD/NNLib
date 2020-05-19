@@ -9,9 +9,9 @@ class _LocalReceptiveFieldSizeCollection(_CollectionBase):
         self.getter = _Getter(self.me)
         self.saver = _Saver(self.me)
 
-    def saveLocalReceptiveFieldSize(self, size, layerId):
-        self.saver.saveLocalReceptiveSize(size, layerId)
+    def saveLocalReceptiveFieldSize(self, size, layerId, networkId):
+        self.saver.saveLocalReceptiveSize(size, layerId, networkId)
 
-    def getLocalReceptiveField(self, layerId):
-        self.getter.getLocalReceptiveFieldSize(layerId)
+    def getLocalReceptiveField(self, layerId, networkId):
+        self.getter.getLocalReceptiveFieldSize(layerId, networkId)
 

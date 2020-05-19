@@ -4,5 +4,5 @@ class _Getter(_CollectionExectuer):
     def __init__(self, collection):
         super().__init__(collection)
 
-    def getBiases(self, layerId):
-        return self.getColByLayerIdAndType(layerId, "bias")
+    def getBiases(self, layerId, networkId):
+        return self.getColByLayerIdAndType(layerId, "bias", networkId)
