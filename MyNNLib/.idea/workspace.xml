@@ -2,12 +2,32 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="23865cb9-dfc5-4cf8-9bdd-3049cfc9f76f" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/DAL/Mongo/MongoDB.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BL/BaseClasses/Network.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/BaseClasses/Network.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BL/InvalidInputException.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DAL/BaseDB.py" beforeDir="false" afterPath="$PROJECT_DIR$/DAL/BaseDB.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DAL/MongoDB.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/BL/BaseClasses/GradientDecent.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/BaseClasses/GradientDecent.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BL/BaseClasses/Layer.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/BaseClasses/Layer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BL/BaseClasses/Network.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Network.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BL/Cost_Functions/CrossEntropy.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Cost_Functions/CrossEntropy.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BL/Cost_Functions/Log_likelihood.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Cost_Functions/Log_likelihood.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BL/Cost_Functions/Quadratic.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Cost_Functions/Quadratic.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BL/Gradient_Decent/Stochastic.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Gradient_Decent/Stochastic.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BL/Layers/Convolutional.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Layers/ConvolutionalLayer/Convolutional.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BL/Layers/MaxPooling.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Layers/MaxPooling.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DAL/Mongo/Biases/BiasCollection.py" beforeDir="false" afterPath="$PROJECT_DIR$/DAL/Mongo/Biases/BiasCollection.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DAL/Mongo/Biases/Getter.py" beforeDir="false" afterPath="$PROJECT_DIR$/DAL/Mongo/Biases/Getter.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DAL/Mongo/Biases/Saver.py" beforeDir="false" afterPath="$PROJECT_DIR$/DAL/Mongo/Biases/Saver.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DAL/Mongo/CollectionBase.py" beforeDir="false" afterPath="$PROJECT_DIR$/DAL/Mongo/CollectionBase.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DAL/Mongo/CollectionExecuter.py" beforeDir="false" afterPath="$PROJECT_DIR$/DAL/Mongo/CollectionExecuter.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DAL/Mongo/Local_Receptive_Field_Size/Getter.py" beforeDir="false" afterPath="$PROJECT_DIR$/DAL/Mongo/Local_Receptive_Field_Size/Getter.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DAL/Mongo/Local_Receptive_Field_Size/LocalReceptiveFieldSizeCollection.py" beforeDir="false" afterPath="$PROJECT_DIR$/DAL/Mongo/Local_Receptive_Field_Size/LocalReceptiveFieldSizeCollection.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DAL/Mongo/Local_Receptive_Field_Size/Saver.py" beforeDir="false" afterPath="$PROJECT_DIR$/DAL/Mongo/Local_Receptive_Field_Size/Saver.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DAL/Mongo/MongoDB.py" beforeDir="false" afterPath="$PROJECT_DIR$/DAL/Mongo/MongoDB.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DAL/Mongo/Scalar_Hyper_Parameters/Getter.py" beforeDir="false" afterPath="$PROJECT_DIR$/DAL/Mongo/Scalar_Hyper_Parameters/Getter.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DAL/Mongo/Scalar_Hyper_Parameters/Saver.py" beforeDir="false" afterPath="$PROJECT_DIR$/DAL/Mongo/Scalar_Hyper_Parameters/Saver.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DAL/Mongo/Scalar_Hyper_Parameters/ScalarHyperParameterCollection.py" beforeDir="false" afterPath="$PROJECT_DIR$/DAL/Mongo/Scalar_Hyper_Parameters/ScalarHyperParameterCollection.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DAL/Mongo/Weights/Getter.py" beforeDir="false" afterPath="$PROJECT_DIR$/DAL/Mongo/Weights/Getter.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DAL/Mongo/Weights/Saver.py" beforeDir="false" afterPath="$PROJECT_DIR$/DAL/Mongo/Weights/Saver.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DAL/Mongo/Weights/WeightCollection.py" beforeDir="false" afterPath="$PROJECT_DIR$/DAL/Mongo/Weights/WeightCollection.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Program.py" beforeDir="false" afterPath="$PROJECT_DIR$/Program.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,14 +56,15 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../ML" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Projects\MyNNLibGitHub\MyNNLib\BL\Layers\ConvoLayer" />
+      <recent name="C:\Projects\MyNNLibGitHub\MyNNLib\BL" />
       <recent name="C:\Projects\MyNNLibGitHub\MyNNLib\DAL\Mongo" />
       <recent name="C:\Projects\MyNNLibGitHub\MyNNLib\BL\BaseClasses" />
       <recent name="C:\Projects\MyNNLib\BL\Layers" />
-      <recent name="C:\Projects\MyNNLib\UI" />
     </key>
   </component>
   <component name="RunManager">
@@ -108,34 +129,34 @@
       <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state x="446" y="59" key="#com.intellij.ide.util.MemberChooser/0.0.1280.680@0.0.1280.680" timestamp="1589463668841" />
-    <state x="395" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1589532975243">
+    <state x="232" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1589784020803">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state x="395" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.1280.680@0.0.1280.680" timestamp="1589532975243" />
+    <state x="232" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.1280.680@0.0.1280.680" timestamp="1589784020803" />
     <state x="371" y="90" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1589461687531">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state x="371" y="90" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1280.680@0.0.1280.680" timestamp="1589461687531" />
-    <state x="421" y="98" key="FileChooserDialogImpl" timestamp="1589456855208">
+    <state x="421" y="98" key="FileChooserDialogImpl" timestamp="1589742205845">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state x="421" y="98" key="FileChooserDialogImpl/0.0.1280.680@0.0.1280.680" timestamp="1589456855208" />
-    <state width="1259" height="163" key="GridCell.Tab.0.bottom" timestamp="1589537210194">
+    <state x="421" y="98" key="FileChooserDialogImpl/0.0.1280.680@0.0.1280.680" timestamp="1589742205845" />
+    <state width="1259" height="163" key="GridCell.Tab.0.bottom" timestamp="1589876971293">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="163" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1589537210194" />
-    <state width="1259" height="163" key="GridCell.Tab.0.center" timestamp="1589537210194">
+    <state width="1259" height="163" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1589876971293" />
+    <state width="1259" height="163" key="GridCell.Tab.0.center" timestamp="1589876971293">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="163" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1589537210194" />
-    <state width="1259" height="163" key="GridCell.Tab.0.left" timestamp="1589537210194">
+    <state width="1259" height="163" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1589876971293" />
+    <state width="1259" height="163" key="GridCell.Tab.0.left" timestamp="1589876971293">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="163" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1589537210194" />
-    <state width="1259" height="163" key="GridCell.Tab.0.right" timestamp="1589537210194">
+    <state width="1259" height="163" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1589876971293" />
+    <state width="1259" height="163" key="GridCell.Tab.0.right" timestamp="1589876971293">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="163" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1589537210194" />
+    <state width="1259" height="163" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1589876971293" />
     <state width="1259" height="204" key="GridCell.Tab.1.bottom" timestamp="1589443592857">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
@@ -152,17 +173,17 @@
       <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state width="1259" height="204" key="GridCell.Tab.1.right/0.0.1280.680@0.0.1280.680" timestamp="1589443592857" />
-    <state x="349" y="168" key="com.intellij.ide.util.TipDialog" timestamp="1589262038699">
+    <state x="349" y="168" key="com.intellij.ide.util.TipDialog" timestamp="1589742155082">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state x="349" y="168" key="com.intellij.ide.util.TipDialog/0.0.1280.680@0.0.1280.680" timestamp="1589262038699" />
+    <state x="349" y="168" key="com.intellij.ide.util.TipDialog/0.0.1280.680@0.0.1280.680" timestamp="1589742155082" />
     <state x="383" y="0" key="refactoring.ChangeSignatureDialog" timestamp="1589468703781">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state x="383" y="0" key="refactoring.ChangeSignatureDialog/0.0.1280.680@0.0.1280.680" timestamp="1589468703781" />
-    <state x="303" y="1" width="672" height="678" key="search.everywhere.popup" timestamp="1589532475290">
+    <state x="303" y="1" width="672" height="678" key="search.everywhere.popup" timestamp="1589742972324">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state x="303" y="1" width="672" height="678" key="search.everywhere.popup/0.0.1280.680@0.0.1280.680" timestamp="1589532475290" />
+    <state x="303" y="1" width="672" height="678" key="search.everywhere.popup/0.0.1280.680@0.0.1280.680" timestamp="1589742972324" />
   </component>
 </project>

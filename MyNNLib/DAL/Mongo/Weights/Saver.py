@@ -1,6 +1,6 @@
-from DAL.Mongo.CollectionExecuter import CollectionExectuer
+from DAL.Mongo.CollectionExecuter import _CollectionExectuer
 
-class Saver(CollectionExectuer):
+class _Saver(_CollectionExectuer):
     def __init__(self, collection):
         super().__init__(collection)
 

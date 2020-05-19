@@ -1,12 +1,12 @@
-from DAL.Mongo.Biases.Getter import Getter
-from DAL.Mongo.Biases.Saver import Saver
-from DAL.Mongo.CollectionBase import CollectionBase
+from DAL.Mongo.Biases.Getter import _Getter
+from DAL.Mongo.Biases.Saver import _Saver
+from DAL.Mongo.CollectionBase import _CollectionBase
 
-class BiasCollection(CollectionBase):
+class _BiasCollection(_CollectionBase):
     def __init__(self, db):
         super().__init__(db, "Bias")
-        self.getter = Getter(self.me)
-        self.saver = Saver(self.me)
+        self.getter = _Getter(self.me)
+        self.saver = _Saver(self.me)
 
     def getBiases(self, layerId):
         return self.getter.getBiases(layerId)

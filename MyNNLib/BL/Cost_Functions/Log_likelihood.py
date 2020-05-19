@@ -10,4 +10,4 @@ class Log_likelihood(CostFunction):
         return - np.log(a)
 
     def delta(self, z, a, y):
-       return self.activationFunction.function(z) - 1
+       return np.subtract(self.activationFunction.function(z), 1)

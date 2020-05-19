@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-class CollectionBase(ABC):
+class _CollectionBase(ABC):
     def __init__(self, db, name):
         self.me = db[name]
 

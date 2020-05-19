@@ -1,10 +1,10 @@
 from DAL.BaseDB import BaseDB
 import pymongo
 import Config as conf
-from DAL.Mongo.Biases.BiasCollection import BiasCollection
-from DAL.Mongo.Local_Receptive_Field_Size.LocalReceptiveFieldSizeCollection import LocalReceptiveFieldSizeCollection
-from DAL.Mongo.Scalar_Hyper_Parameters.ScalarHyperParameterCollection import ScalarHyperParameterCollection
-from DAL.Mongo.Weights.WeightCollection import WeightCollection
+from DAL.Mongo.Biases.BiasCollection import _BiasCollection
+from DAL.Mongo.Local_Receptive_Field_Size.LocalReceptiveFieldSizeCollection import _LocalReceptiveFieldSizeCollection
+from DAL.Mongo.Scalar_Hyper_Parameters.ScalarHyperParameterCollection import _ScalarHyperParameterCollection
+from DAL.Mongo.Weights.WeightCollection import _WeightCollection
 
 
 class MongoDB(BaseDB):
@@ -12,10 +12,10 @@ class MongoDB(BaseDB):
         super().__init__()
         myclient = pymongo.MongoClient(conf.mongo["url"])
         mydb = myclient[dbName]
-        self.biasCol = BiasCollection(mydb)
-        self.weightCol = WeightCollection(mydb)
-        self.lrfsCol = LocalReceptiveFieldSizeCollection(mydb)
-        self.scalarCol = ScalarHyperParameterCollection(mydb)
+        self.biasCol = _BiasCollection(mydb)
+        self.weightCol = _WeightCollection(mydb)
+        self.lrfsCol = _LocalReceptiveFieldSizeCollection(mydb)
+        self.scalarCol = _ScalarHyperParameterCollection(mydb)
         
 
     def saveWeights(self, w, layerId):

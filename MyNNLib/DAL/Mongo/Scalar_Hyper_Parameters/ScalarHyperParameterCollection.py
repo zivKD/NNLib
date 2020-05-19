@@ -1,13 +1,13 @@
-from DAL.Mongo.CollectionBase import CollectionBase
-from DAL.Mongo.Scalar_Hyper_Parameters.Getter import Getter
-from DAL.Mongo.Scalar_Hyper_Parameters.Saver import Saver
+from DAL.Mongo.CollectionBase import _CollectionBase
+from DAL.Mongo.Scalar_Hyper_Parameters.Getter import _Getter
+from DAL.Mongo.Scalar_Hyper_Parameters.Saver import _Saver
 
 
-class ScalarHyperParameterCollection(CollectionBase):
+class _ScalarHyperParameterCollection(_CollectionBase):
     def __init__(self, db):
         super().__init__(db, "Scalar_Hyper_Parameter")
-        self.getter = Getter(self.me)
-        self.saver = Saver(self.me)
+        self.getter = _Getter(self.me)
+        self.saver = _Saver(self.me)
 
     def getLearningRate(self):
         return self.getter.getLearningRate()

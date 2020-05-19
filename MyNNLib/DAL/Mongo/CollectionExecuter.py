@@ -1,5 +1,5 @@
 
-class CollectionExectuer():
+class _CollectionExectuer():
     def __init__(self, collection):
         self.collection = collection
 

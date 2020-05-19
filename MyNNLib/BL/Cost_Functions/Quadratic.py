@@ -9,4 +9,4 @@ class Quadratic(CostFunction):
         return 0.5 * np.linalg.norm(a - y) ** 2
 
     def delta(self, z, a, y):
-       return (a-y) * self.activationFunction.delta(z)
+       return np.subtract(a, y) * self.activationFunction.delta(z)
