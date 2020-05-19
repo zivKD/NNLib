@@ -1,3 +1,4 @@
+from BL.BaseClasses.CostRegularization import CostRegularization
 from BL.BaseClasses.GradientDescent import GradientDescent
 import numpy as np
 

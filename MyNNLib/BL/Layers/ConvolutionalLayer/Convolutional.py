@@ -22,7 +22,7 @@ class Convolutional(Layer):
         self.__sizeOfInputImage = sizeOfInputImage
         self.__numberOfFilters = numberOfFilters
         self.__mathHelper = _MathHelper()
-        [self._weights, self._biases, self.__numberOfLocalReceptiveFields] = self.__mathHelper.initializeFilters(
+        [self.weights, self.biases, self.__numberOfLocalReceptiveFields] = self.__mathHelper.initializeFilters(
             self.__sizeOfInputImage,
             self.__sizeOfLocalReceptiveField,
             self.__stride,
@@ -61,6 +61,6 @@ class Convolutional(Layer):
 
         return thisLayerError
 
-    def saveToDb(self, db : BaseDB):
-        super().saveToDb(db)
-        db.saveStride(self.__stride, self.number)
+    def saveToDb(self, db : BaseDB, neworkId):
+        super().saveToDb(db, neworkId)
+        db.saveStride(self.__stride, self.number, neworkId)

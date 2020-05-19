@@ -9,5 +9,5 @@ class CostFunction(ABC):
         pass
 
     @abstractmethod
-    def delta(self, z, a, y):
+    def derivative(self, z, a, y):
         pass

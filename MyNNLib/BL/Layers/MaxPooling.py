@@ -38,5 +38,5 @@ class MaxPooling(Layer):
         nextError[tuple(indices)] = 1
         return nextError
 
-    def saveToDb(self, db : BaseDB):
+    def saveToDb(self, db : BaseDB, networkId):
         pass

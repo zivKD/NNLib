@@ -3,29 +3,18 @@
   <component name="ChangeListManager">
     <list default="true" id="23865cb9-dfc5-4cf8-9bdd-3049cfc9f76f" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BL/BaseClasses/GradientDecent.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/BaseClasses/GradientDescent.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BL/BaseClasses/CostFunction.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/BaseClasses/CostFunction.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BL/BaseClasses/GradientDescent.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/BaseClasses/GradientDescent.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BL/BaseClasses/Layer.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/BaseClasses/Layer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BL/Cost_Functions/CrossEntropy.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Cost_Functions/CrossEntropy.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BL/Cost_Functions/Log_likelihood.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Cost_Functions/Log_likelihood.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BL/Cost_Functions/Quadratic.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Cost_Functions/Quadratic.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BL/Gradient_Decent/MomentumBased.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Gradient_Decent/MomentumBased.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BL/Gradient_Decent/Stochastic.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Gradient_Decent/Stochastic.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BL/Layers/ConvolutionalLayer/Convolutional.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Layers/ConvolutionalLayer/Convolutional.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BL/Layers/FullyConnected.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Layers/FullyConnected.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BL/Layers/MaxPooling.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Layers/MaxPooling.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BL/Network.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Network.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DAL/BaseDB.py" beforeDir="false" afterPath="$PROJECT_DIR$/DAL/BaseDB.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DAL/Mongo/Biases/BiasCollection.py" beforeDir="false" afterPath="$PROJECT_DIR$/DAL/Mongo/Biases/BiasCollection.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DAL/Mongo/Biases/Getter.py" beforeDir="false" afterPath="$PROJECT_DIR$/DAL/Mongo/Biases/Getter.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DAL/Mongo/Biases/Saver.py" beforeDir="false" afterPath="$PROJECT_DIR$/DAL/Mongo/Biases/Saver.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DAL/Mongo/CollectionBase.py" beforeDir="false" afterPath="$PROJECT_DIR$/DAL/Mongo/CollectionBase.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DAL/Mongo/CollectionExecuter.py" beforeDir="false" afterPath="$PROJECT_DIR$/DAL/Mongo/CollectionExecuter.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DAL/Mongo/Local_Receptive_Field_Size/Getter.py" beforeDir="false" afterPath="$PROJECT_DIR$/DAL/Mongo/Local_Receptive_Field_Size/Getter.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DAL/Mongo/Local_Receptive_Field_Size/LocalReceptiveFieldSizeCollection.py" beforeDir="false" afterPath="$PROJECT_DIR$/DAL/Mongo/Local_Receptive_Field_Size/LocalReceptiveFieldSizeCollection.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DAL/Mongo/Local_Receptive_Field_Size/Saver.py" beforeDir="false" afterPath="$PROJECT_DIR$/DAL/Mongo/Local_Receptive_Field_Size/Saver.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DAL/Mongo/MongoDB.py" beforeDir="false" afterPath="$PROJECT_DIR$/DAL/Mongo/MongoDB.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DAL/Mongo/Scalar_Hyper_Parameters/Getter.py" beforeDir="false" afterPath="$PROJECT_DIR$/DAL/Mongo/Scalar_Hyper_Parameters/Getter.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DAL/Mongo/Scalar_Hyper_Parameters/Saver.py" beforeDir="false" afterPath="$PROJECT_DIR$/DAL/Mongo/Scalar_Hyper_Parameters/Saver.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DAL/Mongo/Scalar_Hyper_Parameters/ScalarHyperParameterCollection.py" beforeDir="false" afterPath="$PROJECT_DIR$/DAL/Mongo/Scalar_Hyper_Parameters/ScalarHyperParameterCollection.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DAL/Mongo/Weights/Getter.py" beforeDir="false" afterPath="$PROJECT_DIR$/DAL/Mongo/Weights/Getter.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DAL/Mongo/Weights/Saver.py" beforeDir="false" afterPath="$PROJECT_DIR$/DAL/Mongo/Weights/Saver.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DAL/Mongo/Weights/WeightCollection.py" beforeDir="false" afterPath="$PROJECT_DIR$/DAL/Mongo/Weights/WeightCollection.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

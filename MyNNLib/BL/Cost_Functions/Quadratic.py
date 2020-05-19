@@ -8,5 +8,5 @@ class Quadratic(CostFunction):
     def function(self, a, y):
         return 0.5 * np.linalg.norm(a - y) ** 2
 
-    def delta(self, z, a, y):
-       return np.subtract(a, y) * self.activationFunction.delta(z)
+    def derivative(self, z, a, y):
+       return np.subtract(a, y) * self.activationFunction.derivative(z)
