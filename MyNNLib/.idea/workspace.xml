@@ -3,11 +3,15 @@
   <component name="ChangeListManager">
     <list default="true" id="23865cb9-dfc5-4cf8-9bdd-3049cfc9f76f" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BL/Activation_Functions/Softmax.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Activation_Functions/Softmax.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BL/BaseClasses/GradientDescent.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/BaseClasses/GradientDescent.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BL/BaseClasses/Layer.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/BaseClasses/Layer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BL/Gradient_Decent/MomentumBased.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Gradient_Decent/MomentumBased.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BL/Layers/ConvolutionalLayer/Convolutional.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Layers/ConvolutionalLayer/Convolutional.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BL/Layers/FullyConnected.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Layers/FullyConnected.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BL/Layers/MaxPooling.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Layers/MaxPooling.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BL/Network.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Network.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DAL/BaseDB.py" beforeDir="false" afterPath="$PROJECT_DIR$/DAL/BaseDB.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Program.py" beforeDir="false" afterPath="$PROJECT_DIR$/Program.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

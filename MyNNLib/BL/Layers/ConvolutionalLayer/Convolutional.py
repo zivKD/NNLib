@@ -1,4 +1,5 @@
 from BL.Activation_Functions.Sigmoid import Sigmoid
+from BL.Activation_Functions.Softmax import Softmax
 from BL.BaseClasses.Layer import Layer
 import numpy as np
 
@@ -37,6 +38,7 @@ class Convolutional(Layer):
         self._current_input = np.array(inputMatrix)
         self._current_weighted_input = np.add(
             self._biases, self.__mathHelper.convulotion(self._current_input, self._weights))
+
         self._current_activation = self._activationFunction.function(self._current_weighted_input)
         return self._current_activation
 

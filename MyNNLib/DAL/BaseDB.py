@@ -1,9 +1,6 @@
 from abc import ABC, abstractmethod
 
 class BaseDB(ABC):
-    def __init__(self, networkId):
-        self._networkId = networkId
-
     @abstractmethod
     def saveWeights(self, w, layerId, networkId):
         pass

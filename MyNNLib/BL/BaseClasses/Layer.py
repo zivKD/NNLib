@@ -37,6 +37,11 @@ class Layer(ABC) :
         regularization.changeWeights(self._weights)
         regularization.changeBiases(self._biases)
 
+    def softmax(self):
+        self._activationFunction.setWeightedInputs(self._current_weighted_input)
+
+
+
     def saveToDb(self, db : BaseDB, networkId):
         db.saveBiases(self._biases, self.number, networkId)
         db.saveWeights(self._weights, self.number, networkId)

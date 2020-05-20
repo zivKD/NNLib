@@ -4,14 +4,14 @@ from BL.BaseClasses.CostFunction import CostFunction
 from BL.BaseClasses.CostRegularization import CostRegularization
 from BL.BaseClasses.GradientDescent import GradientDescent
 from BL.BaseClasses.Layer import Layer
-from BL.Gradient_Decent import MomentumBased
+from BL.Gradient_Decent.MomentumBased import MomentumBased
 from DAL.BaseDB import BaseDB
 import numpy as np
 
 class Network():
     def __init__(self,
                  costFunction : CostFunction,
-                 learningRate : int,
+                 learningRate : float,
                  last_layer_activation_function : ActivationFunction,
                  gradient_descent : GradientDescent,
                  mini_batch_size : int,

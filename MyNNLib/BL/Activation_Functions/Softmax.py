@@ -7,4 +7,4 @@ class Softmax(ActivationFunction):
         return e_x / e_x.sum()
 
     def derivative(self, z):
-        return 1 - self.function(z)
+        return self.function(z) - 1

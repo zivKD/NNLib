@@ -1,9 +1,10 @@
-from BL.BaseClasses.CostRegularization import CostRegularization
 from BL.BaseClasses.GradientDescent import GradientDescent
 import numpy as np
 
-class MomemntumBased(GradientDescent):
-    def __init__(self, numberOfLayersWithWAndB, friction = 0.9):
+
+class MomentumBased(GradientDescent):
+    def __init__(self, numberOfLayersWithWAndB, friction=0.9):
+        super().__init__()
         self.__velocities = [[[], []] for i in range(numberOfLayersWithWAndB)]
         self.__numberOfLayers = numberOfLayersWithWAndB
         self.__layerNumW = 0
@@ -24,10 +25,10 @@ class MomemntumBased(GradientDescent):
 
     def changeWeights(self, w, gradient, learningRate, mini_batch_size):
         vW = self.__velocities[self.__layerNumW][0]
-        newVW = np.subtract(np.dot(vW, self.__friction), np.dot(gradient, learningRate/mini_batch_size))
+        newVW = np.subtract(np.dot(vW, self.__friction), np.dot(gradient, learningRate / mini_batch_size))
         self.__velocities[self.__layerNumW][1] = newVW
-        self.__layerNumW+=1
-        if(self.__layerNumW == self.__numberOfLayers):
+        self.__layerNumW += 1
+        if (self.__layerNumW == self.__numberOfLayers):
             self.__layerNumW = 0
         return np.add(w, newVW)
 

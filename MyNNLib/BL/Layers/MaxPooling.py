@@ -7,17 +7,17 @@ from DAL.BaseDB import BaseDB
 
 
 class MaxPooling(Layer):
-    def __init__(self, activationFunction : ActivationFunction):
-        super().__init__(activationFunction, layerType="MaxPooling")
+    def __init__(self):
+        super().__init__(None, layerType="MaxPooling")
 
-
+    #TODO: implement pool sizes and figure out if you need activation
     def feedforward(self, inputs):
         self._current_input  = inputs
         # all but the size of the local receptive
         self.__currentIndices = np.argmax(inputs, axis=-1)
         maxOuput = np.max(inputs, axis=-1)
         self._current_weighted_input = maxOuput
-        self._current_activation = self._activationFunction.function(maxOuput)
+        self._current_activation = maxOuput
         return self._current_activation
 
     def backpropagate(self, error, learningRate, mini_batch_size, gradient_descent):
