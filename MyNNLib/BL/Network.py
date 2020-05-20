@@ -8,7 +8,6 @@ from BL.Gradient_Decent import MomentumBased
 from DAL.BaseDB import BaseDB
 import numpy as np
 
-
 class Network():
     def __init__(self,
                  costFunction : CostFunction,
@@ -45,11 +44,10 @@ class Network():
         self.should_regulate_cost = should_regulate_cost
         self.costRegularization = costRegularization
 
-    # TODO: Mabye there is a more designly correct way to enforce regularization and dbConnection
-    # TODO: without needing to expose the weights and biases, maybe a smart alternative
-    # TODO: to calling super().change in gradient decent
-
     def runNetwork(self, onMonitoring=lambda accuracy: print(accuracy), frequencyOfMonitoring=10):
+        if(self.should_load_from_db):
+            self.__getFromDb()
+
         for i in range(self.number_of_epochs):
             n = len(self.training_set)
             random.shuffle(self.training_set)
@@ -70,16 +68,26 @@ class Network():
 
                 self.__backprop(output, y)
 
+        if(self.should_save_to_db):
+            self.__saveToDb()
+
     def __feedForward(self, x, y):
         output = None
+
+        if(self.should_regulate_cost):
+            for layer in self.layers:
+                layer.regulate(self.costRegularization)
+
         if((self.gradient_decent) is MomentumBased):
             counter = 0
             output = self.layers[0].feedforward(x)
-            self.gradient_decent.setVelocityMatrix(counter, self.layers[counter].weights.shape)
+            self.gradient_decent.setVelocityMatrix(counter, self.layers[counter].getWeightShape(),
+                                                   self.layers[counter].getBiasShape())
             for layer in self.layers[1:]:
                 counter+=1
                 output = layer.feedforward(output)
-                self.gradient_decent.setVelocityMatrix(counter, self.layers[counter].biases.shape)
+                self.gradient_decent.setVelocityMatrix(counter, self.layers[counter].getWeightShape(),
+                                                       self.layers[counter].getBiasShape())
         else:
             output = self.layers[0].feedforward(x)
             for layer in self.layers[1:]:
@@ -102,9 +110,16 @@ class Network():
         for layer in reversed(self.layers):
             error = layer.backpropagate(error, self.learningRate, self.mini_batch_size, self.gradient_decent)
 
-    def _saveToDb(self):
+    def __saveToDb(self):
         for layer in self.layers:
             layer.saveToDb(self.db, self.id)
         self.db.saveLearningRate(self.learningRate, self.id)
         self.db.saveNumberOfEpoches(self.number_of_epochs, self.id)
         self.db.saveSizeOfMiniBatch(self.mini_batch_size, self.id)
+
+    def __getFromDb(self):
+        for layer in self.layers:
+            layer.getFromDb(self.db, self.id)
+        self.learningRate = self.db.getLearningRate(self.id)
+        self.number_of_epochs = self.db.getNumberOfEpoches(self.id)
+        self.mini_batch_size = self.db.getSizeOfMiniBatch(self.id)

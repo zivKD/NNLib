@@ -18,8 +18,8 @@ class Layer(ABC) :
         Layer.number+=1
         self.layerType = layerType
         self._activationFunction = activationFunction
-        self.weights = np.array([])
-        self.biases = np.array([])
+        self._weights = np.array([])
+        self._biases = np.array([])
         self._current_input = []
         self._current_weighted_input = []
         self._current_activation = []
@@ -32,6 +32,21 @@ class Layer(ABC) :
     def backpropagate(self, error, learningRate, mini_batch_size, gradient_descent : GradientDescent):
         pass
 
+
+    def regulate(self, regularization : CostRegularization):
+        regularization.changeWeights(self._weights)
+        regularization.changeBiases(self._biases)
+
     def saveToDb(self, db : BaseDB, networkId):
-        db.saveBiases(self.biases, self.number, networkId)
-        db.saveWeights(self.weights, self.number, networkId)
+        db.saveBiases(self._biases, self.number, networkId)
+        db.saveWeights(self._weights, self.number, networkId)
+
+    def getFromDb(self, db : BaseDB, networkId):
+        self._weights = db.getWeights(self.number, networkId)
+        self._biases = db.getBiases(self.number, networkId)
+
+    def getWeightShape(self):
+        return self._weights.shape
+
+    def getBiasShape(self):
+        return self._biases.shape

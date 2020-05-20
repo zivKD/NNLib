@@ -22,7 +22,7 @@ class Convolutional(Layer):
         self.__sizeOfInputImage = sizeOfInputImage
         self.__numberOfFilters = numberOfFilters
         self.__mathHelper = _MathHelper()
-        [self.weights, self.biases, self.__numberOfLocalReceptiveFields] = self.__mathHelper.initializeFilters(
+        [self._weights, self._biases, self.__numberOfLocalReceptiveFields] = self.__mathHelper.initializeFilters(
             self.__sizeOfInputImage,
             self.__sizeOfLocalReceptiveField,
             self.__stride,
@@ -36,24 +36,24 @@ class Convolutional(Layer):
         inputMatrix = [inputMatrix for x in range(self.__numberOfFilters)]
         self._current_input = np.array(inputMatrix)
         self._current_weighted_input = np.add(
-            self.biases, self.__mathHelper.convulotion(self._current_input, self.weights))
+            self._biases, self.__mathHelper.convulotion(self._current_input, self._weights))
         self._current_activation = self._activationFunction.function(self._current_weighted_input)
         return self._current_activation
 
     def backpropagate(self, error, learningRate, mini_batch_size, gradient_descent):
         flippedWeights = np.array([[
-            list(zip(*self.weights[i][j][::-1]))
+            list(zip(*self._weights[i][j][::-1]))
             for j in range(self.__numberOfLocalReceptiveFields)]
-            for i in range(len(self.weights))])
+            for i in range(len(self._weights))])
 
         thisLayerError = np.multiply(
             self.__mathHelper.convulotion(flippedWeights, error),
             self._activationFunction.derivative(self._current_weighted_input)
         )
 
-        self.biases = gradient_descent.changeBiases(self.biases, error, learningRate, mini_batch_size)
-        self.weights = gradient_descent.changeWeights(
-            self.weights,
+        self._biases = gradient_descent.changeBiases(self._biases, error, learningRate, mini_batch_size)
+        self._weights = gradient_descent.changeWeights(
+            self._weights,
             self.__mathHelper.convulotion(self._current_input, error),
             learningRate,
             mini_batch_size
@@ -64,3 +64,7 @@ class Convolutional(Layer):
     def saveToDb(self, db : BaseDB, neworkId):
         super().saveToDb(db, neworkId)
         db.saveStride(self.__stride, self.number, neworkId)
+
+    def getFromDb(self, db : BaseDB, networkId):
+        super().saveToDb(db, networkId)
+        self.__stride = db.getStride(self.number, networkId)

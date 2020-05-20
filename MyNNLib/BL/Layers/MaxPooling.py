@@ -20,7 +20,6 @@ class MaxPooling(Layer):
         self._current_activation = self._activationFunction.function(maxOuput)
         return self._current_activation
 
-    #TODO: Understand this function
     def backpropagate(self, error, learningRate, mini_batch_size, gradient_descent):
         nextError = np.zeros(self._current_input.shape)
         # Generate the indices to each of the firest dimension
@@ -39,4 +38,7 @@ class MaxPooling(Layer):
         return nextError
 
     def saveToDb(self, db : BaseDB, networkId):
+        pass
+
+    def getFromDb(self, db : BaseDB, networkId):
         pass
