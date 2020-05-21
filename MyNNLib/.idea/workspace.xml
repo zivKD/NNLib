@@ -2,17 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="23865cb9-dfc5-4cf8-9bdd-3049cfc9f76f" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/BL/BaseClasses/Regularization.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BL/Regularization/Dropout.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BL/BaseClasses/CostRegularization.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/BL/BaseClasses/GradientDescent.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/BaseClasses/GradientDescent.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BL/BaseClasses/Layer.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/BaseClasses/Layer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BL/Gradient_Decent/Stochastic.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Gradient_Decent/Stochastic.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BL/Layers/ConvolutionalLayer/Convolutional.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Layers/ConvolutionalLayer/Convolutional.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BL/Layers/ConvolutionalLayer/MathHelper.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Layers/MathHelper.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BL/Layers/MaxPooling.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Layers/MaxPooling.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BL/Network.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Network.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BL/BaseClasses/Regularization.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/BaseClasses/Regularization.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BL/Regularization/Dropout.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Regularization/Dropout.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Program.py" beforeDir="false" afterPath="$PROJECT_DIR$/Program.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

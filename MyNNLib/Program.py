@@ -18,13 +18,6 @@ import numpy as np
 # 2. reshape the data to my preferred shape
 # 3. implement dropout and activate it for the last three layers
 
-arr = np.random.binomial(1, 0.5, (2, 2))
-arr2 = np.array([[1, 10], [10, 10]])
-arr3 = np.multiply(arr, arr2)
-arr4 = np.argwhere(arr3 == 0)
-print(arr3)
-arr3[arr3 == 0] = arr2[arr3 == 0]
-print(arr3)
 # f = gzip.open('C:\Projects\ML\MLRepo\data\mnist.pkl.gz', 'rb')
 # training_set, validation_set, test_set = cPickle.load(f, encoding='latin1')
 # f.close()
