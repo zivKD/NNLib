@@ -1,9 +1,9 @@
 from random import random
 from BL.BaseClasses.ActivationFunction import ActivationFunction
 from BL.BaseClasses.CostFunction import CostFunction
-from BL.BaseClasses.CostRegularization import CostRegularization
 from BL.BaseClasses.GradientDescent import GradientDescent
 from BL.BaseClasses.Layer import Layer
+from BL.BaseClasses.Regularization import Regularization
 from BL.Gradient_Decent.MomentumBased import MomentumBased
 from DAL.BaseDB import BaseDB
 import numpy as np
@@ -21,11 +21,11 @@ class Network():
                  should_load_from_db: bool,
                  should_save_to_db : bool,
                  network_id : str,
-                 should_regulate_cost : bool,
+                 should_regulate : bool,
                  training_set=(),
                  validation_set=(),
                  test_set=(),
-                 costRegularization: CostRegularization = None
+                 regularizationTechs : (Regularization,) = None
                  ):
         self.costFunction = costFunction
         self.learningRate = learningRate
@@ -41,8 +41,8 @@ class Network():
         self.should_load_from_db = should_load_from_db
         self.should_save_to_db = should_save_to_db
         self.id = network_id
-        self.should_regulate_cost = should_regulate_cost
-        self.costRegularization = costRegularization
+        self.__should_regulate = should_regulate
+        self.__regularizationTechs = regularizationTechs
 
     def runNetwork(self, onMonitoring=lambda accuracy: print(accuracy), frequencyOfMonitoring=10):
         if(self.should_load_from_db):
@@ -73,11 +73,6 @@ class Network():
 
     def __feedForward(self, x, y):
         output = None
-
-        if(self.should_regulate_cost):
-            for layer in self.layers:
-                layer.regulate(self.costRegularization)
-
         if((self.gradient_decent) is MomentumBased):
             counter = 0
             output = self.layers[0].feedforward(x)
@@ -102,10 +97,10 @@ class Network():
             self.last_layer_activation_function.derivative(self.layers[-1]._current_weighted_input)
         )
 
-        if(self.should_regulate_cost):
-            for layer in self.layers:
-                self.costRegularization.changeWeights(layer.weights)
-                self.costRegularization.changeBiases(layer.biases)
+        if(self.__should_regulate):
+            for regularization in self.__regularizationTechs:
+                for layer in self.layers:
+                    layer.regulate(regularization)
 
         for layer in reversed(self.layers):
             error = layer.backpropagate(error, self.learningRate, self.mini_batch_size, self.gradient_decent)

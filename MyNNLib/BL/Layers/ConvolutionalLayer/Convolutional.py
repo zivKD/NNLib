@@ -1,10 +1,8 @@
 from BL.Activation_Functions.Sigmoid import Sigmoid
-from BL.Activation_Functions.Softmax import Softmax
 from BL.BaseClasses.Layer import Layer
 import numpy as np
 
-from BL.Gradient_Decent.Stochastic import Stochastic
-from BL.Layers.ConvolutionalLayer.MathHelper import _MathHelper
+from BL.Layers.MathHelper import _MathHelper
 from DAL.BaseDB import BaseDB
 
 

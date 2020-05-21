@@ -12,12 +12,19 @@ from DAL.Mongo.MongoDB import MongoDB
 import _pickle as cPickle
 import gzip
 
+import numpy as np
+
 #TODO:
-# 1. implement pool size in max pool and figure out if we need activation
 # 2. reshape the data to my preferred shape
 # 3. implement dropout and activate it for the last three layers
 
-
+arr = np.random.binomial(1, 0.5, (2, 2))
+arr2 = np.array([[1, 10], [10, 10]])
+arr3 = np.multiply(arr, arr2)
+arr4 = np.argwhere(arr3 == 0)
+print(arr3)
+arr3[arr3 == 0] = arr2[arr3 == 0]
+print(arr3)
 # f = gzip.open('C:\Projects\ML\MLRepo\data\mnist.pkl.gz', 'rb')
 # training_set, validation_set, test_set = cPickle.load(f, encoding='latin1')
 # f.close()
@@ -34,6 +41,9 @@ import gzip
 #         numberOfInputFeatureMaps=1
 #     ),
 #     MaxPooling(
+#         sizeOfInputImage=(28, 28),
+#         stride=1,
+#         poolSize=(2,2)
 #     ),
 #     Convolutional(
 #         activationFunc,
@@ -44,9 +54,12 @@ import gzip
 #         numberOfInputFeatureMaps=20
 #     ),
 #     MaxPooling(
+#         sizeOfInputImage=(12, 12),
+#         stride=1,
+#         poolSize=(2,2)
 #     ),
 #     FullyConnected(
-#         n_in=40 * 4 * 4,
+#         n_in= 40 * 4 * 4,
 #         activationFunction = activationFunc,
 #         n_out=1000
 #     ),

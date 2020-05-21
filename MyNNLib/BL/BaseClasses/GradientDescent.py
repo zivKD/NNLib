@@ -1,8 +1,5 @@
 from abc import ABC, abstractmethod
 
-from BL.BaseClasses.CostRegularization import CostRegularization
-
-
 class GradientDescent(ABC):
 
     def __init__(self):

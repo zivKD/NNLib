@@ -2,16 +2,16 @@ from abc import ABC, abstractmethod
 import numpy as np
 
 from BL.Activation_Functions.Sigmoid import Sigmoid
-from BL.BaseClasses.CostRegularization import CostRegularization
+from BL.BaseClasses.ActivationFunction import ActivationFunction
 from BL.BaseClasses.GradientDescent import GradientDescent
-from BL.Gradient_Decent.Stochastic import Stochastic
+from BL.BaseClasses.Regularization import Regularization
 from DAL.BaseDB import BaseDB
 
 
 class Layer(ABC) :
     number = 0
     def __init__(self,
-                 activationFunction = Sigmoid(),
+                 activationFunction : ActivationFunction,
                  layerType = "non",
                  ):
         self.number = Layer.number
@@ -33,9 +33,8 @@ class Layer(ABC) :
         pass
 
 
-    def regulate(self, regularization : CostRegularization):
-        regularization.changeWeights(self._weights)
-        regularization.changeBiases(self._biases)
+    def regulate(self, regularization : Regularization):
+        regularization.changeParams(self._weights, self._biases, self.number)
 
     def softmax(self):
         self._activationFunction.setWeightedInputs(self._current_weighted_input)

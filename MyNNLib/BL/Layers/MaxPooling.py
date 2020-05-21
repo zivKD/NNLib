@@ -1,23 +1,26 @@
-from BL.Activation_Functions.Sigmoid import Sigmoid
-from BL.BaseClasses.ActivationFunction import ActivationFunction
 from BL.BaseClasses.Layer import Layer
 import numpy as np
 
+from BL.Layers.MathHelper import _MathHelper
 from DAL.BaseDB import BaseDB
 
 
 class MaxPooling(Layer):
-    def __init__(self):
+    def __init__(self, sizeOfInputImage, poolSize, stride):
         super().__init__(None, layerType="MaxPooling")
+        self.__size_of_input_image =sizeOfInputImage
+        self.__pool_size = poolSize
+        self.__stride = stride
 
-    #TODO: implement pool sizes and figure out if you need activation
     def feedforward(self, inputs):
         self._current_input  = inputs
+        helper = _MathHelper()
+        inputMatrix = helper.turnIntoInputMatrix(inputs, self.__size_of_input_image, self.__stride, self.__pool_size)
         # all but the size of the local receptive
-        self.__currentIndices = np.argmax(inputs, axis=-1)
-        maxOuput = np.max(inputs, axis=-1)
+        self.__currentIndices = np.argmax(inputMatrix, axis=-1)
+        maxOuput = np.max(inputMatrix, axis=-1)
         self._current_weighted_input = maxOuput
-        self._current_activation = maxOuput
+        self._current_activation = self._activationFunction.function(maxOuput)
         return self._current_activation
 
     def backpropagate(self, error, learningRate, mini_batch_size, gradient_descent):
