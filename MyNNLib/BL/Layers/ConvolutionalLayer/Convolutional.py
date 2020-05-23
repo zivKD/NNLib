@@ -29,7 +29,9 @@ class Convolutional(Layer):
             self.__numberOfInputFeatureMaps
         )
 
-    def feedforward(self, inputs):
+    def feedforward(self, inputs, mini_batch_size):
+        inputs = inputs.reshape(mini_batch_size, self.__numberOfInputFeatureMaps, self.__sizeOfInputImage[0],
+                     self.__sizeOfInputImage[1])
         inputMatrix = self.__mathHelper.turnIntoInputMatrix(inputs, self.__sizeOfInputImage,
                                                             self.__stride, self.__sizeOfLocalReceptiveField)
         inputMatrix = [inputMatrix for x in range(self.__numberOfFilters)]

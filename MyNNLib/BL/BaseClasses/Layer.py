@@ -25,21 +25,18 @@ class Layer(ABC) :
         self._current_activation = []
 
     @abstractmethod
-    def feedforward(self, inputs):
+    def feedforward(self, inputs, mini_batch_size):
         pass
 
     @abstractmethod
     def backpropagate(self, error, learningRate, mini_batch_size, gradient_descent : GradientDescent):
         pass
 
-
     def regulate(self, regularization : Regularization):
         regularization.changeParams(self._weights, self._biases, self.number)
 
     def softmax(self):
         self._activationFunction.setWeightedInputs(self._current_weighted_input)
-
-
 
     def saveToDb(self, db : BaseDB, networkId):
         db.saveBiases(self._biases, self.number, networkId)

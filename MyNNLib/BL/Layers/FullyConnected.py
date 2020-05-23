@@ -21,7 +21,7 @@ class FullyConnected(Layer) :
             size = (n_out,)
         )
 
-    def feedforward(self, inputs):
+    def feedforward(self, inputs, mini_batch_size):
         z = np.add(np.dot(self._weights, inputs), self._biases)
         activation = self._activationFunction.function(z)
         self._current_input = inputs

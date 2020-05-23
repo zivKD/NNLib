@@ -12,7 +12,7 @@ class MaxPooling(Layer):
         self.__pool_size = poolSize
         self.__stride = stride
 
-    def feedforward(self, inputs):
+    def feedforward(self, inputs, mini_batch_size):
         self._current_input  = inputs
         helper = _MathHelper()
         inputMatrix = helper.turnIntoInputMatrix(inputs, self.__size_of_input_image, self.__stride, self.__pool_size)
@@ -39,6 +39,7 @@ class MaxPooling(Layer):
         # in the self.__curentIndices.shape
         nextError[tuple(indices)] = 1
         return nextError
+
 
     def saveToDb(self, db : BaseDB, networkId):
         pass

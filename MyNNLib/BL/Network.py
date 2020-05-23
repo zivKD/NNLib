@@ -84,7 +84,7 @@ class Network():
                 self.gradient_decent.setVelocityMatrix(counter, self.layers[counter].getWeightShape(),
                                                        self.layers[counter].getBiasShape())
         else:
-            output = self.layers[0].feedforward(x)
+            output = self.layers[0].feedforward(x, self.mini_batch_size)
             for layer in self.layers[1:]:
                 output = layer.feedforward(output)
 
