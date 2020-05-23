@@ -50,7 +50,7 @@ class Network():
 
         for i in range(self.number_of_epochs):
             n = len(self.training_set)
-            random.shuffle(self.training_set)
+            np.random.shuffle(self.training_set)
             mini_batches = [
                 self.training_set[k:k + self.mini_batch_size]
                 for k in range(0, n, self.mini_batch_size)
@@ -61,7 +61,7 @@ class Network():
                 monitoring_counter += 1
                 x = np.array([batch[0].ravel() for batch in mini_batch]).transpose()
                 y = np.array([batch[1].ravel() for batch in mini_batch]).transpose()
-                output = self.__feedForward(x, y)
+                output = self.__feedForward(x)
                 if (monitoring_counter == frequencyOfMonitoring):
                     onMonitoring(np.sum(np.subtract(output, y)) / len(y))
                     monitoring_counter = 0
@@ -71,7 +71,7 @@ class Network():
         if(self.should_save_to_db):
             self.__saveToDb()
 
-    def __feedForward(self, x, y):
+    def __feedForward(self, x):
         output = None
         if((self.gradient_decent) is MomentumBased):
             counter = 0
