@@ -1,14 +1,14 @@
 import numpy as np
 
 class _MathHelper():
-    def initializeFilters(self, sizeOfInputImage, sizeOfLocalReceptiveField, stride, numberOfFilters, numberOfInputFeatureMaps):
+    def initializeFilters(self, mini_batch_size, sizeOfInputImage, sizeOfLocalReceptiveField, stride, numberOfFilters, numberOfInputFeatureMaps):
         counter1 = 0
         counter2 = 0
-        for i in range(0, sizeOfInputImage[0] - sizeOfLocalReceptiveField[0] + 1, stride):
+        for i in range(0, sizeOfInputImage[0] - sizeOfLocalReceptiveField[0], stride):
             counter1+=1
-        for j in range(0, sizeOfInputImage[1] - sizeOfLocalReceptiveField[1] + 1, stride):
+        for j in range(0, sizeOfInputImage[1] - sizeOfLocalReceptiveField[1], stride):
             counter2 += 1
-        numberOfLocalReceptiveFields = max(counter1, counter2) * numberOfInputFeatureMaps
+        numberOfLocalReceptiveFields = counter1 * counter2 * numberOfInputFeatureMaps
         dimensions = (numberOfFilters, sizeOfLocalReceptiveField[0],
                   sizeOfLocalReceptiveField[1])
         biases = np.random.normal(
@@ -16,11 +16,12 @@ class _MathHelper():
             scale = 1,
             size = (numberOfFilters,)
         )
-        biases = np.array([[[[
+        biases = np.array([[[[[
                 bias
                 for x in range(sizeOfLocalReceptiveField[1])]
                 for x in range(sizeOfLocalReceptiveField[0])]
                 for x in range(numberOfLocalReceptiveFields)]
+                for x in range(mini_batch_size)]
                 for bias in biases]
         )
         weights = np.random.normal(
@@ -34,12 +35,13 @@ class _MathHelper():
 
         return [weights, biases, numberOfLocalReceptiveFields]
 
-    def turnIntoInputMatrix(self, inputs, sizeOfInputImage, stride, sizeOfLocalReceptiveField):
+    def turnIntoInputMatrix(self, inputs, sizeOfInputImage, stride, sizeOfLocalReceptiveField, numberOfInputFeatureMaps):
         inputMatrix = []
         for input in inputs:
-            for inputRow in range(0, sizeOfInputImage[0] - 1, stride) :
-                for inputColumn in range(0, sizeOfInputImage[1] - 1, stride):
-                    inputMatrix.append(self.getLocalReceptiveField(inputRow, inputColumn, input, sizeOfLocalReceptiveField))
+            for inputRow in range(0, sizeOfInputImage[0] - sizeOfLocalReceptiveField[0], stride) :
+                for inputColumn in range(0, sizeOfInputImage[1] - sizeOfLocalReceptiveField[1], stride):
+                    for i in range(numberOfInputFeatureMaps):
+                        inputMatrix.append(self.getLocalReceptiveField(inputRow, inputColumn, input[i], sizeOfLocalReceptiveField))
 
         return inputMatrix
 
@@ -56,11 +58,11 @@ class _MathHelper():
         ks = (kl - 1) // 2  ## kernels usually square with odd number of rows/columns
         imx = len(matrix)
         imy = len(matrix[0])
-        for i in range(imx - 1):
-            for j in range(imy - 1):
+        for i in range(imx - kl):
+            for j in range(imy - kl):
                 acc = 0
-                for ki in range(kl):  ##kernel is the matrix to be used
-                    for kj in range(kl):
+                for ki in range(kl - 1):  ##kernel is the matrix to be used
+                    for kj in range(kl - 1):
                         if 0 <= i - ks <= kl:  ## make sure you don't get out of bound error
                             acc = acc + (matrix[i - ks + ki][j - ks + kj] * kernel[ki][kj])
 

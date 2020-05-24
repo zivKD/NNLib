@@ -22,6 +22,7 @@ class Convolutional(Layer):
         self.__numberOfFilters = numberOfFilters
         self.__mathHelper = _MathHelper()
         [self._weights, self._biases, self.__numberOfLocalReceptiveFields] = self.__mathHelper.initializeFilters(
+            mini_batch_size,
             self.__sizeOfInputImage,
             self.__sizeOfLocalReceptiveField,
             self.__stride,
@@ -32,8 +33,13 @@ class Convolutional(Layer):
     def feedforward(self, inputs, mini_batch_size):
         inputs = inputs.reshape(mini_batch_size, self.__numberOfInputFeatureMaps, self.__sizeOfInputImage[0],
                      self.__sizeOfInputImage[1])
-        inputMatrix = self.__mathHelper.turnIntoInputMatrix(inputs, self.__sizeOfInputImage,
-                                                            self.__stride, self.__sizeOfLocalReceptiveField)
+        inputMatrix = self.__mathHelper.turnIntoInputMatrix(
+            inputs,
+            self.__sizeOfInputImage,
+            self.__stride,
+            self.__sizeOfLocalReceptiveField,
+            self.__numberOfInputFeatureMaps
+        )
         inputMatrix = [inputMatrix for x in range(self.__numberOfFilters)]
         self._current_input = np.array(inputMatrix)
         self._current_weighted_input = np.add(

@@ -5,8 +5,7 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BL/BaseClasses/Layer.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/BaseClasses/Layer.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BL/Layers/ConvolutionalLayer/Convolutional.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Layers/ConvolutionalLayer/Convolutional.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BL/Layers/FullyConnected.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Layers/FullyConnected.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BL/Layers/MaxPooling.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Layers/MaxPooling.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BL/Layers/MathHelper.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Layers/MathHelper.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BL/Network.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Network.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -121,38 +120,38 @@
       <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state x="421" y="98" key="FileChooserDialogImpl/0.0.1280.680@0.0.1280.680" timestamp="1590257043230" />
-    <state width="1259" height="204" key="GridCell.Tab.0.bottom" timestamp="1590260209969">
+    <state width="1259" height="204" key="GridCell.Tab.0.bottom" timestamp="1590342489423">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1590260209969" />
-    <state width="1259" height="204" key="GridCell.Tab.0.center" timestamp="1590260209969">
+    <state width="1259" height="204" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1590342489423" />
+    <state width="1259" height="204" key="GridCell.Tab.0.center" timestamp="1590342489423">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1590260209969" />
-    <state width="1259" height="204" key="GridCell.Tab.0.left" timestamp="1590260209969">
+    <state width="1259" height="204" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1590342489423" />
+    <state width="1259" height="204" key="GridCell.Tab.0.left" timestamp="1590342489423">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1590260209969" />
-    <state width="1259" height="204" key="GridCell.Tab.0.right" timestamp="1590260209969">
+    <state width="1259" height="204" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1590342489423" />
+    <state width="1259" height="204" key="GridCell.Tab.0.right" timestamp="1590342489423">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1590260209969" />
-    <state width="1259" height="204" key="GridCell.Tab.1.bottom" timestamp="1590260209969">
+    <state width="1259" height="204" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1590342489423" />
+    <state width="1259" height="204" key="GridCell.Tab.1.bottom" timestamp="1590342489423">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.1.bottom/0.0.1280.680@0.0.1280.680" timestamp="1590260209969" />
-    <state width="1259" height="204" key="GridCell.Tab.1.center" timestamp="1590260209969">
+    <state width="1259" height="204" key="GridCell.Tab.1.bottom/0.0.1280.680@0.0.1280.680" timestamp="1590342489423" />
+    <state width="1259" height="204" key="GridCell.Tab.1.center" timestamp="1590342489423">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.1.center/0.0.1280.680@0.0.1280.680" timestamp="1590260209969" />
-    <state width="1259" height="204" key="GridCell.Tab.1.left" timestamp="1590260209969">
+    <state width="1259" height="204" key="GridCell.Tab.1.center/0.0.1280.680@0.0.1280.680" timestamp="1590342489423" />
+    <state width="1259" height="204" key="GridCell.Tab.1.left" timestamp="1590342489423">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.1.left/0.0.1280.680@0.0.1280.680" timestamp="1590260209969" />
-    <state width="1259" height="204" key="GridCell.Tab.1.right" timestamp="1590260209969">
+    <state width="1259" height="204" key="GridCell.Tab.1.left/0.0.1280.680@0.0.1280.680" timestamp="1590342489423" />
+    <state width="1259" height="204" key="GridCell.Tab.1.right" timestamp="1590342489423">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.1.right/0.0.1280.680@0.0.1280.680" timestamp="1590260209969" />
+    <state width="1259" height="204" key="GridCell.Tab.1.right/0.0.1280.680@0.0.1280.680" timestamp="1590342489423" />
     <state width="498" height="446" key="SwitcherDM" timestamp="1589914616066">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
@@ -174,9 +173,9 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/BL/Network.py</url>
-          <line>86</line>
-          <option name="timeStamp" value="7" />
+          <url>file://$PROJECT_DIR$/BL/Layers/ConvolutionalLayer/Convolutional.py</url>
+          <line>47</line>
+          <option name="timeStamp" value="13" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

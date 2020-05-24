@@ -12,7 +12,7 @@ class Layer(ABC) :
     number = 0
     def __init__(self,
                  activationFunction : ActivationFunction,
-                 layerType = "non",
+                 layerType = "non"
                  ):
         self.number = Layer.number
         Layer.number+=1

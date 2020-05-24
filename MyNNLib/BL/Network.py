@@ -1,4 +1,3 @@
-from random import random
 from BL.BaseClasses.ActivationFunction import ActivationFunction
 from BL.BaseClasses.CostFunction import CostFunction
 from BL.BaseClasses.GradientDescent import GradientDescent
@@ -9,6 +8,7 @@ from DAL.BaseDB import BaseDB
 import numpy as np
 
 class Network():
+    #region Init
     def __init__(self,
                  costFunction : CostFunction,
                  learningRate : float,
@@ -43,6 +43,7 @@ class Network():
         self.id = network_id
         self.__should_regulate = should_regulate
         self.__regularizationTechs = regularizationTechs
+    #endregion
 
     def runNetwork(self, onMonitoring=lambda accuracy: print(accuracy), frequencyOfMonitoring=10):
         if(self.should_load_from_db):
