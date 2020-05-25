@@ -71,7 +71,7 @@ class Network():
 
     def __feedForward(self, x):
         output = None
-        if((self.gradient_decent) is MomentumBased):
+        if(type(self.gradient_decent) is MomentumBased):
             counter = 0
             output = self.layers[0].feedforward(x)
             self.gradient_decent.setVelocityMatrix(counter, self.layers[counter].getWeightShape(),

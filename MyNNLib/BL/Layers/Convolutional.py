@@ -21,18 +21,55 @@ class Convolutional(Layer):
         self.__sizeOfInputImage = sizeOfInputImage
         self.__numberOfFilters = numberOfFilters
         self.__mathHelper = _MathHelper()
-        [self._weights, self._biases, self.__numberOfLocalReceptiveFields] = self.__mathHelper.initializeFilters(
-            HyperParameterContainer.mini_batch_size,
-            self.__sizeOfInputImage,
-            self.__sizeOfLocalReceptiveField,
-            self.__stride,
-            self.__numberOfFilters,
-            self.__numberOfInputFeatureMaps
+        self.__initializeFilters()
+
+    def __initializeFilters(self):
+        mini_batch_size = HyperParameterContainer.mini_batch_size
+        counter1 = 0
+        counter2 = 0
+        for i in range(0, self.__sizeOfInputImage[0] - self.__sizeOfLocalReceptiveField[0], self.__stride):
+            counter1+=1
+        for i in range(0, self.__sizeOfInputImage[1] - self.__sizeOfLocalReceptiveField[1], self.__stride):
+            counter2 += 1
+        self.__numberOfLocalReceptiveFields = counter1 * counter2 * self.__numberOfInputFeatureMaps
+        biases = np.random.normal(
+            loc = 0,
+            scale = 1,
+            size = (HyperParameterContainer.mini_batch_size)
+        )
+        self._biases = np.array([[[[[
+                bias
+                for x in range(self.__sizeOfLocalReceptiveField[1])]
+                for x in range(self.__sizeOfLocalReceptiveField[0])]
+                for x in range(self.__numberOfLocalReceptiveFields)]
+                for x in range(self.__numberOfFilters)]
+                for bias in biases]
+        )
+        weights = np.random.normal(
+            loc=0,
+            scale=np.sqrt(1/(self.__numberOfFilters * np.prod(self.__sizeOfLocalReceptiveField[0:]))),
+            size= (
+                HyperParameterContainer.mini_batch_size,
+                self.__numberOfFilters,
+                self.__sizeOfLocalReceptiveField[0],
+                self.__sizeOfLocalReceptiveField[1])
+        )
+        self._weights = np.array(
+            [[[
+               filter
+                for x in range(self.__numberOfLocalReceptiveFields)]
+                for filter in weightSlice]
+                for weightSlice in weights]
         )
 
     def feedforward(self, inputs):
-        inputs = inputs.reshape(HyperParameterContainer.mini_batch_size, self.__numberOfInputFeatureMaps, self.__sizeOfInputImage[0],
-                     self.__sizeOfInputImage[1])
+        inputs = inputs.reshape(
+            HyperParameterContainer.mini_batch_size,
+            self.__numberOfInputFeatureMaps,
+            self.__sizeOfInputImage[0],
+            self.__sizeOfInputImage[1]
+        )
+
         inputMatrix = self.__mathHelper.turnIntoInputMatrix(
             inputs,
             self.__sizeOfInputImage,
@@ -40,7 +77,12 @@ class Convolutional(Layer):
             self.__sizeOfLocalReceptiveField,
             self.__numberOfInputFeatureMaps
         )
-        inputMatrix = [inputMatrix for x in range(self.__numberOfFilters)]
+
+        inputMatrix = [[
+            input
+            for x in range(self.__numberOfFilters)]
+            for input in inputMatrix]
+
         self._current_input = np.array(inputMatrix)
         self._current_weighted_input = np.add(
             self._biases, self.__mathHelper.convulotion(self._current_input, self._weights))
