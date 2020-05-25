@@ -2,19 +2,19 @@ from BL.Activation_Functions.Sigmoid import Sigmoid
 from BL.BaseClasses.Layer import Layer
 import numpy as np
 
+from BL.HyperParameterContainer import HyperParameterContainer
 from BL.Layers.MathHelper import _MathHelper
 from DAL.BaseDB import BaseDB
 
 
 class Convolutional(Layer):
     def __init__(self,
-                 activationFunction = Sigmoid(),
                  sizeOfLocalReceptiveField = (2, 2),
                  stride = 1,
                  numberOfInputFeatureMaps = 1,
                  numberOfFilters = 1,
                  sizeOfInputImage = (5, 5)):
-        super().__init__(activationFunction, "CONVOLUTIONAL")
+        super().__init__("CONVOLUTIONAL")
         self.__sizeOfLocalReceptiveField = sizeOfLocalReceptiveField
         self.__stride = stride
         self.__numberOfInputFeatureMaps = numberOfInputFeatureMaps
@@ -22,7 +22,7 @@ class Convolutional(Layer):
         self.__numberOfFilters = numberOfFilters
         self.__mathHelper = _MathHelper()
         [self._weights, self._biases, self.__numberOfLocalReceptiveFields] = self.__mathHelper.initializeFilters(
-            mini_batch_size,
+            HyperParameterContainer.mini_batch_size,
             self.__sizeOfInputImage,
             self.__sizeOfLocalReceptiveField,
             self.__stride,
@@ -30,8 +30,8 @@ class Convolutional(Layer):
             self.__numberOfInputFeatureMaps
         )
 
-    def feedforward(self, inputs, mini_batch_size):
-        inputs = inputs.reshape(mini_batch_size, self.__numberOfInputFeatureMaps, self.__sizeOfInputImage[0],
+    def feedforward(self, inputs):
+        inputs = inputs.reshape(HyperParameterContainer.mini_batch_size, self.__numberOfInputFeatureMaps, self.__sizeOfInputImage[0],
                      self.__sizeOfInputImage[1])
         inputMatrix = self.__mathHelper.turnIntoInputMatrix(
             inputs,
@@ -48,7 +48,7 @@ class Convolutional(Layer):
         self._current_activation = self._activationFunction.function(self._current_weighted_input)
         return self._current_activation
 
-    def backpropagate(self, error, learningRate, mini_batch_size, gradient_descent):
+    def backpropagate(self, error):
         flippedWeights = np.array([[
             list(zip(*self._weights[i][j][::-1]))
             for j in range(self.__numberOfLocalReceptiveFields)]
@@ -59,12 +59,11 @@ class Convolutional(Layer):
             self._activationFunction.derivative(self._current_weighted_input)
         )
 
-        self._biases = gradient_descent.changeBiases(self._biases, error, learningRate, mini_batch_size)
+        gradient_descent = HyperParameterContainer.gradientDescent
+        self._biases = gradient_descent.changeBiases(self._biases, error)
         self._weights = gradient_descent.changeWeights(
             self._weights,
             self.__mathHelper.convulotion(self._current_input, error),
-            learningRate,
-            mini_batch_size
         )
 
         return thisLayerError

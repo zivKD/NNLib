@@ -4,6 +4,7 @@ from BL.BaseClasses.GradientDescent import GradientDescent
 from BL.BaseClasses.Layer import Layer
 from BL.BaseClasses.Regularization import Regularization
 from BL.Gradient_Decent.MomentumBased import MomentumBased
+from BL.HyperParameterContainer import HyperParameterContainer
 from DAL.BaseDB import BaseDB
 import numpy as np
 
@@ -11,11 +12,7 @@ class Network():
     #region Init
     def __init__(self,
                  costFunction : CostFunction,
-                 learningRate : float,
                  last_layer_activation_function : ActivationFunction,
-                 gradient_descent : GradientDescent,
-                 mini_batch_size : int,
-                 number_of_epoches : int,
                  layers : [Layer,],
                  db: BaseDB,
                  should_load_from_db: bool,
@@ -28,11 +25,11 @@ class Network():
                  regularizationTechs : (Regularization,) = None
                  ):
         self.costFunction = costFunction
-        self.learningRate = learningRate
+        self.learningRate = HyperParameterContainer.learningRate
         self.last_layer_activation_function = last_layer_activation_function
-        self.gradient_decent = gradient_descent
-        self.mini_batch_size = mini_batch_size
-        self.number_of_epochs = number_of_epoches
+        self.gradient_decent = HyperParameterContainer.gradientDescent
+        self.mini_batch_size = HyperParameterContainer.mini_batch_size
+        self.number_of_epochs = HyperParameterContainer.mini_batch_size
         self.layers = layers
         self.training_set = training_set
         self.validation_set = validation_set
@@ -85,7 +82,7 @@ class Network():
                 self.gradient_decent.setVelocityMatrix(counter, self.layers[counter].getWeightShape(),
                                                        self.layers[counter].getBiasShape())
         else:
-            output = self.layers[0].feedforward(x, self.mini_batch_size)
+            output = self.layers[0].feedforward(x)
             for layer in self.layers[1:]:
                 output = layer.feedforward(output)
 
@@ -104,7 +101,7 @@ class Network():
                     layer.regulate(regularization)
 
         for layer in reversed(self.layers):
-            error = layer.backpropagate(error, self.learningRate, self.mini_batch_size, self.gradient_decent)
+            error = layer.backpropagate(error)
 
     def __saveToDb(self):
         for layer in self.layers:

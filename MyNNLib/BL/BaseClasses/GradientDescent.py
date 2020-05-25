@@ -6,9 +6,9 @@ class GradientDescent(ABC):
         pass
 
     @abstractmethod
-    def changeWeights(self, w, gradient, learningRate, mini_batch_size):
+    def changeWeights(self, w, gradient):
         pass
 
     @abstractmethod
-    def changeBiases(self, b, gradient, learningRate, mini_batch_size):
+    def changeBiases(self, b, gradient):
         pass

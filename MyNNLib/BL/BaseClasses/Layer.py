@@ -1,23 +1,20 @@
 from abc import ABC, abstractmethod
 import numpy as np
-
-from BL.Activation_Functions.Sigmoid import Sigmoid
-from BL.BaseClasses.ActivationFunction import ActivationFunction
 from BL.BaseClasses.GradientDescent import GradientDescent
 from BL.BaseClasses.Regularization import Regularization
+from BL.HyperParameterContainer import HyperParameterContainer
 from DAL.BaseDB import BaseDB
 
 
 class Layer(ABC) :
     number = 0
     def __init__(self,
-                 activationFunction : ActivationFunction,
                  layerType = "non"
                  ):
         self.number = Layer.number
         Layer.number+=1
         self.layerType = layerType
-        self._activationFunction = activationFunction
+        self._activationFunction = HyperParameterContainer.activationFunction
         self._weights = np.array([])
         self._biases = np.array([])
         self._current_input = []
@@ -25,11 +22,11 @@ class Layer(ABC) :
         self._current_activation = []
 
     @abstractmethod
-    def feedforward(self, inputs, mini_batch_size):
+    def feedforward(self, inputs):
         pass
 
     @abstractmethod
-    def backpropagate(self, error, learningRate, mini_batch_size, gradient_descent : GradientDescent):
+    def backpropagate(self, error):
         pass
 
     def regulate(self, regularization : Regularization):
@@ -50,4 +47,4 @@ class Layer(ABC) :
         return self._weights.shape
 
     def getBiasShape(self):
-        return self._biases.shape
+        return self._biases.shapes

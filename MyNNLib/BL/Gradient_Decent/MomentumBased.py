@@ -1,6 +1,8 @@
 from BL.BaseClasses.GradientDescent import GradientDescent
 import numpy as np
 
+from BL.HyperParameterContainer import HyperParameterContainer
+
 
 class MomentumBased(GradientDescent):
     def __init__(self, numberOfLayersWithWAndB, friction=0.9):
@@ -23,18 +25,22 @@ class MomentumBased(GradientDescent):
             size=(bShape)
         )
 
-    def changeWeights(self, w, gradient, learningRate, mini_batch_size):
+    def changeWeights(self, w, gradient):
         vW = self.__velocities[self.__layerNumW][0]
-        newVW = np.subtract(np.dot(vW, self.__friction), np.dot(gradient, learningRate / mini_batch_size))
+        newVW = np.subtract(np.dot(vW, self.__friction), np.dot(gradient,
+                                                                HyperParameterContainer.learningRate /
+                                                                HyperParameterContainer.mini_batch_size))
         self.__velocities[self.__layerNumW][1] = newVW
         self.__layerNumW += 1
         if (self.__layerNumW == self.__numberOfLayers):
             self.__layerNumW = 0
         return np.add(w, newVW)
 
-    def changeBiases(self, b, gradient, learningRate, mini_batch_size):
+    def changeBiases(self, b, gradient):
         vB = self.__velocities[self.__layerNumW][1]
-        newVB = np.subtract(np.dot(vB, self.__friction), np.dot(gradient, learningRate / mini_batch_size))
+        newVB = np.subtract(np.dot(vB, self.__friction), np.dot(gradient,
+                                                                HyperParameterContainer.learningRate /
+                                                                HyperParameterContainer.mini_batch_size))
         self.__velocities[self.__layerNumW][1] = newVB
         self.__layerNumB += 1
         if (self.__layerNumB == self.__numberOfLayers):

@@ -6,16 +6,18 @@ from DAL.BaseDB import BaseDB
 
 
 class MaxPooling(Layer):
-    def __init__(self, sizeOfInputImage, poolSize, stride):
-        super().__init__(None, layerType="MaxPooling")
+    def __init__(self, sizeOfInputImage, poolSize, stride, number_of_input_feature_maps):
+        super().__init__(layerType="MaxPooling")
         self.__size_of_input_image =sizeOfInputImage
         self.__pool_size = poolSize
         self.__stride = stride
+        self.__number_of_input_feature_maps = number_of_input_feature_maps
 
-    def feedforward(self, inputs, mini_batch_size):
+    def feedforward(self, inputs):
         self._current_input  = inputs
         helper = _MathHelper()
-        inputMatrix = helper.turnIntoInputMatrix(inputs, self.__size_of_input_image, self.__stride, self.__pool_size)
+        inputMatrix = helper.turnIntoInputMatrix(inputs, self.__size_of_input_image, self.__stride, self.__pool_size,
+                                                 self.__number_of_input_feature_maps)
         # all but the size of the local receptive
         self.__currentIndices = np.argmax(inputMatrix, axis=-1)
         maxOuput = np.max(inputMatrix, axis=-1)
@@ -23,7 +25,7 @@ class MaxPooling(Layer):
         self._current_activation = self._activationFunction.function(maxOuput)
         return self._current_activation
 
-    def backpropagate(self, error, learningRate, mini_batch_size, gradient_descent):
+    def backpropagate(self, error):
         nextError = np.zeros(self._current_input.shape)
         # Generate the indices to each of the firest dimension
         idx = np.indices(self.__currentIndices.shape)

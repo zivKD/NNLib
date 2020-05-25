@@ -1,14 +1,15 @@
 import numpy as np
 
 from BL.BaseClasses.Regularization import Regularization
+from BL.HyperParameterContainer import HyperParameterContainer
 
 
 class Dropout(Regularization):
-    def __init__(self, number_of_layers_to_affect : tuple, number_of_runs, p = 0.5):
+    def __init__(self, number_of_layers_to_affect : tuple, number_of_runs):
         super().__init__(number_of_layers_to_affect)
         self.__layersWeights = [[num, np.array([None]), 1] for num in number_of_layers_to_affect]
         self.__number_of_runs = number_of_runs
-        self.__p = p
+        self.__p = HyperParameterContainer.dropoutPrecentage
 
     def changeParams(self, w, b, layerNumber):
         layerWeightArray = []

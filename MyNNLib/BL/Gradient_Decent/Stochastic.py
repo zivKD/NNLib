@@ -1,9 +1,12 @@
 from BL.BaseClasses.GradientDescent import GradientDescent
 import numpy as np
 
-class Stochastic(GradientDescent):
-    def changeWeights(self, w, gradient, learningRate, mini_batch_size):
-        return np.subtract(w, (learningRate / mini_batch_size) * gradient)
+from BL.HyperParameterContainer import HyperParameterContainer
 
-    def changeBiases(self, b, gradient, learningRate, mini_batch_size):
-        return np.subtract(b, (learningRate / mini_batch_size) * gradient)
+
+class Stochastic(GradientDescent):
+    def changeWeights(self, w, gradient):
+        return np.subtract(w, (HyperParameterContainer.learningRate / HyperParameterContainer.mini_batch_size) * gradient)
+
+    def changeBiases(self, b, gradient):
+        return np.subtract(b, (HyperParameterContainer.learningRate / HyperParameterContainer.mini_batch_size) * gradient)
