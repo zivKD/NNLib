@@ -6,9 +6,9 @@ class _MathHelper():
     def getNumberOfLocalReceptiveFields(self,sizeOfInputImage, sizeOfLocalReceptiveField, stride, numberOfInputFeatureMaps):
         counter1 = 0
         counter2 = 0
-        for i in range(0, sizeOfInputImage[0] - sizeOfLocalReceptiveField[0], stride):
+        for i in range(0, sizeOfInputImage[0] - sizeOfLocalReceptiveField[0] + 1, stride):
             counter1 += 1
-        for i in range(0, sizeOfInputImage[1] - sizeOfLocalReceptiveField[1], stride):
+        for i in range(0, sizeOfInputImage[1] - sizeOfLocalReceptiveField[1] + 1, stride):
             counter2 += 1
         return counter1 * counter2 * numberOfInputFeatureMaps
 
@@ -16,8 +16,8 @@ class _MathHelper():
         inputMatrix = [[] for i in range(len(inputs))]
         i = 0
         for input in inputs:
-            for inputRow in range(0, sizeOfInputImage[0] - sizeOfLocalReceptiveField[0], stride) :
-                    for inputColumn in range(0, sizeOfInputImage[1] - sizeOfLocalReceptiveField[1], stride):
+            for inputRow in range(0, sizeOfInputImage[0] - sizeOfLocalReceptiveField[0] + 1, stride) :
+                    for inputColumn in range(0, sizeOfInputImage[1] - sizeOfLocalReceptiveField[1] + 1, stride):
                         for j in range(numberOfInputFeatureMaps):
                             inputMatrix[i].append(self.getLocalReceptiveField(inputRow, inputColumn, input[j],
                                                                               sizeOfLocalReceptiveField))

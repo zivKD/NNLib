@@ -75,8 +75,13 @@ class Convolutional(Layer):
         self._current_input = np.array(inputMatrix)
         convolutionProduct = self._convolution(self._current_input, self._weights, self._biases.shape)
         self._current_weighted_input = np.add(self._biases, convolutionProduct)
+        self._current_weighted_input = self._current_weighted_input.reshape((
+            HyperParameterContainer.mini_batch_size,
+            self.__numberOfFilters,
+            self.__sizeOfInputImage[0] - self.__sizeOfLocalReceptiveField[0] + 1,
+            self.__sizeOfInputImage[1] - self.__sizeOfLocalReceptiveField[1] + 1
+        ))
         self._current_activation = self._activationFunction.function(self._current_weighted_input)
-
         return self._current_activation
 
     def backpropagate(self, error):

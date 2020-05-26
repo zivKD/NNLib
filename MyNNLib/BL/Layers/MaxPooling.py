@@ -28,9 +28,15 @@ class MaxPooling(Layer):
         self.__currentIndices = np.argmax(self._current_input, axis=-1)
         maxOuput = np.max(self._current_input, axis=-1)
         self._current_weighted_input = maxOuput
+        self._current_weighted_input = self._current_weighted_input.reshape((
+            HyperParameterContainer.mini_batch_size,
+            self.__number_of_input_feature_maps,
+            self.__size_of_input_image[0] / 2,
+            self.__size_of_input_image[1] / 2
+        ))
+
         self._current_activation = self._activationFunction.function(maxOuput)
-        return helper.turnIntoCommonShape(self._current_activation, numberOfFilters,
-                                          numberOfLocalReceptiveFields)
+        return self._current_activation
 
     def backpropagate(self, error):
         nextError = np.zeros(self._current_input.shape)

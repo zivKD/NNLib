@@ -2,12 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="23865cb9-dfc5-4cf8-9bdd-3049cfc9f76f" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/MyNNLib.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/MyNNLib.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BL/Layers/Convolutional.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Layers/Convolutional.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BL/Layers/MathHelper.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Layers/MathHelper.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Program.py" beforeDir="false" afterPath="$PROJECT_DIR$/Program.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BL/Layers/MaxPooling.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Layers/MaxPooling.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -126,38 +124,38 @@
       <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state x="421" y="98" key="FileChooserDialogImpl/0.0.1280.680@0.0.1280.680" timestamp="1590499332343" />
-    <state width="1259" height="204" key="GridCell.Tab.0.bottom" timestamp="1590521389151">
+    <state width="1259" height="204" key="GridCell.Tab.0.bottom" timestamp="1590522645255">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1590521389151" />
-    <state width="1259" height="204" key="GridCell.Tab.0.center" timestamp="1590521389151">
+    <state width="1259" height="204" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1590522645255" />
+    <state width="1259" height="204" key="GridCell.Tab.0.center" timestamp="1590522645255">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1590521389151" />
-    <state width="1259" height="204" key="GridCell.Tab.0.left" timestamp="1590521389151">
+    <state width="1259" height="204" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1590522645255" />
+    <state width="1259" height="204" key="GridCell.Tab.0.left" timestamp="1590522645254">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1590521389151" />
-    <state width="1259" height="204" key="GridCell.Tab.0.right" timestamp="1590521389151">
+    <state width="1259" height="204" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1590522645254" />
+    <state width="1259" height="204" key="GridCell.Tab.0.right" timestamp="1590522645255">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1590521389151" />
-    <state width="1259" height="204" key="GridCell.Tab.1.bottom" timestamp="1590521389152">
+    <state width="1259" height="204" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1590522645255" />
+    <state width="1259" height="204" key="GridCell.Tab.1.bottom" timestamp="1590522654048">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.1.bottom/0.0.1280.680@0.0.1280.680" timestamp="1590521389152" />
-    <state width="1259" height="204" key="GridCell.Tab.1.center" timestamp="1590521389152">
+    <state width="1259" height="204" key="GridCell.Tab.1.bottom/0.0.1280.680@0.0.1280.680" timestamp="1590522654048" />
+    <state width="1259" height="204" key="GridCell.Tab.1.center" timestamp="1590522654048">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.1.center/0.0.1280.680@0.0.1280.680" timestamp="1590521389152" />
-    <state width="1259" height="204" key="GridCell.Tab.1.left" timestamp="1590521389152">
+    <state width="1259" height="204" key="GridCell.Tab.1.center/0.0.1280.680@0.0.1280.680" timestamp="1590522654048" />
+    <state width="1259" height="204" key="GridCell.Tab.1.left" timestamp="1590522654048">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.1.left/0.0.1280.680@0.0.1280.680" timestamp="1590521389152" />
-    <state width="1259" height="204" key="GridCell.Tab.1.right" timestamp="1590521389152">
+    <state width="1259" height="204" key="GridCell.Tab.1.left/0.0.1280.680@0.0.1280.680" timestamp="1590522654048" />
+    <state width="1259" height="204" key="GridCell.Tab.1.right" timestamp="1590522654048">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.1.right/0.0.1280.680@0.0.1280.680" timestamp="1590521389152" />
+    <state width="1259" height="204" key="GridCell.Tab.1.right/0.0.1280.680@0.0.1280.680" timestamp="1590522654048" />
     <state x="144" y="0" key="SettingsEditor" timestamp="1590499442177">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
@@ -181,13 +179,6 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/BL/Layers/MaxPooling.py</url>
-          <line>31</line>
-          <option name="timeStamp" value="54" />
-        </line-breakpoint>
-      </breakpoints>
       <default-breakpoints>
         <breakpoint type="python-exception">
           <properties notifyOnTerminate="true" exception="BaseException">
