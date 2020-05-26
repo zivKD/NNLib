@@ -1,7 +1,7 @@
 from BL.Activation_Functions.Sigmoid import Sigmoid
 from BL.BaseClasses.Layer import Layer
 import numpy as np
-
+from scipy import ndimage
 from BL.HyperParameterContainer import HyperParameterContainer
 from BL.Layers.MathHelper import _MathHelper
 from DAL.BaseDB import BaseDB
@@ -64,15 +64,13 @@ class Convolutional(Layer):
             self.__sizeOfInputImage[0],
             self.__sizeOfInputImage[1]
         )
-
         inputMatrix = [[
             input
             for x in range(self.__numberOfFilters)]
             for input in inputs]
-
         self._current_input = np.array(inputMatrix)
         self._current_weighted_input = np.add(
-            self._biases, self.__mathHelper.convulotion(self._current_input, self._weights))
+            self._biases, self.__convolution(self._current_input, self._weights))
         self._current_activation = self._activationFunction.function(self._current_weighted_input)
 
         return self._current_activation
@@ -84,7 +82,7 @@ class Convolutional(Layer):
             for i in range(len(self._weights))])
 
         thisLayerError = np.multiply(
-            self.__mathHelper.convulotion(flippedWeights, error),
+            self.__convolution(flippedWeights, error),
             self._activationFunction.derivative(self._current_weighted_input)
         )
 
@@ -92,7 +90,7 @@ class Convolutional(Layer):
         self._biases = gradient_descent.changeBiases(self._biases, error)
         self._weights = gradient_descent.changeWeights(
             self._weights,
-            self.__mathHelper.convulotion(self._current_input, error),
+            self.__convolution(self._current_input, error),
         )
 
         return thisLayerError
@@ -104,26 +102,3 @@ class Convolutional(Layer):
     def getFromDb(self, db : BaseDB, networkId):
         super().saveToDb(db, networkId)
         self.__stride = db.getStride(self.number, networkId)
-
-    def __convolution(self, inputs, weights):
-        output = np.zeros(weights.shape)
-        imageWidth = inputs.shape[3]
-        imageHeight = inputs.shape[4]
-        kernelWidth = weights.shape[3]
-        kernelHeight = weights.shape[4]
-        for inputCounter in range(inputs.shape[0]):
-            for filterCounter in range(inputs.shape[1]):
-                for inputMap in inputs[inputCounter, filterCounter]:
-                    for m in range(imageWidth - kernelWidth):
-                        for n in range(imageHeight - kernelHeight):
-                            acc = 0
-                            for localReceptiveFieldCounter in range(weights.shape[2]):
-                                kernel = weights[inputCounter][filterCounter][localReceptiveFieldCounter]
-                                for i in range(kernelWidth - 1):
-                                    for j in range(kernelHeight - 1):
-                                        if 0 <= i - kernelHeight <= kernelWidth:
-                                            acc = acc + (
-                                                    inputMap[m - kernelWidth + i][n - kernelHeight + j] *
-                                                    kernel[i, j]
-                                            )
-                            output[inputCounter][filterCounter][m][n]
