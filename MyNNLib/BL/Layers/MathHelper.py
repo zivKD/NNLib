@@ -56,34 +56,6 @@ class _MathHelper():
                 else:
                     return None
         return localReceptiveField
-    #
-    # def convulotion(self, matrix, weights):
-    #     output = np.zeros(weights.shape)
-    #     for i in range(matrix.shape[0]):
-    #         for j in range(matrix.shape[1]):
-    #             for m in range(matrix.shape[2]):
-    #                 output[i][j][m] = self.__convolveWeights(matrix[i][j][m], weights)
-    #
-    #     return output
-    #
-    # def __convolveWeights(self, matrix, weights):
-    #     output = np.zeros(weights.shape)
-    #     kernelWidth = weights.shape[3]
-    #     kernelHeight = weights.shape[4]
-    #     for i in range(matrix[0] - kernelWidth):
-    #         for j in range(matrix[1] - kernelWidth):
-    #             acc = 0
-    #             for counterOfInput in range(weights.shape[0]):
-    #              for counterOfFilter in range(weights.shape[1]):
-    #                 for kernel in weights[counterOfInput][counterOfFilter]:
-    #                     for ki in range(kernelWidth - 1):
-    #                         for kj in range(kernelWidth - 1):
-    #                             if 0 <= i - kernelHeight <= kernelWidth:  ## make sure you don't get out of bound error
-    #                                 acc = acc + (kernel[i - kernelHeight + ki][j - kernelHeight + kj] * weights[ki][kj])
-    #
-    #             output[i][j] = acc
-    #
-    #     return output
 
     def turnIntoCommonShape(self, activation, numberOfFilters, numberOfLocalReceptiveFields, sizeOfLocalReceptiveField):
         sqrt = int(np.sqrt(numberOfLocalReceptiveFields))  # based on being a square

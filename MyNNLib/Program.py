@@ -11,6 +11,7 @@ from BL.Gradient_Decent.MomentumBased import MomentumBased
 from BL.Regularization.Dropout import Dropout
 from DAL.Mongo.MongoDB import MongoDB
 
+# TODO: Understand how fftconvolve works
 # TODO: Design the system better so it will keep all the SOLID principles
 # TODO: How to reshape the output from convolutional to the correct shape in Max pooling
 
@@ -80,3 +81,4 @@ model = Network(
 )
 
 model.runNetwork()
+

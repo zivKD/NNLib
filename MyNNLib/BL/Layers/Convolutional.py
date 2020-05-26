@@ -1,11 +1,9 @@
-from BL.Activation_Functions.Sigmoid import Sigmoid
 from BL.BaseClasses.Layer import Layer
 import numpy as np
-from scipy import ndimage
+from scipy.signal import fftconvolve as convolve
 from BL.HyperParameterContainer import HyperParameterContainer
 from BL.Layers.MathHelper import _MathHelper
 from DAL.BaseDB import BaseDB
-
 
 class Convolutional(Layer):
     def __init__(self,
@@ -30,31 +28,30 @@ class Convolutional(Layer):
         biases = np.random.normal(
             loc = 0,
             scale = 1,
-            size = (mini_batch_size)
+            size = (self.__numberOfFilters)
         )
-        self._biases = np.array([[[[[
+        self._biases = np.array([[[
                 bias
-                for x in range(self.__sizeOfLocalReceptiveField[1])]
-                for x in range(self.__sizeOfLocalReceptiveField[0])]
                 for x in range(self.__numberOfLocalReceptiveFields)]
-                for x in range(self.__numberOfFilters)]
                 for bias in biases]
+                for x in range(mini_batch_size)]
         )
         weights = np.random.normal(
             loc=0,
             scale=np.sqrt(1/(self.__numberOfFilters * np.prod(self.__sizeOfLocalReceptiveField[0:]))),
             size= (
-                mini_batch_size,
                 self.__numberOfFilters,
                 self.__sizeOfLocalReceptiveField[0],
                 self.__sizeOfLocalReceptiveField[1])
         )
+
         self._weights = np.array(
-            [[[
-               filter
+            [[[[
+                localReceptiveField
                 for x in range(self.__numberOfLocalReceptiveFields)]
-                for filter in weightSlice]
-                for weightSlice in weights]
+                for localReceptiveField in filter]
+                for filter in weights]
+                for x in range(mini_batch_size)]
         )
 
     def feedforward(self, inputs):
@@ -64,13 +61,20 @@ class Convolutional(Layer):
             self.__sizeOfInputImage[0],
             self.__sizeOfInputImage[1]
         )
+
+        inputs = self.__mathHelper.turnIntoInputMatrix(
+            inputs, self.__sizeOfInputImage, self.__stride,
+            self.__sizeOfLocalReceptiveField, self.__numberOfInputFeatureMaps
+        )
+
         inputMatrix = [[
             input
             for x in range(self.__numberOfFilters)]
             for input in inputs]
+
         self._current_input = np.array(inputMatrix)
-        self._current_weighted_input = np.add(
-            self._biases, self.__convolution(self._current_input, self._weights))
+        convolutionProduct = self._convolution(self._current_input, self._weights, self._biases.shape)
+        self._current_weighted_input = np.add(self._biases, convolutionProduct)
         self._current_activation = self._activationFunction.function(self._current_weighted_input)
 
         return self._current_activation
@@ -81,16 +85,18 @@ class Convolutional(Layer):
             for j in range(self.__numberOfLocalReceptiveFields)]
             for i in range(len(self._weights))])
 
+        activation = self._convolution(flippedWeights, error, self._current_weighted_input.shape)
         thisLayerError = np.multiply(
-            self.__convolution(flippedWeights, error),
+            activation,
             self._activationFunction.derivative(self._current_weighted_input)
         )
 
         gradient_descent = HyperParameterContainer.gradientDescent
         self._biases = gradient_descent.changeBiases(self._biases, error)
+        gradient = self._convolution(self._current_input, error, self._weights)
         self._weights = gradient_descent.changeWeights(
             self._weights,
-            self.__convolution(self._current_input, error),
+            gradient
         )
 
         return thisLayerError
@@ -102,3 +108,9 @@ class Convolutional(Layer):
     def getFromDb(self, db : BaseDB, networkId):
         super().saveToDb(db, networkId)
         self.__stride = db.getStride(self.number, networkId)
+
+    def _convolution(self, matrix, kernel, shape):
+        convolutionProduct = convolve(matrix, kernel, 'same')
+        convolutionProduct = np.sum(convolutionProduct, axis=-1)
+        convolutionProduct = convolutionProduct.reshape(shape)
+        return convolutionProduct
