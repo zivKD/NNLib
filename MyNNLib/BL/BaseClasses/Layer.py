@@ -47,4 +47,4 @@ class Layer(ABC) :
         return self._weights.shape
 
     def getBiasShape(self):
-        return self._biases.shapes
+        return self._biases.shape

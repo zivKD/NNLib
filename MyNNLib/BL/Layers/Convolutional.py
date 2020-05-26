@@ -25,17 +25,12 @@ class Convolutional(Layer):
 
     def __initializeFilters(self):
         mini_batch_size = HyperParameterContainer.mini_batch_size
-        counter1 = 0
-        counter2 = 0
-        for i in range(0, self.__sizeOfInputImage[0] - self.__sizeOfLocalReceptiveField[0], self.__stride):
-            counter1+=1
-        for i in range(0, self.__sizeOfInputImage[1] - self.__sizeOfLocalReceptiveField[1], self.__stride):
-            counter2 += 1
-        self.__numberOfLocalReceptiveFields = counter1 * counter2 * self.__numberOfInputFeatureMaps
+        self.__numberOfLocalReceptiveFields = self.__mathHelper.getNumberOfLocalReceptiveFields(
+            self.__sizeOfInputImage, self.__sizeOfLocalReceptiveField, self.__stride, self.__numberOfInputFeatureMaps)
         biases = np.random.normal(
             loc = 0,
             scale = 1,
-            size = (HyperParameterContainer.mini_batch_size)
+            size = (mini_batch_size)
         )
         self._biases = np.array([[[[[
                 bias
@@ -49,7 +44,7 @@ class Convolutional(Layer):
             loc=0,
             scale=np.sqrt(1/(self.__numberOfFilters * np.prod(self.__sizeOfLocalReceptiveField[0:]))),
             size= (
-                HyperParameterContainer.mini_batch_size,
+                mini_batch_size,
                 self.__numberOfFilters,
                 self.__sizeOfLocalReceptiveField[0],
                 self.__sizeOfLocalReceptiveField[1])
@@ -70,24 +65,16 @@ class Convolutional(Layer):
             self.__sizeOfInputImage[1]
         )
 
-        inputMatrix = self.__mathHelper.turnIntoInputMatrix(
-            inputs,
-            self.__sizeOfInputImage,
-            self.__stride,
-            self.__sizeOfLocalReceptiveField,
-            self.__numberOfInputFeatureMaps
-        )
-
         inputMatrix = [[
             input
             for x in range(self.__numberOfFilters)]
-            for input in inputMatrix]
+            for input in inputs]
 
         self._current_input = np.array(inputMatrix)
         self._current_weighted_input = np.add(
             self._biases, self.__mathHelper.convulotion(self._current_input, self._weights))
-
         self._current_activation = self._activationFunction.function(self._current_weighted_input)
+
         return self._current_activation
 
     def backpropagate(self, error):
@@ -117,3 +104,26 @@ class Convolutional(Layer):
     def getFromDb(self, db : BaseDB, networkId):
         super().saveToDb(db, networkId)
         self.__stride = db.getStride(self.number, networkId)
+
+    def __convolution(self, inputs, weights):
+        output = np.zeros(weights.shape)
+        imageWidth = inputs.shape[3]
+        imageHeight = inputs.shape[4]
+        kernelWidth = weights.shape[3]
+        kernelHeight = weights.shape[4]
+        for inputCounter in range(inputs.shape[0]):
+            for filterCounter in range(inputs.shape[1]):
+                for inputMap in inputs[inputCounter, filterCounter]:
+                    for m in range(imageWidth - kernelWidth):
+                        for n in range(imageHeight - kernelHeight):
+                            acc = 0
+                            for localReceptiveFieldCounter in range(weights.shape[2]):
+                                kernel = weights[inputCounter][filterCounter][localReceptiveFieldCounter]
+                                for i in range(kernelWidth - 1):
+                                    for j in range(kernelHeight - 1):
+                                        if 0 <= i - kernelHeight <= kernelWidth:
+                                            acc = acc + (
+                                                    inputMap[m - kernelWidth + i][n - kernelHeight + j] *
+                                                    kernel[i, j]
+                                            )
+                            output[inputCounter][filterCounter][m][n]

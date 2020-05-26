@@ -12,6 +12,7 @@ from BL.Regularization.Dropout import Dropout
 from DAL.Mongo.MongoDB import MongoDB
 
 # TODO: Design the system better so it will keep all the SOLID principles
+# TODO: How to reshape the output from convolutional to the correct shape in Max pooling
 
 training_set, validation_set, test_set = DataLoader.load()
 activationFunc = RELU()

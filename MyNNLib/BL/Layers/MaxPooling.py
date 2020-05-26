@@ -1,6 +1,7 @@
 from BL.BaseClasses.Layer import Layer
 import numpy as np
 
+from BL.HyperParameterContainer import HyperParameterContainer
 from BL.Layers.MathHelper import _MathHelper
 from DAL.BaseDB import BaseDB
 
@@ -14,16 +15,22 @@ class MaxPooling(Layer):
         self.__number_of_input_feature_maps = number_of_input_feature_maps
 
     def feedforward(self, inputs):
-        self._current_input  = inputs
         helper = _MathHelper()
-        inputMatrix = helper.turnIntoInputMatrix(inputs, self.__size_of_input_image, self.__stride, self.__pool_size,
+        numberOfFilters = len(inputs[1])
+        numberOfLocalReceptiveFields = helper.getNumberOfLocalReceptiveFields(
+            self.__size_of_input_image, self.__pool_size, self.__stride, self.__number_of_input_feature_maps
+        )
+        inputMatrix = helper.turnIntoInputMatrix2(inputs,
+                                                  self.__size_of_input_image, self.__stride, self.__pool_size,
                                                  self.__number_of_input_feature_maps)
+        self._current_input = np.array(inputMatrix)
         # all but the size of the local receptive
-        self.__currentIndices = np.argmax(inputMatrix, axis=-1)
-        maxOuput = np.max(inputMatrix, axis=-1)
+        self.__currentIndices = np.argmax(self._current_input, axis=-1)
+        maxOuput = np.max(self._current_input, axis=-1)
         self._current_weighted_input = maxOuput
         self._current_activation = self._activationFunction.function(maxOuput)
-        return self._current_activation
+        return helper.turnIntoCommonShape(self._current_activation, numberOfFilters,
+                                          numberOfLocalReceptiveFields)
 
     def backpropagate(self, error):
         nextError = np.zeros(self._current_input.shape)
