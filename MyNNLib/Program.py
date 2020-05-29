@@ -110,7 +110,7 @@ def conv5D(matrix, kernel, stride=1):
     localReceptiveFieldWidth, localReceptiveFieldHeight = kernel.shape[-2:]
     numberOfLocalReceptiveFields =  (1 +
        (imageWidth - localReceptiveFieldWidth) // stride) * (1 +
-       (imageHeight - localReceptiveFieldHeight) // stride) * matrix.shape[1]
+       (imageHeight - localReceptiveFieldHeight) // stride) * matrix.shape[1] * matrix.shape[2]
 
     # wraps the kernel in a [] and then duplicates the array for the size of the number of local receptive fields
     kernel = numpy.repeat(kernel[:, :, None, :, :], numberOfLocalReceptiveFields, axis=2)
@@ -128,11 +128,11 @@ def conv5D(matrix, kernel, stride=1):
         s1,
         s2,
         s3,
-        s4 * stride,
-        s5 * stride
+        s4,
+        s5
     )
 
-    subs = numpy.lib.stride_tricks.as_strided(matrix, output_shape, strides=strides)
+    subs = numpy.lib.stride_tricks.as_strided(matrix, output_shape, strides = strides)
 
     arr = subs * kernel
     # multipling the kernel in the local receptive fields and summing up

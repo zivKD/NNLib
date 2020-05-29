@@ -11,6 +11,12 @@ class _MathHelper():
         ]
 
     @staticmethod
+    def getNumberOfLocalReceptiveFields(imageWidth, imageHeight, lrfWidth, lrfHeight, stride,
+                                        numberOfInputFeatureMaps, numberOfFilters):
+        return _MathHelper.getOutputImageDims(imageWidth, imageHeight, lrfWidth, lrfHeight, stride) * \
+            numberOfFilters * numberOfInputFeatureMaps
+
+    @staticmethod
     def getLocalReceptiveFields(
             matrix,
             stride,
@@ -48,10 +54,11 @@ class _MathHelper():
         # needed variables
         imageWidth, imageHeight = matrix.shape[-2:]
         localReceptiveFieldWidth, localReceptiveFieldHeight = kernel.shape[-2:]
+
         numberOfLocalReceptiveFields = \
-            (1 + (imageWidth - localReceptiveFieldWidth) // stride) * \
-            (1 + (imageHeight - localReceptiveFieldHeight) // stride) * \
-            matrix.shape[1]
+        _MathHelper.getNumberOfLocalReceptiveFields(imageWidth, imageHeight,
+                                                    localReceptiveFieldWidth, localReceptiveFieldHeight,
+                                                    stride, matrix[2], matrix[1])
 
         # wraps the kernel in a [] and then duplicates the array for the size of the number of local receptive fields
         kernel = np.repeat(kernel[:, :, None, :, :], numberOfLocalReceptiveFields, axis=2)

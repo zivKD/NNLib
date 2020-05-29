@@ -23,19 +23,31 @@ class Convolutional(Layer):
 
     def __initializeFilters(self):
         mini_batch_size = HyperParameterContainer.mini_batch_size
-        [self.__numberOfLocalReceptiveFields, self.__outputImageDims] = self.__mathHelper.getDims(
-            self.__sizeOfInputImage, self.__sizeOfLocalReceptiveField, self.__stride, self.__numberOfInputFeatureMaps)
+        self.__numberOfLocalReceptiveFields = _MathHelper.getNumberOfLocalReceptiveFields(
+            self.__sizeOfInputImage[0],
+            self.__sizeOfInputImage[1],
+            self.__sizeOfLocalReceptiveField[0],
+            self.__sizeOfLocalReceptiveField[1],
+            self.__stride,
+            self.__numberOfInputFeatureMaps,
+            self.__numberOfFilters
+        )
+
+        self.__outputImageDims = _MathHelper.getOutputImageDims(
+            self.__sizeOfInputImage[0],
+            self.__sizeOfInputImage[1],
+            self.__sizeOfLocalReceptiveField[0],
+            self.__sizeOfLocalReceptiveField[1],
+            self.__stride
+        )
+
         biases = np.random.normal(
             loc = 0,
             scale = 1,
             size = (self.__numberOfFilters)
         )
-        self._biases = np.array([[[
-                bias
-                for x in range(self.__numberOfLocalReceptiveFields)]
-                for bias in biases]
-                for x in range(mini_batch_size)]
-        )
+        biases = np.repeat(biases[None, :], mini_batch_size, axis=0)
+        self._biases = np.repeat(biases[:, :, None], self.__numberOfLocalReceptiveFields, axis=2)
         weights = np.random.normal(
             loc=0,
             scale=np.sqrt(1/(self.__numberOfFilters * np.prod(self.__sizeOfLocalReceptiveField[0:]))),
@@ -44,13 +56,7 @@ class Convolutional(Layer):
                 self.__sizeOfLocalReceptiveField[0],
                 self.__sizeOfLocalReceptiveField[1])
         )
-
-        self._weights = np.array(
-            [[
-                filter
-                for filter in weights]
-                for x in range(mini_batch_size)]
-        )
+        self._weights = np.repeat(weights[None, :, :, :], mini_batch_size, axis=0)
 
     def feedforward(self, inputs):
         inputs = inputs.reshape(
@@ -59,16 +65,11 @@ class Convolutional(Layer):
             self.__sizeOfInputImage[0],
             self.__sizeOfInputImage[1]
         )
-
-        inputMatrix = [[
-            input
-            for x in range(self.__numberOfFilters)]
-            for input in inputs]
-
-        self._current_input = np.array(inputMatrix)
-        convolutionProduct = self._convolution(self._current_input, self._weights, self._biases.shape)
-        self._current_weighted_input = np.add(self._biases, convolutionProduct)
-        self._current_weighted_input = self._current_weighted_input.reshape((
+        inputs = np.repeat(inputs[:,None, :, :, :], self.__numberOfFilters, axis=1)
+        self._current_input = inputs
+        convolutionProduct = _MathHelper.conv5D(self._current_input, self._weights, self._biases.shape)
+        convolutionProduct = np.add(self._biases, convolutionProduct)
+        self._current_weighted_input =  convolutionProduct.reshape((
             HyperParameterContainer.mini_batch_size,
             self.__numberOfFilters,
             self.__outputImageDims[0],
@@ -83,7 +84,7 @@ class Convolutional(Layer):
             for j in range(self.__numberOfLocalReceptiveFields)]
             for i in range(len(self._weights))])
 
-        activation = self._convolution(flippedWeights, error, self._current_weighted_input.shape)
+        activation = _MathHelper.conv5D(flippedWeights, error, self._current_weighted_input.shape)
         thisLayerError = np.multiply(
             activation,
             self._activationFunction.derivative(self._current_weighted_input)
@@ -91,7 +92,7 @@ class Convolutional(Layer):
 
         gradient_descent = HyperParameterContainer.gradientDescent
         self._biases = gradient_descent.changeBiases(self._biases, error)
-        gradient = self._convolution(self._current_input, error, self._weights)
+        gradient = _MathHelper.conv5D(self._current_input, error, self._weights)
         self._weights = gradient_descent.changeWeights(
             self._weights,
             gradient
