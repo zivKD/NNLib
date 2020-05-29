@@ -20,15 +20,20 @@ class FullyConnected(Layer) :
             scale=np.sqrt(1/n_out),
             size=(n_in, n_out)
         )
-        self._biases = np.random.normal(
+        biases = np.random.normal(
             loc=0,
             scale=1,
             size = (n_out,)
         )
-
+        self._biases = np.repeat(biases[None, :], HyperParameterContainer.mini_batch_size, axis=0)
 
     def feedforward(self, inputs):
-        z = np.add(np.dot(self._weights, inputs), self._biases)
+        inputs = inputs.reshape(HyperParameterContainer.mini_batch_size, self.__n_in)
+        dots = []
+        for input in inputs:
+            dot = np.dot(input, self._weights)
+            dots.append(dot)
+        z = np.add(dots, self._biases)
         activation = self._activationFunction.function(z)
         self._current_input = inputs
         self._current_weighted_input = z

@@ -69,6 +69,7 @@ class Network():
         if(self.should_save_to_db):
             self.__saveToDb()
 
+
     def __feedForward(self, x):
         output = None
         if(type(self.gradient_decent) is MomentumBased):
@@ -77,10 +78,9 @@ class Network():
             self.gradient_decent.setVelocityMatrix(counter, self.layers[counter].getWeightShape(),
                                                    self.layers[counter].getBiasShape())
             for layer in self.layers[1:]:
-                counter+=1
                 output = layer.feedforward(output)
-                self.gradient_decent.setVelocityMatrix(counter, self.layers[counter].getWeightShape(),
-                                                       self.layers[counter].getBiasShape())
+                self.gradient_decent.setVelocityMatrix(layer.number, layer.getWeightShape(),
+                                                       layer.getBiasShape())
         else:
             output = self.layers[0].feedforward(x)
             for layer in self.layers[1:]:

@@ -7,7 +7,7 @@ from DAL.BaseDB import BaseDB
 
 
 class Layer(ABC) :
-    number = 0
+    number = 1
     def __init__(self,
                  layerType = "non"
                  ):

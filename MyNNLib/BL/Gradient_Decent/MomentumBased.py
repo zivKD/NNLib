@@ -7,23 +7,26 @@ from BL.HyperParameterContainer import HyperParameterContainer
 class MomentumBased(GradientDescent):
     def __init__(self, numberOfLayersWithWAndB, friction=0.9):
         super().__init__()
-        self.__velocities = [[[], []] for i in range(numberOfLayersWithWAndB)]
-        self.__numberOfLayers = numberOfLayersWithWAndB
+        self.__velocities = np.array([[number, [], []] for number in numberOfLayersWithWAndB])
+        self.__numberOfLayers = len(numberOfLayersWithWAndB)
         self.__layerNumW = 0
         self.__layerNumB = 0
         self.__friction = friction
 
     def setVelocityMatrix(self, numberOfLayer, wShape, bShape):
-        self.__velocities[numberOfLayer][0] = np.random.normal(
-            loc=0,
-            scale=np.sqrt(1),
-            size=(wShape)
-        )
-        self.__velocities[numberOfLayer][1] = np.random.normal(
-            loc=0,
-            scale=np.sqrt(1),
-            size=(bShape)
-        )
+        for layersVelocity in self.__velocities:
+           if(layersVelocity[0] == numberOfLayer):
+                layersVelocity[1] = np.random.normal(
+                    loc=0,
+                    scale=np.sqrt(1),
+                    size=(wShape)
+                )
+                layersVelocity[2] = np.random.normal(
+                    loc=0,
+                    scale=np.sqrt(1),
+                    size=(bShape)
+                )
+                break
 
     def changeWeights(self, w, gradient):
         vW = self.__velocities[self.__layerNumW][0]

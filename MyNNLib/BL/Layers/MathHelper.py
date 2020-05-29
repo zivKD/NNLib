@@ -20,15 +20,15 @@ class _MathHelper():
     def getLocalReceptiveFields(
             matrix,
             stride,
-            imageWidth,
-            imageHeight,
+            outputImageWidth,
+            outputImageHeight,
             lrfWidth,
             lrfHeight
     ):
         s0, s1 = matrix.strides[-2:]
-        x, y = _MathHelper.getOutputImageDims(imageWidth, imageHeight, lrfWidth, lrfHeight, stride)
-        view_shape = matrix.shape[:-3] + (x, y, lrfWidth, lrfHeight)
-        strides = matrix.strides[:-3] + (stride * s0, stride * s1, s0, s1)
+        matrix_dims = np.ndim(matrix)
+        view_shape = matrix.shape[:2-matrix_dims] + (outputImageWidth, outputImageHeight, lrfWidth, lrfHeight)
+        strides = matrix.strides[:2-matrix_dims] + (stride * s0, stride * s1, s0, s1)
         return np.lib.stride_tricks.as_strided(matrix, view_shape, strides=strides)
 
     @staticmethod
@@ -40,10 +40,10 @@ class _MathHelper():
                                               localReceptiveFieldWidth, localReceptiveFieldHeight,
                                               stride)
 
-        # wraps the kernel in a [] and then duplicates the array for the size of the number of local receptive fields
+        # wraps the kernel in a [] and then duplicates the array for NxM
         kernel = np.repeat(kernel[:, :, None, :, :], x, axis=2)
         kernel = np.repeat(kernel[:, :, :, None, :, :], y, axis=3)
-        subs = _MathHelper.getLocalReceptiveFields(matrix, stride, imageWidth, imageHeight,
+        subs = _MathHelper.getLocalReceptiveFields(matrix, stride, x, y,
                                             localReceptiveFieldWidth, localReceptiveFieldHeight)
 
         # multipling the kernel in the local receptive fields and summing up

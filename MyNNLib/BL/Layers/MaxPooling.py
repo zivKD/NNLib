@@ -15,22 +15,15 @@ class MaxPooling(Layer):
         self.__number_of_input_feature_maps = number_of_input_feature_maps
 
     def feedforward(self, inputs):
-        [outputImageWidth, outputImageHeight] = _MathHelper.getOutputImageDims(
-            self.__size_of_input_image[0],
-            self.__size_of_input_image[1],
-            self.__pool_size[0],
-            self.__pool_size[1],
-            self.__stride
-        )
-
+        outputImageWidth, outputImageHeight = [x//2 for x in inputs.shape[-2:]]
         self._current_input = _MathHelper.getLocalReceptiveFields(
-            inputs, self.__stride, self.__size_of_input_image[0], self.__size_of_input_image[1],
+            inputs, self.__stride, outputImageWidth, outputImageHeight,
             self.__pool_size[0], self.__pool_size[1]
         )
 
-        self.__currentIndices = np.argmax(self._current_input, axis=-1)
-        maxOuput = np.max(self._current_input, axis=-1)
-        self._current_weighted_input = maxOuput.reshape((
+        #TODO: get argmax over last two axes
+        maxOutput = np.amax(self._current_input, axis=(-2, -1))
+        self._current_weighted_input = maxOutput.reshape((
             HyperParameterContainer.mini_batch_size,
             self.__number_of_input_feature_maps,
             outputImageHeight,
@@ -42,7 +35,7 @@ class MaxPooling(Layer):
 
     def backpropagate(self, error):
         nextError = np.zeros(self._current_input.shape)
-        # Generate the indices to each of the firest dimension
+        # Generate the indices to each of the first dimension
         idx = np.indices(self.__currentIndices.shape)
         indices = [
             idx[j].flatten()
