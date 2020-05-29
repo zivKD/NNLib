@@ -1,6 +1,6 @@
 from BL.BaseClasses.Layer import Layer
 import numpy as np
-from scipy.signal import fftconvolve as convolve
+from scipy.signal import fftconvolve
 from BL.HyperParameterContainer import HyperParameterContainer
 from BL.Layers.MathHelper import _MathHelper
 from DAL.BaseDB import BaseDB
@@ -23,7 +23,7 @@ class Convolutional(Layer):
 
     def __initializeFilters(self):
         mini_batch_size = HyperParameterContainer.mini_batch_size
-        self.__numberOfLocalReceptiveFields = self.__mathHelper.getNumberOfLocalReceptiveFields(
+        [self.__numberOfLocalReceptiveFields, self.__outputImageDims] = self.__mathHelper.getDims(
             self.__sizeOfInputImage, self.__sizeOfLocalReceptiveField, self.__stride, self.__numberOfInputFeatureMaps)
         biases = np.random.normal(
             loc = 0,
@@ -46,10 +46,8 @@ class Convolutional(Layer):
         )
 
         self._weights = np.array(
-            [[[[
-                localReceptiveField
-                for x in range(self.__numberOfLocalReceptiveFields)]
-                for localReceptiveField in filter]
+            [[
+                filter
                 for filter in weights]
                 for x in range(mini_batch_size)]
         )
@@ -60,11 +58,6 @@ class Convolutional(Layer):
             self.__numberOfInputFeatureMaps,
             self.__sizeOfInputImage[0],
             self.__sizeOfInputImage[1]
-        )
-
-        inputs = self.__mathHelper.turnIntoInputMatrix(
-            inputs, self.__sizeOfInputImage, self.__stride,
-            self.__sizeOfLocalReceptiveField, self.__numberOfInputFeatureMaps
         )
 
         inputMatrix = [[
@@ -78,8 +71,8 @@ class Convolutional(Layer):
         self._current_weighted_input = self._current_weighted_input.reshape((
             HyperParameterContainer.mini_batch_size,
             self.__numberOfFilters,
-            self.__sizeOfInputImage[0] - self.__sizeOfLocalReceptiveField[0] + 1,
-            self.__sizeOfInputImage[1] - self.__sizeOfLocalReceptiveField[1] + 1
+            self.__outputImageDims[0],
+            self.__outputImageDims[1]
         ))
         self._current_activation = self._activationFunction.function(self._current_weighted_input)
         return self._current_activation
@@ -114,8 +107,3 @@ class Convolutional(Layer):
         super().saveToDb(db, networkId)
         self.__stride = db.getStride(self.number, networkId)
 
-    def _convolution(self, matrix, kernel, shape):
-        convolutionProduct = convolve(matrix, kernel, 'same')
-        convolutionProduct = np.sum(convolutionProduct, axis=-1)
-        convolutionProduct = convolutionProduct.reshape(shape)
-        return convolutionProduct

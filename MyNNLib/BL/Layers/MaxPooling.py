@@ -15,27 +15,29 @@ class MaxPooling(Layer):
         self.__number_of_input_feature_maps = number_of_input_feature_maps
 
     def feedforward(self, inputs):
-        helper = _MathHelper()
-        numberOfFilters = len(inputs[1])
-        numberOfLocalReceptiveFields = helper.getNumberOfLocalReceptiveFields(
-            self.__size_of_input_image, self.__pool_size, self.__stride, self.__number_of_input_feature_maps
+        [outputImageWidth, outputImageHeight] = _MathHelper.getOutputImageDims(
+            self.__size_of_input_image[0],
+            self.__size_of_input_image[1],
+            self.__pool_size[0],
+            self.__pool_size[1],
+            self.__stride
         )
-        inputMatrix = helper.turnIntoInputMatrix2(inputs,
-                                                  self.__size_of_input_image, self.__stride, self.__pool_size,
-                                                 self.__number_of_input_feature_maps)
-        self._current_input = np.array(inputMatrix)
-        # all but the size of the local receptive
+
+        self._current_input = _MathHelper.getLocalReceptiveFields(
+            inputs, self.__stride, self.__size_of_input_image[0], self.__size_of_input_image[1],
+            self.__pool_size[0], self.__pool_size[1]
+        )
+
         self.__currentIndices = np.argmax(self._current_input, axis=-1)
         maxOuput = np.max(self._current_input, axis=-1)
-        self._current_weighted_input = maxOuput
-        self._current_weighted_input = self._current_weighted_input.reshape((
+        self._current_weighted_input = maxOuput.reshape((
             HyperParameterContainer.mini_batch_size,
             self.__number_of_input_feature_maps,
-            self.__size_of_input_image[0] / 2,
-            self.__size_of_input_image[1] / 2
+            outputImageHeight,
+            outputImageWidth
         ))
 
-        self._current_activation = self._activationFunction.function(maxOuput)
+        self._current_activation = self._activationFunction.function(self._current_weighted_input)
         return self._current_activation
 
     def backpropagate(self, error):
