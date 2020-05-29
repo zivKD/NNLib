@@ -25,48 +25,29 @@ class _MathHelper():
             lrfWidth,
             lrfHeight
     ):
-        s1, s2, s3, s4, s5 = matrix.strides
-
-        numberOfLocalReceptiveFields = \
-            _MathHelper.getOutputImageDims(imageWidth, imageHeight, lrfWidth, lrfHeight, stride)[:] * \
-            matrix.shape[1]
-
-        output_shape = (
-            matrix.shape[0],  # mini batch size
-            matrix.shape[1],  # number of filters
-            numberOfLocalReceptiveFields,
-            lrfWidth,
-            lrfHeight
-        )
-
-        strides = (
-            s1,
-            s2,
-            s3,
-            s4 * stride,
-            s5 * stride
-        )
-
-        return np.lib.stride_tricks.as_strided(matrix, output_shape, strides=strides)
+        s0, s1 = matrix.strides[-2:]
+        x, y = _MathHelper.getOutputImageDims(imageWidth, imageHeight, lrfWidth, lrfHeight, stride)
+        view_shape = matrix.shape[:-3] + (x, y, lrfWidth, lrfHeight)
+        strides = matrix.strides[:-3] + (stride * s0, stride * s1, s0, s1)
+        return np.lib.stride_tricks.as_strided(matrix, view_shape, strides=strides)
 
     @staticmethod
-    def conv5D(self, matrix, kernel, stride=1):
+    def conv5D(matrix, kernel, stride=1):
         # needed variables
         imageWidth, imageHeight = matrix.shape[-2:]
         localReceptiveFieldWidth, localReceptiveFieldHeight = kernel.shape[-2:]
-
-        numberOfLocalReceptiveFields = \
-        _MathHelper.getNumberOfLocalReceptiveFields(imageWidth, imageHeight,
-                                                    localReceptiveFieldWidth, localReceptiveFieldHeight,
-                                                    stride, matrix[2], matrix[1])
+        x, y = _MathHelper.getOutputImageDims(imageWidth, imageHeight,
+                                              localReceptiveFieldWidth, localReceptiveFieldHeight,
+                                              stride)
 
         # wraps the kernel in a [] and then duplicates the array for the size of the number of local receptive fields
-        kernel = np.repeat(kernel[:, :, None, :, :], numberOfLocalReceptiveFields, axis=2)
-
+        kernel = np.repeat(kernel[:, :, None, :, :], x, axis=2)
+        kernel = np.repeat(kernel[:, :, :, None, :, :], y, axis=3)
         subs = _MathHelper.getLocalReceptiveFields(matrix, stride, imageWidth, imageHeight,
                                             localReceptiveFieldWidth, localReceptiveFieldHeight)
-        arr = subs * kernel
+
         # multipling the kernel in the local receptive fields and summing up
-        conv = np.sum(subs * kernel, axis=(3, 4))
+        arr = subs * kernel
+        conv = np.sum(subs * kernel, axis=(4, 5))
 
         return conv

@@ -1,6 +1,5 @@
 from BL.BaseClasses.Layer import Layer
 import numpy as np
-from scipy.signal import fftconvolve
 from BL.HyperParameterContainer import HyperParameterContainer
 from BL.Layers.MathHelper import _MathHelper
 from DAL.BaseDB import BaseDB
@@ -68,13 +67,7 @@ class Convolutional(Layer):
         inputs = np.repeat(inputs[:,None, :, :, :], self.__numberOfFilters, axis=1)
         self._current_input = inputs
         convolutionProduct = _MathHelper.conv5D(self._current_input, self._weights, self._biases.shape)
-        convolutionProduct = np.add(self._biases, convolutionProduct)
-        self._current_weighted_input =  convolutionProduct.reshape((
-            HyperParameterContainer.mini_batch_size,
-            self.__numberOfFilters,
-            self.__outputImageDims[0],
-            self.__outputImageDims[1]
-        ))
+        self._current_weighted_input = np.add(self._biases, convolutionProduct)
         self._current_activation = self._activationFunction.function(self._current_weighted_input)
         return self._current_activation
 

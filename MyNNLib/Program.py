@@ -85,6 +85,8 @@
 from scipy.signal import fftconvolve
 import numpy as numpy
 
+from BL.Layers.MathHelper import _MathHelper
+
 """
 the matrix shape is: 
 mini_batch_size X
@@ -103,42 +105,4 @@ matrix = numpy.arange(784).reshape((1,1, 1, 28, 28))
 kernel = numpy.arange(25).reshape((1, 1, 5, 5))
 
 
-def conv5D(matrix, kernel, stride=1):
-    # needed variables
-    s1, s2, s3, s4, s5 =  matrix.strides
-    imageWidth, imageHeight = matrix.shape[-2:]
-    localReceptiveFieldWidth, localReceptiveFieldHeight = kernel.shape[-2:]
-    numberOfLocalReceptiveFields =  (1 +
-       (imageWidth - localReceptiveFieldWidth) // stride) * (1 +
-       (imageHeight - localReceptiveFieldHeight) // stride) * matrix.shape[1] * matrix.shape[2]
-
-    # wraps the kernel in a [] and then duplicates the array for the size of the number of local receptive fields
-    kernel = numpy.repeat(kernel[:, :, None, :, :], numberOfLocalReceptiveFields, axis=2)
-
-    # splits to local receptive fields
-    output_shape = (
-        matrix.shape[0], # mini batch size
-        matrix.shape[1], # number of filters
-        numberOfLocalReceptiveFields,
-        localReceptiveFieldWidth,
-        localReceptiveFieldHeight
-    )
-
-    strides = (
-        s1,
-        s2,
-        s3,
-        s4,
-        s5
-    )
-
-    subs = numpy.lib.stride_tricks.as_strided(matrix, output_shape, strides = strides)
-
-    arr = subs * kernel
-    # multipling the kernel in the local receptive fields and summing up
-    conv = numpy.sum(subs * kernel, axis=(3, 4))
-
-    return conv
-
-
-print(conv5D(matrix, kernel))
+print(_MathHelper.conv5D(matrix, kernel, 1).shape)
