@@ -93,11 +93,12 @@ class Convolutional(Layer):
         )
 
         gradient_descent = HyperParameterContainer.gradientDescent
-        self._biases = gradient_descent.changeBiases(self._biases, error)
+        self._biases = gradient_descent.changeBiases(self._biases, error,self.number)
         gradient = _MathHelper.conv5D(self._current_input, error, self._weights)
         self._weights = gradient_descent.changeWeights(
             self._weights,
-            gradient
+            gradient,
+            self.number
         )
 
         return thisLayerError

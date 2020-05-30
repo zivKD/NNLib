@@ -6,7 +6,7 @@ class HyperParameterContainer():
     regularizationParameter : float = None
     mini_batch_size : int = None
     number_of_epochs : int = None
-    dropoutPrecentage : float = None
+    dropoutPercentage : float = None
     activationFunction : ActivationFunction = None
     gradientDescent = None
 
@@ -24,7 +24,7 @@ class HyperParameterContainer():
         HyperParameterContainer.regularizationParameter = regularizationParameter
         HyperParameterContainer.mini_batch_size = mini_batch_size
         HyperParameterContainer.number_of_epochs = number_of_epochs
-        HyperParameterContainer.dropoutPrecentage = dropoutPrecentage
+        HyperParameterContainer.dropoutPercentage = dropoutPrecentage
         HyperParameterContainer.activationFunction = activationFunction
         HyperParameterContainer.gradientDescent = gradientDescent
 

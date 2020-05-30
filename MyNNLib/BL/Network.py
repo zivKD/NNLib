@@ -80,10 +80,9 @@ class Network():
                     layer.regulate(regularization)
 
         if(type(self.gradient_decent) is MomentumBased and epochNumber == 0):
-            counter = 0
             output = self.layers[0].feedforward(x)
-            self.gradient_decent.setVelocityMatrix(counter, self.layers[counter].getWeightShape(),
-                                                   self.layers[counter].getBiasShape())
+            self.gradient_decent.setVelocityMatrix(1, self.layers[0].getWeightShape(),
+                                                   self.layers[0].getBiasShape())
             for layer in self.layers[1:]:
                 output = layer.feedforward(output)
                 self.gradient_decent.setVelocityMatrix(layer.number, layer.getWeightShape(),

@@ -44,9 +44,11 @@ class FullyConnected(Layer) :
         gradient_descent = HyperParameterContainer.gradientDescent
         dot = np.dot(self._weights, error)
         activationDerivative = self._activationFunction.derivative(self._current_weighted_input)
+        # is this the right thing to do?
+        activationDerivative = np.repeat(activationDerivative[:, :], self.__n_in//self.__n_out, axis=0)
         nextError = np.multiply(activationDerivative, dot)
-        self._biases = gradient_descent.changeBiases(self._biases, error)
-        self._weights = gradient_descent.changeWeights(self._weights, error)
+        self._biases = gradient_descent.changeBiases(self._biases, error, self.number)
+        self._weights = gradient_descent.changeWeights(self._weights, error, self.number)
         return nextError
 
 
