@@ -42,7 +42,9 @@ class FullyConnected(Layer) :
 
     def backpropagate(self, error):
         gradient_descent = HyperParameterContainer.gradientDescent
-        nextError = np.multiply(np.dot(self._weights, error), self._activationFunction.derivative(self._current_weighted_input))
+        dot = np.dot(self._weights, error)
+        activationDerivative = self._activationFunction.derivative(self._current_weighted_input)
+        nextError = np.multiply(activationDerivative, dot)
         self._biases = gradient_descent.changeBiases(self._biases, error)
         self._weights = gradient_descent.changeWeights(self._weights, error)
         return nextError

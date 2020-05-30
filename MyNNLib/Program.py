@@ -11,17 +11,15 @@ from BL.Gradient_Decent.MomentumBased import MomentumBased
 from BL.Regularization.Dropout import Dropout
 from DAL.Mongo.MongoDB import MongoDB
 
-# TODO: Understand how fftconvolve works
+
 # TODO: Design the system better so it will keep all the SOLID principles
-# TODO: How to reshape the output from convolutional to the correct shape in Max pooling
 
 training_set, validation_set, test_set = DataLoader.load()
 activationFunc = RELU()
-dropout = Dropout((5, 6, 7), number_of_runs=10)
-
 HyperParameterContainer.init(
     gradientDescent = MomentumBased((1, 3, 5, 6, 7))
 )
+dropout = Dropout((5, 6, 7), number_of_runs=10)
 
 layers = [
     Convolutional(
@@ -77,7 +75,7 @@ model = Network(
     should_save_to_db=True,
     network_id="1",
     should_regulate=True,
-    regularizationTechs=(dropout)
+    regularizationTechs=(dropout,)
 )
 
 model.runNetwork()

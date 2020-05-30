@@ -59,20 +59,27 @@ class Network():
                 monitoring_counter += 1
                 x = np.array([batch[0].ravel() for batch in mini_batch]).transpose()
                 y = np.array([batch[1].ravel() for batch in mini_batch]).transpose()
-                output = self.__feedForward(x)
+                output = self.__feedForward(x, i)
                 if (monitoring_counter == frequencyOfMonitoring):
                     onMonitoring(np.sum(np.subtract(output, y)) / len(y))
                     monitoring_counter = 0
 
                 self.__backprop(output, y)
 
+
         if(self.should_save_to_db):
             self.__saveToDb()
 
 
-    def __feedForward(self, x):
+    def __feedForward(self, x, epochNumber):
         output = None
-        if(type(self.gradient_decent) is MomentumBased):
+
+        if(self.__should_regulate):
+            for regularization in self.__regularizationTechs:
+                for layer in self.layers:
+                    layer.regulate(regularization)
+
+        if(type(self.gradient_decent) is MomentumBased and epochNumber == 0):
             counter = 0
             output = self.layers[0].feedforward(x)
             self.gradient_decent.setVelocityMatrix(counter, self.layers[counter].getWeightShape(),
@@ -94,11 +101,6 @@ class Network():
             self.costFunction.derivative(self.layers[-1]._current_weighted_input, output, y),
             self.last_layer_activation_function.derivative(self.layers[-1]._current_weighted_input)
         )
-
-        if(self.__should_regulate):
-            for regularization in self.__regularizationTechs:
-                for layer in self.layers:
-                    layer.regulate(regularization)
 
         for layer in reversed(self.layers):
             error = layer.backpropagate(error)
