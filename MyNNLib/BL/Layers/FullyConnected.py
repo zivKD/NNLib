@@ -41,15 +41,22 @@ class FullyConnected(Layer) :
         return activation
 
     def backpropagate(self, error):
-        gradient_descent = HyperParameterContainer.gradientDescent
-        dot = np.dot(self._weights, error)
+        weights = self._weights.transpose()
+        dot = np.dot(error, weights)
         activationDerivative = self._activationFunction.derivative(self._current_weighted_input)
-        # is this the right thing to do?
-        activationDerivative = np.repeat(activationDerivative[:, :], self.__n_in//self.__n_out, axis=0)
-        nextError = np.multiply(activationDerivative, dot)
+        shape = activationDerivative.shape
+        activationDerivative = activationDerivative.transpose().reshape(shape)
+
+        gradient_descent = HyperParameterContainer.gradientDescent
         self._biases = gradient_descent.changeBiases(self._biases, error, self.number)
+        error = error.repeat(self.__n_in/error.shape[0], axis=0)
+        error = error.reshape(self._weights.shape)
         self._weights = gradient_descent.changeWeights(self._weights, error, self.number)
+
+        if(self.__n_in != self.__n_out):
+            activationDerivative = np.repeat(activationDerivative[:, :], self.__n_in/activationDerivative.shape[0], axis=0)
+            dot = dot.repeat(self.__n_out/dot.shape[0], axis=0)
+        activationDerivative = activationDerivative.reshape(dot.shape)
+        nextError = np.multiply(dot, activationDerivative)
         return nextError
-
-
 
