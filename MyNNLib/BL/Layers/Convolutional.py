@@ -66,6 +66,7 @@ class Convolutional(Layer):
     sizeOfLocalReceptiveField[1]
     """
     def feedforward(self, inputs):
+        self._current_input = inputs
         inputs = inputs.reshape(
             HyperParameterContainer.mini_batch_size,
             self.__numberOfInputFeatureMaps,
@@ -73,28 +74,24 @@ class Convolutional(Layer):
             self.__sizeOfInputImage[1]
         )
         inputs = np.repeat(inputs[:,None, :, :, :], self.__numberOfFilters, axis=1)
-        self._current_input = inputs
-        convolutionProduct = _MathHelper.conv5D(self._current_input, self._weights, self.__stride)
+        convolutionProduct = _MathHelper.conv5D(inputs, self._weights, self.__stride)
         self._current_weighted_input = np.add(self._biases, convolutionProduct)
         self._current_activation = self._activationFunction.function(self._current_weighted_input)
         return self._current_activation
 
     def backpropagate(self, error):
-        flippedWeights = np.array([[[
-            list(zip(*self._weights[i][j][::-1]))
-            for j in range(self.__outputImageDims[0])]
-            for m in range(self.__outputImageDims[1])]
-            for i in range(len(self._weights))])
-
-        activation = _MathHelper.conv5D(flippedWeights, error, self._current_weighted_input.shape)
-        thisLayerError = np.multiply(
+        flippedWeights = self.__rotBy90D(self._weights)
+        flippedWeights = self.__rotBy90D(flippedWeights)
+        flippedWeights = np.array(flippedWeights)
+        activation = _MathHelper.conv5D(flippedWeights, error, self.__stride)
+        thisLayerError = np.dot(
             activation,
             self._activationFunction.derivative(self._current_weighted_input)
         )
 
         gradient_descent = HyperParameterContainer.gradientDescent
         self._biases = gradient_descent.changeBiases(self._biases, error,self.number)
-        gradient = _MathHelper.conv5D(self._current_input, error, self._weights)
+        gradient = _MathHelper.conv5D(self._current_input, error, self.__stride)
         self._weights = gradient_descent.changeWeights(
             self._weights,
             gradient,
@@ -111,3 +108,8 @@ class Convolutional(Layer):
         super().saveToDb(db, networkId)
         self.__stride = db.getStride(self.number, networkId)
 
+    def __rotBy90D(self, matrix):
+        return [[
+            list(zip(*matrix[i][j][::-1]))
+            for j in range(len(matrix[0]))]
+            for i in range(len(matrix))]

@@ -56,6 +56,7 @@ class FullyConnected(Layer) :
         if(self.__n_in != self.__n_out):
             activationDerivative = np.repeat(activationDerivative[:, :], self.__n_in/activationDerivative.shape[0], axis=0)
             dot = dot.repeat(self.__n_out/dot.shape[0], axis=0)
+
         activationDerivative = activationDerivative.reshape(dot.shape)
         nextError = np.multiply(dot, activationDerivative)
         return nextError
