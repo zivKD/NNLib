@@ -3,9 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="23865cb9-dfc5-4cf8-9bdd-3049cfc9f76f" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BL/Layers/Convolutional.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Layers/Convolutional.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BL/Layers/FullyConnected.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Layers/FullyConnected.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BL/Layers/MaxPooling.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Layers/MaxPooling.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Program.py" beforeDir="false" afterPath="$PROJECT_DIR$/Program.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -128,38 +127,38 @@
       <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state x="421" y="98" key="FileChooserDialogImpl/0.0.1280.680@0.0.1280.680" timestamp="1590846583690" />
-    <state width="1259" height="204" key="GridCell.Tab.0.bottom" timestamp="1590989452014">
+    <state width="1259" height="204" key="GridCell.Tab.0.bottom" timestamp="1590991740939">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1590989452014" />
-    <state width="1259" height="204" key="GridCell.Tab.0.center" timestamp="1590989452014">
+    <state width="1259" height="204" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1590991740939" />
+    <state width="1259" height="204" key="GridCell.Tab.0.center" timestamp="1590991740939">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1590989452014" />
-    <state width="1259" height="204" key="GridCell.Tab.0.left" timestamp="1590989452014">
+    <state width="1259" height="204" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1590991740939" />
+    <state width="1259" height="204" key="GridCell.Tab.0.left" timestamp="1590991740939">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1590989452014" />
-    <state width="1259" height="204" key="GridCell.Tab.0.right" timestamp="1590989452014">
+    <state width="1259" height="204" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1590991740939" />
+    <state width="1259" height="204" key="GridCell.Tab.0.right" timestamp="1590991740939">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1590989452014" />
-    <state width="1259" height="204" key="GridCell.Tab.1.bottom" timestamp="1590989456206">
+    <state width="1259" height="204" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1590991740939" />
+    <state width="1259" height="204" key="GridCell.Tab.1.bottom" timestamp="1590991745174">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.1.bottom/0.0.1280.680@0.0.1280.680" timestamp="1590989456206" />
-    <state width="1259" height="204" key="GridCell.Tab.1.center" timestamp="1590989456206">
+    <state width="1259" height="204" key="GridCell.Tab.1.bottom/0.0.1280.680@0.0.1280.680" timestamp="1590991745174" />
+    <state width="1259" height="204" key="GridCell.Tab.1.center" timestamp="1590991745174">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.1.center/0.0.1280.680@0.0.1280.680" timestamp="1590989456206" />
-    <state width="1259" height="204" key="GridCell.Tab.1.left" timestamp="1590989456206">
+    <state width="1259" height="204" key="GridCell.Tab.1.center/0.0.1280.680@0.0.1280.680" timestamp="1590991745174" />
+    <state width="1259" height="204" key="GridCell.Tab.1.left" timestamp="1590991745174">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.1.left/0.0.1280.680@0.0.1280.680" timestamp="1590989456206" />
-    <state width="1259" height="204" key="GridCell.Tab.1.right" timestamp="1590989456206">
+    <state width="1259" height="204" key="GridCell.Tab.1.left/0.0.1280.680@0.0.1280.680" timestamp="1590991745174" />
+    <state width="1259" height="204" key="GridCell.Tab.1.right" timestamp="1590991745174">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.1.right/0.0.1280.680@0.0.1280.680" timestamp="1590989456206" />
+    <state width="1259" height="204" key="GridCell.Tab.1.right/0.0.1280.680@0.0.1280.680" timestamp="1590991745174" />
     <state x="144" y="0" key="SettingsEditor" timestamp="1590499442177">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
@@ -192,11 +191,6 @@
           <url>file://$PROJECT_DIR$/BL/Layers/Convolutional.py</url>
           <line>85</line>
           <option name="timeStamp" value="156" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/BL/Layers/MaxPooling.py</url>
-          <line>37</line>
-          <option name="timeStamp" value="161" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

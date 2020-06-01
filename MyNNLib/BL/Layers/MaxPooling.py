@@ -22,9 +22,8 @@ class MaxPooling(Layer):
             self.__pool_size[0], self.__pool_size[1]
         )
 
-        maxOutput = np.amax(localReceptiveFieldedInput, axis=(-2, -1))
-        self.__currentIndices = np.argmax(maxOutput, axis=-1)
-        self._current_weighted_input = maxOutput.reshape((
+        [max, self.__currentIndices] = self.getMax(localReceptiveFieldedInput)
+        self._current_weighted_input = max.reshape((
             HyperParameterContainer.mini_batch_size,
             self.__number_of_input_feature_maps,
             outputImageHeight,
@@ -48,7 +47,7 @@ class MaxPooling(Layer):
         # The indices tuple will be a 2d, the first dimension is the number of dimensions in the input
         # and the second dimension is the indices which are equal in number to the producet of dimensions
         # in the self.__curentIndices.shape
-        nextError[tuple(indices)] = 1
+        nextError[self.__currentIndices] = 1
         return nextError
 
 
@@ -57,3 +56,12 @@ class MaxPooling(Layer):
 
     def getFromDb(self, db : BaseDB, networkId):
         pass
+
+    def getMax(self, localReceptiveFieldedInput):
+        reshapedrfiInput = localReceptiveFieldedInput.reshape(localReceptiveFieldedInput.shape[:-2] + (-1,))
+        ms = np.max(reshapedrfiInput, axis=-1)
+        idx = np.argmax(reshapedrfiInput, -1)
+        idx1 = np.unravel_index(idx, localReceptiveFieldedInput.shape[-2:])
+        ij = np.ix_(*[np.arange(i) for i in localReceptiveFieldedInput.shape[:-2]])
+        indices = ij + idx1
+        return [ms, indices]
