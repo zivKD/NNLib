@@ -73,7 +73,6 @@ class Network():
 
     def __feedForward(self, x, epochNumber):
         output = None
-
         if(self.__should_regulate):
             for regularization in self.__regularizationTechs:
                 for layer in self.layers:
@@ -96,6 +95,9 @@ class Network():
 
 
     def __backprop(self, output, y):
+        '''
+        δ =  ∂C/(∂a) * σ'(z)
+        '''
         error = np.multiply(
             self.costFunction.derivative(self.layers[-1]._current_weighted_input, output, y),
             self.last_layer_activation_function.derivative(self.layers[-1]._current_weighted_input)

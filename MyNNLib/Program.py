@@ -13,6 +13,7 @@ from DAL.Mongo.MongoDB import MongoDB
 
 
 # TODO: Design the system better so it will keep all the SOLID principles
+# TODO: Find a replacement to a loop on the mini-batch
 
 training_set, validation_set, test_set = DataLoader.load()
 activationFunc = RELU()

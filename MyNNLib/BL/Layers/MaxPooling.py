@@ -21,9 +21,8 @@ class MaxPooling(Layer):
             inputs, self.__stride, outputImageWidth, outputImageHeight,
             self.__pool_size[0], self.__pool_size[1]
         )
-
-        [max, self.__currentIndices] = self.getMax(localReceptiveFieldedInput)
-        self._current_weighted_input = max.reshape((
+        self.__max = np.amax(localReceptiveFieldedInput, axis=(-2,-1))
+        self._current_weighted_input = self.__max.reshape((
             HyperParameterContainer.mini_batch_size,
             self.__number_of_input_feature_maps,
             outputImageHeight,
@@ -34,21 +33,10 @@ class MaxPooling(Layer):
         return self._current_activation
 
     def backpropagate(self, error):
-        nextError = np.zeros(self._current_input.shape)
-        # Generate the indices to each of the first dimension
-        idx = np.indices(self.__currentIndices.shape)
-        indices = [
-            idx[j].flatten()
-            for j in range(len(self.__currentIndices.shape))
-        ]
-        # Insert the indices for the last dimension to which we want to insert the 1 where it's max value
-        indices.insert(nextError.ndim - 1, self.__currentIndices.flatten())
-        # Now we got a tuple of indices for each dimension and we can insert to the last dimensions - 1.
-        # The indices tuple will be a 2d, the first dimension is the number of dimensions in the input
-        # and the second dimension is the indices which are equal in number to the producet of dimensions
-        # in the self.__curentIndices.shape
-        nextError[self.__currentIndices] = 1
-        return nextError
+        max = self.__max.repeat(2, axis=-1).repeat(2, axis=-2)
+        maxCoordinatesGradient = np.equal(self._current_input, max).astype(int)
+        error = error.repeat(2, axis=-1).repeat(2, axis=-2).reshape(maxCoordinatesGradient.shape)
+        return np.multiply(error, maxCoordinatesGradient)
 
 
     def saveToDb(self, db : BaseDB, networkId):
@@ -56,12 +44,3 @@ class MaxPooling(Layer):
 
     def getFromDb(self, db : BaseDB, networkId):
         pass
-
-    def getMax(self, localReceptiveFieldedInput):
-        reshapedrfiInput = localReceptiveFieldedInput.reshape(localReceptiveFieldedInput.shape[:-2] + (-1,))
-        ms = np.max(reshapedrfiInput, axis=-1)
-        idx = np.argmax(reshapedrfiInput, -1)
-        idx1 = np.unravel_index(idx, localReceptiveFieldedInput.shape[-2:])
-        ij = np.ix_(*[np.arange(i) for i in localReceptiveFieldedInput.shape[:-2]])
-        indices = ij + idx1
-        return [ms, indices]
