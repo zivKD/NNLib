@@ -12,6 +12,7 @@ class FullyConnected(Layer) :
         super().__init__("FullyConnected")
         self.__n_in = n_in
         self.__n_out = n_out
+        self.__isSoftmax = isSoftmax
         if isSoftmax:
             self._activationFunction = Softmax()
 

@@ -32,7 +32,16 @@ class _MathHelper():
         return np.lib.stride_tricks.as_strided(matrix, view_shape, strides=strides)
 
     @staticmethod
-    def conv5D(matrix, kernel, stride=1):
+    def padArray(var, pad):
+        var_pad = np.pad(var, ([pad, pad], [pad, pad]) + ([0, 0],) * (np.ndim(var) - 2),
+                            mode='constant', constant_values=0)
+        return var_pad
+
+    @staticmethod
+    def conv5D(matrix, kernel, stride=1, pad=0):
+        if pad > 0:
+            matrix = _MathHelper.padArray(matrix, pad, 1)
+
         # needed variables
         imageWidth, imageHeight = matrix.shape[-2:]
         localReceptiveFieldWidth, localReceptiveFieldHeight = kernel.shape[-2:]
@@ -43,11 +52,11 @@ class _MathHelper():
         # wraps the kernel in a [] and then duplicates the array for NxM
         kernel = np.repeat(kernel[:, :, None, :, :], x, axis=2)
         kernel = np.repeat(kernel[:, :, :, None, :, :], y, axis=3)
+
         subs = _MathHelper.getLocalReceptiveFields(matrix, stride, x, y,
                                             localReceptiveFieldWidth, localReceptiveFieldHeight)
 
         # multipling the kernel in the local receptive fields and summing up
-        arr = subs * kernel
-        conv = np.sum(subs * kernel, axis=(4, 5))
+        conv = np.sum(np.multiply(subs, kernel), axis=(4, 5))
 
         return conv
