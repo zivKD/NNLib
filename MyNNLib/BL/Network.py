@@ -54,17 +54,22 @@ class Network():
                 for k in range(0, n, self.mini_batch_size)
             ]
 
-            monitoring_counter = 0
+            monitoring_counter = 1
             for mini_batch in mini_batches:
-                monitoring_counter += 1
                 x = np.array([batch[0].ravel() for batch in mini_batch]).transpose()
                 y = np.array([batch[1].ravel() for batch in mini_batch]).transpose()
                 output = self.__feedForward(x, i)
-                if (monitoring_counter == frequencyOfMonitoring):
-                    onMonitoring(np.sum(np.subtract(output, y)) / len(y))
-                    monitoring_counter = 0
+                if (monitoring_counter == frequencyOfMonitoring + 1):
+                    subtract = np.subtract(output, y)
+                    sum = np.sum(subtract)
+                    absoluteSum = np.abs(sum)
+                    percentedSum = absoluteSum * HyperParameterContainer.mini_batch_size
+                    accuracy = int(percentedSum)
+                    onMonitoring(accuracy)
+                    monitoring_counter = 1
                 self.__backprop(output, y)
-                print("epoch:" + str(i) +  "/batch:" + str(monitoring_counter))
+                print("epoch:" + str(i+1) +  " batch:" + str(monitoring_counter))
+                monitoring_counter += 1
 
 
         if(self.should_save_to_db):
