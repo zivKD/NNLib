@@ -83,16 +83,17 @@ class Convolutional(Layer):
         flippedWeights = self.__rotBy90D(self._weights)
         flippedWeights = self.__rotBy90D(flippedWeights)
         flippedWeights = np.array(flippedWeights)
-        flippedWeights = np.repeat(flippedWeights[:, None, :, :, :], self.__numberOfFilters, axis=1)
-        activation = _MathHelper.conv5D(flippedWeights, error, self.__stride, pad=3)
-        thisLayerError = np.dot(
-            activation,
+        flippedWeights = np.repeat(flippedWeights[:, :, None, :, :], self.__numberOfInputFeatureMaps, axis=2)
+        convolutionProduct = _MathHelper.conv5D(flippedWeights, error, self.__stride, pad=5*self.__stride)
+        thisLayerError = np.multiply(
+            convolutionProduct,
             self._activationFunction.derivative(self._current_weighted_input)
         )
 
         gradient_descent = HyperParameterContainer.gradientDescent
         self._biases = gradient_descent.changeBiases(self._biases, error,self.number)
-        gradient = _MathHelper.conv5D(self._current_input, error, self.__stride)
+        input = np.repeat(self._current_input[:, None, :, :, :], self.__numberOfFilters, axis=1)
+        gradient = _MathHelper.conv5D(input, error, self.__stride)
         self._weights = gradient_descent.changeWeights(
             self._weights,
             gradient,

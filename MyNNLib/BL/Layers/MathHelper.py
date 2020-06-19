@@ -33,14 +33,14 @@ class _MathHelper():
 
     @staticmethod
     def padArray(var, pad):
-        var_pad = np.pad(var, ([pad, pad], [pad, pad]) + ([0, 0],) * (np.ndim(var) - 2),
-                            mode='constant', constant_values=0)
+        p = ([0, 0],) * (np.ndim(var) - 2) + ([pad, pad], [pad, pad])
+        var_pad = np.pad(var, p, mode='constant', constant_values=0)
         return var_pad
 
     @staticmethod
     def conv5D(matrix, kernel, stride=1, pad=0):
         if pad > 0:
-            matrix = _MathHelper.padArray(matrix, pad, 1)
+            matrix = _MathHelper.padArray(matrix, pad)
 
         # needed variables
         imageWidth, imageHeight = matrix.shape[-2:]

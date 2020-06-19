@@ -4,7 +4,6 @@
     <list default="true" id="23865cb9-dfc5-4cf8-9bdd-3049cfc9f76f" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BL/Layers/Convolutional.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Layers/Convolutional.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BL/Layers/FullyConnected.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Layers/FullyConnected.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BL/Layers/MathHelper.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Layers/MathHelper.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Program.py" beforeDir="false" afterPath="$PROJECT_DIR$/Program.py" afterDir="false" />
     </list>
@@ -35,7 +34,7 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="C:/Projects/ML" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
@@ -125,42 +124,42 @@
       <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state x="309" y="0" key="CommitChangelistDialog2/0.0.1280.680@0.0.1280.680" timestamp="1590829573233" />
-    <state x="421" y="98" key="FileChooserDialogImpl" timestamp="1590846583690">
+    <state x="421" y="98" key="FileChooserDialogImpl" timestamp="1592426882495">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state x="421" y="98" key="FileChooserDialogImpl/0.0.1280.680@0.0.1280.680" timestamp="1590846583690" />
-    <state width="1259" height="204" key="GridCell.Tab.0.bottom" timestamp="1591556765639">
+    <state x="421" y="98" key="FileChooserDialogImpl/0.0.1280.680@0.0.1280.680" timestamp="1592426882495" />
+    <state width="1259" height="204" key="GridCell.Tab.0.bottom" timestamp="1592544313294">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1591556765639" />
-    <state width="1259" height="204" key="GridCell.Tab.0.center" timestamp="1591556765638">
+    <state width="1259" height="204" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1592544313294" />
+    <state width="1259" height="204" key="GridCell.Tab.0.center" timestamp="1592544313294">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1591556765638" />
-    <state width="1259" height="204" key="GridCell.Tab.0.left" timestamp="1591556765638">
+    <state width="1259" height="204" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1592544313294" />
+    <state width="1259" height="204" key="GridCell.Tab.0.left" timestamp="1592544313294">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1591556765638" />
-    <state width="1259" height="204" key="GridCell.Tab.0.right" timestamp="1591556765638">
+    <state width="1259" height="204" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1592544313294" />
+    <state width="1259" height="204" key="GridCell.Tab.0.right" timestamp="1592544313294">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1591556765638" />
-    <state width="1259" height="204" key="GridCell.Tab.1.bottom" timestamp="1591556772470">
+    <state width="1259" height="204" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1592544313294" />
+    <state width="1259" height="204" key="GridCell.Tab.1.bottom" timestamp="1592544320536">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.1.bottom/0.0.1280.680@0.0.1280.680" timestamp="1591556772470" />
-    <state width="1259" height="204" key="GridCell.Tab.1.center" timestamp="1591556772470">
+    <state width="1259" height="204" key="GridCell.Tab.1.bottom/0.0.1280.680@0.0.1280.680" timestamp="1592544320536" />
+    <state width="1259" height="204" key="GridCell.Tab.1.center" timestamp="1592544320535">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.1.center/0.0.1280.680@0.0.1280.680" timestamp="1591556772470" />
-    <state width="1259" height="204" key="GridCell.Tab.1.left" timestamp="1591556772470">
+    <state width="1259" height="204" key="GridCell.Tab.1.center/0.0.1280.680@0.0.1280.680" timestamp="1592544320535" />
+    <state width="1259" height="204" key="GridCell.Tab.1.left" timestamp="1592544320535">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.1.left/0.0.1280.680@0.0.1280.680" timestamp="1591556772470" />
-    <state width="1259" height="204" key="GridCell.Tab.1.right" timestamp="1591556772470">
+    <state width="1259" height="204" key="GridCell.Tab.1.left/0.0.1280.680@0.0.1280.680" timestamp="1592544320535" />
+    <state width="1259" height="204" key="GridCell.Tab.1.right" timestamp="1592544320535">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.1.right/0.0.1280.680@0.0.1280.680" timestamp="1591556772470" />
+    <state width="1259" height="204" key="GridCell.Tab.1.right/0.0.1280.680@0.0.1280.680" timestamp="1592544320535" />
     <state x="144" y="0" key="SettingsEditor" timestamp="1590499442177">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
@@ -190,9 +189,20 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <condition expression="self.number == 2" language="Python" />
+          <url>file://$PROJECT_DIR$/BL/Layers/MaxPooling.py</url>
+          <line>37</line>
+          <option name="timeStamp" value="232" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/BL/Layers/Convolutional.py</url>
-          <line>86</line>
-          <option name="timeStamp" value="216" />
+          <line>102</line>
+          <option name="timeStamp" value="234" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/BL/Layers/Convolutional.py</url>
+          <line>87</line>
+          <option name="timeStamp" value="238" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

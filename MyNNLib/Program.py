@@ -14,7 +14,10 @@ from DAL.Mongo.MongoDB import MongoDB
 
 # TODO: Design the system better so it will keep all the SOLID principles
 # TODO: Find a replacement to a loop on the mini-batch
-# TODO: Seperate fully connected layer and softmax layer
+# TODO: Separate fully connected layer and softmax layer
+# Find a better solution then avaraging in fully connected backpopagation - this is correct
+# TODO: is the shape the padded convolution correct? if so how to multiply matrices?
+# TODO: Understand what wrong with the max pooling backbropagation for the second time
 
 training_set, validation_set, test_set = DataLoader.load()
 activationFunc = RELU()
