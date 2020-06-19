@@ -66,13 +66,13 @@ class Convolutional(Layer):
     sizeOfLocalReceptiveField[1]
     """
     def feedforward(self, inputs):
-        self._current_input = inputs
         inputs = inputs.reshape(
             HyperParameterContainer.mini_batch_size,
             self.__numberOfInputFeatureMaps,
             self.__sizeOfInputImage[0],
             self.__sizeOfInputImage[1]
         )
+        self._current_input = inputs
         inputs = np.repeat(inputs[:,None, :, :, :], self.__numberOfFilters, axis=1)
         convolutionProduct = _MathHelper.conv5D(inputs, self._weights, self.__stride)
         self._current_weighted_input = np.add(self._biases, convolutionProduct)
@@ -84,11 +84,19 @@ class Convolutional(Layer):
         flippedWeights = self.__rotBy90D(flippedWeights)
         flippedWeights = np.array(flippedWeights)
         flippedWeights = np.repeat(flippedWeights[:, :, None, :, :], self.__numberOfInputFeatureMaps, axis=2)
-        convolutionProduct = _MathHelper.conv5D(flippedWeights, error, self.__stride, pad=5*self.__stride)
-        thisLayerError = np.multiply(
+        padding = error.shape[-1] - flippedWeights.shape[-1] + 2
+        convolutionProduct = _MathHelper.conv5D(flippedWeights, error, self.__stride, pad=padding*self.__stride)
+        this_layer_error = np.multiply(
             convolutionProduct,
             self._activationFunction.derivative(self._current_weighted_input)
         )
+
+        # Opposite of striding to local receptive fields
+        this_layer_error = np.repeat(this_layer_error[:,None, :, :, :], self.__numberOfInputFeatureMaps, axis=1)
+        this_layer_error = _MathHelper.getLocalReceptiveFields(this_layer_error, self.__stride, self.__sizeOfInputImage[0],
+                                                               self.__sizeOfInputImage[1], self.__outputImageDims[0],
+                                                               self.__outputImageDims[1])
+        this_layer_error = np.sum(this_layer_error, axis=(4,5))
 
         gradient_descent = HyperParameterContainer.gradientDescent
         self._biases = gradient_descent.changeBiases(self._biases, error,self.number)
@@ -100,7 +108,7 @@ class Convolutional(Layer):
             self.number
         )
 
-        return thisLayerError
+        return this_layer_error
 
     def saveToDb(self, db : BaseDB, neworkId):
         super().saveToDb(db, neworkId)

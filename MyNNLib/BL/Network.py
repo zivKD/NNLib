@@ -63,8 +63,8 @@ class Network():
                 if (monitoring_counter == frequencyOfMonitoring):
                     onMonitoring(np.sum(np.subtract(output, y)) / len(y))
                     monitoring_counter = 0
-
                 self.__backprop(output, y)
+                print("epoch:" + str(i) +  "/batch:" + str(monitoring_counter))
 
 
         if(self.should_save_to_db):
