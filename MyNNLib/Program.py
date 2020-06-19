@@ -12,12 +12,10 @@ from BL.Regularization.Dropout import Dropout
 from DAL.Mongo.MongoDB import MongoDB
 
 
-# TODO: Design the system better so it will keep all the SOLID principles
+# TODO: Design the system better so it will keep all the SOLID principles and functionality programming
 # TODO: Find a replacement to a loop on the mini-batch
 # TODO: Separate fully connected layer and softmax layer
-# Find a better solution then avaraging in fully connected backpopagation - this is correct
-# TODO: is the shape the padded convolution correct? if so how to multiply matrices?
-# TODO: Understand what wrong with the max pooling backbropagation for the second time
+# TODO: Understand why the weights in the fully-connected layer (possibly in all the layers) get so big
 
 training_set, validation_set, test_set = DataLoader.load()
 activationFunc = RELU()

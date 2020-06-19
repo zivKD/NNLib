@@ -4,6 +4,7 @@ from BL.Activation_Functions.Sigmoid import Sigmoid
 from BL.Activation_Functions.Softmax import Softmax
 from BL.BaseClasses.Layer import Layer
 from BL.HyperParameterContainer import HyperParameterContainer
+from BL.Layers.MathHelper import _MathHelper
 
 
 class FullyConnected(Layer) :

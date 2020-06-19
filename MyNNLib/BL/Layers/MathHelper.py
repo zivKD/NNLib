@@ -4,6 +4,10 @@ from BL.HyperParameterContainer import HyperParameterContainer
 
 class _MathHelper():
     @staticmethod
+    def IsNan(a):
+        return np.isnan(np.sum(a))
+
+    @staticmethod
     def getOutputImageDims(imageWidth, imageHeight, lrfWidth, lrfHeight, stride):
         return [
             (1 + (imageWidth - lrfWidth) // stride),

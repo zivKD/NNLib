@@ -5,6 +5,7 @@ from BL.BaseClasses.Layer import Layer
 from BL.BaseClasses.Regularization import Regularization
 from BL.Gradient_Decent.MomentumBased import MomentumBased
 from BL.HyperParameterContainer import HyperParameterContainer
+from BL.Layers.MathHelper import _MathHelper
 from DAL.BaseDB import BaseDB
 import numpy as np
 
@@ -53,12 +54,11 @@ class Network():
                 self.training_set[k:k + self.mini_batch_size]
                 for k in range(0, n, self.mini_batch_size)
             ]
-
             monitoring_counter = 1
             for mini_batch in mini_batches:
                 x = np.array([batch[0].ravel() for batch in mini_batch]).transpose()
                 y = np.array([batch[1].ravel() for batch in mini_batch]).transpose()
-                output = self.__feedForward(x, i)
+                output = self.__feedForward(x, i, monitoring_counter-1)
                 if (monitoring_counter == frequencyOfMonitoring + 1):
                     subtract = np.subtract(output, y)
                     sum = np.sum(subtract)
@@ -76,14 +76,14 @@ class Network():
             self.__saveToDb()
 
 
-    def __feedForward(self, x, epochNumber):
+    def __feedForward(self, x, epochNumber, miniBatchNumber):
         output = None
         if(self.__should_regulate):
             for regularization in self.__regularizationTechs:
                 for layer in self.layers:
                     layer.regulate(regularization)
 
-        if(type(self.gradient_decent) is MomentumBased and epochNumber == 0):
+        if(type(self.gradient_decent) is MomentumBased and epochNumber == 0 and miniBatchNumber == 0):
             output = self.layers[0].feedforward(x)
             self.gradient_decent.setVelocityMatrix(1, self.layers[0].getWeightShape(),
                                                    self.layers[0].getBiasShape())
@@ -91,11 +91,12 @@ class Network():
                 output = layer.feedforward(output)
                 self.gradient_decent.setVelocityMatrix(layer.number, layer.getWeightShape(),
                                                        layer.getBiasShape())
+
+
         else:
             output = self.layers[0].feedforward(x)
             for layer in self.layers[1:]:
                 output = layer.feedforward(output)
-
         return output
 
 

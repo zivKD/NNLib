@@ -34,7 +34,8 @@ class MomentumBased(GradientDescent):
             newGradient = HyperParameterContainer.learningRate/HyperParameterContainer.mini_batch_size * gradient
             newVW = np.subtract(velocity, newGradient)
             self.__velocities[layerNumber][0] = newVW
-            return np.add(w, newVW)
+            addition = np.add(w, newVW)
+            return addition
 
         return w
 
