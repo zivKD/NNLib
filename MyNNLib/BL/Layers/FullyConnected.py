@@ -16,19 +16,10 @@ class FullyConnected(Layer) :
         self.__isSoftmax = isSoftmax
         if isSoftmax:
             self._activationFunction = Softmax()
-
-        weights = np.random.normal(
-            loc=0,
-            scale=np.sqrt(1/n_out),
-            size=(n_in, n_out)
-        )
-        self._weights = np.repeat(weights[None, :, :], HyperParameterContainer.mini_batch_size, axis=0)
-        biases = np.random.normal(
-            loc=0,
-            scale=1,
-            size = (n_out,)
-        )
-        self._biases = np.repeat(biases[None, :], HyperParameterContainer.mini_batch_size, axis=0)
+        weights = np.random.normal(loc=0, scale=np.sqrt(1/n_out), size=(n_in, n_out))
+        self._weights = _MathHelper.repeat(weights, axis=0, num_of_repeats=HyperParameterContainer.mini_batch_size)
+        biases = np.random.normal(loc=0, scale=1, size = (n_out,))
+        self._biases = _MathHelper.repeat(biases, axis=0, num_of_repeats=HyperParameterContainer.mini_batch_size)
 
     def feedforward(self, inputs):
         inputs = inputs.reshape(HyperParameterContainer.mini_batch_size, self.__n_in)
@@ -43,48 +34,31 @@ class FullyConnected(Layer) :
         return activation
 
     def backpropagate(self, error):
-        """
-            δ = ((w)^T * δ) ⊙ σ`(z)
-        """
-        # we transpose the weights because we are moving backwards
+        self.change_by_gradient(error)
+        return self.calculate_this_layer_error(error)
+
+    def calculate_this_layer_error(self, error):
         weights = self._weights.transpose()
         weights = weights.reshape(self._weights.shape)
         activationDerivative = self._activationFunction.derivative(self._current_weighted_input)
-        nextError = []
-        if weights.shape[1] % activationDerivative.shape[1] == 0:
-            activationDerivative = activationDerivative.repeat(weights.shape[1]/activationDerivative.shape[1], axis=1)
-            dots = []
-            for i in range(len(error)):
-                dots.append(np.dot(weights[i], error[i]))
-            nextError = np.multiply(dots, activationDerivative)
-        else:
-            activationDerivative = activationDerivative.repeat(self.__n_in, axis=1)
-            dots = []
-            for i in range(len(error)):
-                dots.append(np.dot(weights[i], error[i]))
-            dots = np.repeat(dots, self.__n_out, axis=1)
-            nextError = np.multiply(dots, activationDerivative)
-            nextError = nextError.reshape(HyperParameterContainer.mini_batch_size, self.__n_in, self.__n_out)
-            nextError = np.average(nextError, axis=-1).reshape(HyperParameterContainer.mini_batch_size, self.__n_in)
-        '''
-            ∂C/∂w = a_in * δ_out
-        '''
-        # we transpose the activation for the same reason we transpose the weights
+        activationDerivative = activationDerivative.repeat(self.__n_in, axis=1)
+        dots = []
+        for i in range(len(error)):
+            dots.append(np.dot(weights[i], error[i]))
+        dots = _MathHelper.repeat(dots, axis=(1,), num_of_repeats=self.__n_out, should_expand=(False,))
+        nextError = np.multiply(dots, activationDerivative)
+        nextError = nextError.reshape(HyperParameterContainer.mini_batch_size, self.__n_in, self.__n_out)
+        return np.average(nextError, axis=-1).reshape(HyperParameterContainer.mini_batch_size, self.__n_in)
+
+    def change_by_gradient(self, error):
         wGradient = np.dot(error, self._current_activation.transpose())
-        wGradient = np.repeat(wGradient[None, :, :], HyperParameterContainer.mini_batch_size, axis=0)
-        wGradient = wGradient.repeat(self._weights.shape[1] / wGradient.shape[1], axis=1)
-        wGradient = wGradient.repeat(self._weights.shape[2] / wGradient.shape[2], axis=2)
-        self._weights = HyperParameterContainer.gradientDescent.changeWeights(
-            self._weights, wGradient, self.number
+        num_of_repeats = (HyperParameterContainer.mini_batch_size,
+                          self._weights.shape[1] / wGradient.shape[1], self._weights.shape[2] / wGradient.shape[2])
+        wGradient = _MathHelper.repeat(
+            wGradient,
+            axis=(0,1,2),
+            num_of_repeats= num_of_repeats,
+            should_expand=(True,False,False)
         )
-
-        '''
-            ∂C/∂b = δ
-        '''
-        bGradient = error
-        self._biases = HyperParameterContainer.gradientDescent.changeBiases(
-            self._biases, bGradient, self.number
-        )
-
-        return nextError
-
+        self._weights = HyperParameterContainer.gradientDescent.changeWeights(self._weights, wGradient, self.number)
+        self._biases = HyperParameterContainer.gradientDescent.changeBiases(self._biases, error, self.number)

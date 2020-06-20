@@ -7,9 +7,9 @@ from DAL.BaseDB import BaseDB
 
 
 class MaxPooling(Layer):
-    def __init__(self, sizeOfInputImage, poolSize, stride, number_of_input_feature_maps):
+    def __init__(self, input_image_dims, poolSize, stride, number_of_input_feature_maps):
         super().__init__(layerType="MaxPooling")
-        self.__size_of_input_image =sizeOfInputImage
+        self.__size_of_input_image =input_image_dims
         self.__pool_size = poolSize
         self.__stride = stride
         self.__number_of_input_feature_maps = number_of_input_feature_maps
@@ -17,10 +17,7 @@ class MaxPooling(Layer):
     def feedforward(self, inputs):
         self._current_input = inputs
         outputImageWidth, outputImageHeight = [x//2 for x in inputs.shape[-2:]]
-        localReceptiveFieldedInput = _MathHelper.getLocalReceptiveFields(
-            inputs, self.__stride, outputImageWidth, outputImageHeight,
-            self.__pool_size[0], self.__pool_size[1]
-        )
+        localReceptiveFieldedInput = _MathHelper.get_local_receptive_fields(inputs, self.__stride, (outputImageWidth, outputImageHeight), self.__pool_size)
         self.__max = np.amax(localReceptiveFieldedInput, axis=(-2,-1))
         self._current_weighted_input = self.__max.reshape((
             HyperParameterContainer.mini_batch_size,
@@ -28,7 +25,6 @@ class MaxPooling(Layer):
             outputImageHeight,
             outputImageWidth
         ))
-
         self._current_activation = self._activationFunction.function(self._current_weighted_input)
         return self._current_activation
 

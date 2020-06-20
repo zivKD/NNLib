@@ -5,110 +5,68 @@ from BL.Layers.MathHelper import _MathHelper
 from DAL.BaseDB import BaseDB
 
 class Convolutional(Layer):
-    def __init__(self,
-                 sizeOfLocalReceptiveField = (2, 2),
-                 stride = 1,
-                 numberOfInputFeatureMaps = 1,
-                 numberOfFilters = 1,
-                 sizeOfInputImage = (5, 5)):
+    def __init__(self, sizeOfLocalReceptiveField, input_image_dims, numberOfFilters, numberOfInputFeatureMaps=1, stride = 1):
         super().__init__("CONVOLUTIONAL")
         self.__sizeOfLocalReceptiveField = sizeOfLocalReceptiveField
         self.__stride = stride
         self.__numberOfInputFeatureMaps = numberOfInputFeatureMaps
-        self.__sizeOfInputImage = sizeOfInputImage
+        self.__input_image_dims = input_image_dims
         self.__numberOfFilters = numberOfFilters
         self.__mathHelper = _MathHelper()
-        self.__initializeFilters()
+        self.__initialize_filters()
+        self._expected_input_shape = (HyperParameterContainer.mini_batch_size, self.__numberOfInputFeatureMaps) + \
+                                     self.__input_image_dims[:]
+        self._expected_output_shape = (HyperParameterContainer.mini_batch_size, self.__numberOfFilters) +\
+                                      self.__outputImageDims[:]
 
-    def __initializeFilters(self):
+    def __initialize_filters(self):
         mini_batch_size = HyperParameterContainer.mini_batch_size
-        self.__outputImageDims = _MathHelper.getOutputImageDims(
-            self.__sizeOfInputImage[0],
-            self.__sizeOfInputImage[1],
-            self.__sizeOfLocalReceptiveField[0],
-            self.__sizeOfLocalReceptiveField[1],
-            self.__stride
-        )
+        self.__outputImageDims = _MathHelper.get_output_image_dims(self.__input_image_dims, self.__sizeOfLocalReceptiveField, self.__stride)
+        biases = np.random.normal(loc = 0, scale = 1, size = (self.__numberOfFilters))
+        self._biases = _MathHelper.repeat(biases, (0, 2, 3), (mini_batch_size) + self.__outputImageDims[:])
+        scale = np.sqrt(1/(self.__numberOfFilters * np.prod(self.__sizeOfLocalReceptiveField[0:])))
+        weights = np.random.normal(loc=0, scale=scale, size= (self.__numberOfFilters, self.__sizeOfLocalReceptiveField[0], self.__sizeOfLocalReceptiveField[1]))
+        self._weights = _MathHelper.repeat(weights, axis=0, num_of_repeats=mini_batch_size)
 
-        biases = np.random.normal(
-            loc = 0,
-            scale = 1,
-            size = (self.__numberOfFilters)
-        )
-
-        biases = np.repeat(biases[None, :], mini_batch_size, axis=0)
-        biases = np.repeat(biases[:, :, None], self.__outputImageDims[0], axis=2)
-        self._biases = np.repeat(biases[:, :, :, None], self.__outputImageDims[1], axis=3)
-
-        weights = np.random.normal(
-            loc=0,
-            scale=np.sqrt(1/(self.__numberOfFilters * np.prod(self.__sizeOfLocalReceptiveField[0:]))),
-            size= (
-                self.__numberOfFilters,
-                self.__sizeOfLocalReceptiveField[0],
-                self.__sizeOfLocalReceptiveField[1])
-        )
-
-        self._weights = np.repeat(weights[None, :, :, :], mini_batch_size, axis=0)
-
-    """
-    the matrix shape is: 
-    mini_batch_size X
-    numberOfFilters X
-    numberOfInputFeatureMaps X
-    sizeOfInputImage[0] X 
-    sizeOfInputImage[1]  
-
-    the kernel shape is:
-    mini_batch_size X 
-    numberOfFilters X 
-    sizeOfLocalReceptiveField[0] X  
-    sizeOfLocalReceptiveField[1]
-    """
     def feedforward(self, inputs):
-        inputs = inputs.reshape(
-            HyperParameterContainer.mini_batch_size,
-            self.__numberOfInputFeatureMaps,
-            self.__sizeOfInputImage[0],
-            self.__sizeOfInputImage[1]
-        )
+        inputs = super()._turnToInputShape(inputs)
+        inputs = _MathHelper.repeat(inputs, axis=(1,), num_of_repeats=(self.__numberOfFilters,))
         self._current_input = inputs
-        inputs = np.repeat(inputs[:,None, :, :, :], self.__numberOfFilters, axis=1)
-        convolutionProduct = _MathHelper.conv5D(inputs, self._weights, self.__stride)
-        self._current_weighted_input = np.add(self._biases, convolutionProduct)
+        convolution_product = _MathHelper.conv(inputs, self._weights, self.__stride)
+        self._current_weighted_input = np.add(self._biases, convolution_product)
         self._current_activation = self._activationFunction.function(self._current_weighted_input)
         return self._current_activation
 
     def backpropagate(self, error):
-        flippedWeights = self.__rotBy90D(self._weights)
-        flippedWeights = self.__rotBy90D(flippedWeights)
-        flippedWeights = np.array(flippedWeights)
-        flippedWeights = np.repeat(flippedWeights[:, :, None, :, :], self.__numberOfInputFeatureMaps, axis=2)
-        padding = error.shape[-1] - flippedWeights.shape[-1] + 2
-        convolutionProduct = _MathHelper.conv5D(flippedWeights, error, self.__stride, pad=padding*self.__stride)
+        error = super()._turnToOutputShape(error)
+        self.change_by_gradient(error)
+        return self.calculate_this_layer_error(error)
+
+    def calculate_this_layer_error(self, error):
+        flipped_weights = self.__rotBy180D(self._weights)
+        flipped_weights = _MathHelper.repeat(flipped_weights, axis=(2,), num_of_repeats=(self.__numberOfInputFeatureMaps,))
+        padding = error.shape[-1] - flipped_weights.shape[-1] + 2
+        convolution_product = _MathHelper.conv(flipped_weights, error, self.__stride, pad=padding * self.__stride)
         this_layer_error = np.multiply(
-            convolutionProduct,
+            convolution_product,
             self._activationFunction.derivative(self._current_weighted_input)
         )
-
         # Opposite of striding to local receptive fields
-        this_layer_error = np.repeat(this_layer_error[:,None, :, :, :], self.__numberOfInputFeatureMaps, axis=1)
-        this_layer_error = _MathHelper.getLocalReceptiveFields(this_layer_error, self.__stride, self.__sizeOfInputImage[0],
-                                                               self.__sizeOfInputImage[1], self.__outputImageDims[0],
-                                                               self.__outputImageDims[1])
-        this_layer_error = np.sum(this_layer_error, axis=(4,5))
+        this_layer_error = _MathHelper.repeat(this_layer_error, axis=(1,), num_of_repeats=self.__numberOfInputFeatureMaps)
+        this_layer_error = _MathHelper.get_local_receptive_fields(this_layer_error, self.__stride,
+                                                                  self.__input_image_dims,
+                                                                  self.__outputImageDims)
+        return np.sum(this_layer_error, axis=(4, 5))
 
+    def change_by_gradient(self, error):
         gradient_descent = HyperParameterContainer.gradientDescent
-        self._biases = gradient_descent.changeBiases(self._biases, error,self.number)
-        input = np.repeat(self._current_input[:, None, :, :, :], self.__numberOfFilters, axis=1)
-        gradient = _MathHelper.conv5D(input, error, self.__stride)
+        self._biases = gradient_descent.changeBiases(self._biases, error, self.number)
+        gradient = _MathHelper.conv(self._current_input, error, self.__stride)
         self._weights = gradient_descent.changeWeights(
             self._weights,
             gradient,
             self.number
         )
-
-        return this_layer_error
 
     def saveToDb(self, db : BaseDB, neworkId):
         super().saveToDb(db, neworkId)
@@ -118,8 +76,12 @@ class Convolutional(Layer):
         super().saveToDb(db, networkId)
         self.__stride = db.getStride(self.number, networkId)
 
-    def __rotBy90D(self, matrix):
-        return [[
+    def __rotBy180D(self, matrix):
+        matrix = [[
             list(zip(*matrix[i][j][::-1]))
             for j in range(len(matrix[0]))]
             for i in range(len(matrix))]
+        return np.array([[
+            list(zip(*matrix[i][j][::-1]))
+            for j in range(len(matrix[0]))]
+            for i in range(len(matrix))])

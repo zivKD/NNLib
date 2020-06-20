@@ -1,11 +1,9 @@
 from BL.BaseClasses.ActivationFunction import ActivationFunction
 from BL.BaseClasses.CostFunction import CostFunction
-from BL.BaseClasses.GradientDescent import GradientDescent
 from BL.BaseClasses.Layer import Layer
 from BL.BaseClasses.Regularization import Regularization
 from BL.Gradient_Decent.MomentumBased import MomentumBased
 from BL.HyperParameterContainer import HyperParameterContainer
-from BL.Layers.MathHelper import _MathHelper
 from DAL.BaseDB import BaseDB
 import numpy as np
 
@@ -60,11 +58,7 @@ class Network():
                 y = np.array([batch[1].ravel() for batch in mini_batch]).transpose()
                 output = self.__feedForward(x, i, monitoring_counter-1)
                 if (monitoring_counter == frequencyOfMonitoring + 1):
-                    subtract = np.subtract(output, y)
-                    sum = np.sum(subtract)
-                    absoluteSum = np.abs(sum)
-                    percentedSum = absoluteSum * HyperParameterContainer.mini_batch_size
-                    accuracy = int(percentedSum)
+                    accuracy = np.abs(np.sum(np.subtract(output, y))) * HyperParameterContainer.mini_batch_size
                     onMonitoring(accuracy)
                     monitoring_counter = 1
                 self.__backprop(output, y)
@@ -84,31 +78,24 @@ class Network():
                     layer.regulate(regularization)
 
         if(type(self.gradient_decent) is MomentumBased and epochNumber == 0 and miniBatchNumber == 0):
-            output = self.layers[0].feedforward(x)
-            self.gradient_decent.setVelocityMatrix(1, self.layers[0].getWeightShape(),
-                                                   self.layers[0].getBiasShape())
-            for layer in self.layers[1:]:
+            output = x
+            for layer in self.layers:
                 output = layer.feedforward(output)
                 self.gradient_decent.setVelocityMatrix(layer.number, layer.getWeightShape(),
                                                        layer.getBiasShape())
-
-
         else:
-            output = self.layers[0].feedforward(x)
-            for layer in self.layers[1:]:
+            output = x
+            for layer in self.layers:
                 output = layer.feedforward(output)
+
         return output
 
 
     def __backprop(self, output, y):
-        '''
-        δ =  ∂C/(∂a) * σ'(z)
-        '''
         error = np.multiply(
             self.costFunction.derivative(self.layers[-1]._current_weighted_input, output, y),
             self.last_layer_activation_function.derivative(self.layers[-1]._current_weighted_input)
         )
-
         for layer in reversed(self.layers):
             error = layer.backpropagate(error)
 

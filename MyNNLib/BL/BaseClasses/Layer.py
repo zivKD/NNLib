@@ -8,9 +8,7 @@ from DAL.BaseDB import BaseDB
 
 class Layer(ABC) :
     number = 1
-    def __init__(self,
-                 layerType = "non"
-                 ):
+    def __init__(self, layerType = "non"):
         self.number = Layer.number
         Layer.number+=1
         self.layerType = layerType
@@ -20,6 +18,8 @@ class Layer(ABC) :
         self._current_input = []
         self._current_weighted_input = []
         self._current_activation = []
+        self._expected_input_shape = ()
+        self._expected_output_shape = ()
 
     @abstractmethod
     def feedforward(self, inputs):
@@ -30,7 +30,7 @@ class Layer(ABC) :
         pass
 
     def regulate(self, regularization : Regularization):
-        regularization.changeParams(self._weights, self._biases, self.number)
+        self._weights, self._biases = regularization.changeParams(self._weights, self._biases, self.number)
 
     def softmax(self):
         self._activationFunction.setWeightedInputs(self._current_weighted_input)
@@ -48,3 +48,9 @@ class Layer(ABC) :
 
     def getBiasShape(self):
         return self._biases.shape
+
+    def _turnToInputShape(self, arr):
+        return arr.reshape(self._expected_input_shape)
+
+    def _turnToOutputShape(self, arr):
+        return arr.reshape(self._expected_output_shape)
