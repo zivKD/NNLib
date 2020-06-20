@@ -56,7 +56,7 @@ class Network():
             for mini_batch in mini_batches:
                 x = np.array([batch[0].ravel() for batch in mini_batch]).transpose()
                 y = np.array([batch[1].ravel() for batch in mini_batch]).transpose()
-                output = self.__feedForward(x, i, monitoring_counter-1)
+                output = self.__feedForward(x)
                 if (monitoring_counter == frequencyOfMonitoring + 1):
                     accuracy = np.abs(np.sum(np.subtract(output, y))) * HyperParameterContainer.mini_batch_size
                     onMonitoring(accuracy)
@@ -70,24 +70,14 @@ class Network():
             self.__saveToDb()
 
 
-    def __feedForward(self, x, epochNumber, miniBatchNumber):
-        output = None
+    def __feedForward(self, x):
         if(self.__should_regulate):
             for regularization in self.__regularizationTechs:
                 for layer in self.layers:
                     layer.regulate(regularization)
-
-        if(type(self.gradient_decent) is MomentumBased and epochNumber == 0 and miniBatchNumber == 0):
-            output = x
-            for layer in self.layers:
-                output = layer.feedforward(output)
-                self.gradient_decent.setVelocityMatrix(layer.number, layer.getWeightShape(),
-                                                       layer.getBiasShape())
-        else:
-            output = x
-            for layer in self.layers:
-                output = layer.feedforward(output)
-
+        output = x
+        for layer in self.layers:
+            output = layer.feedforward(output)
         return output
 
 

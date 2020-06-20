@@ -3,13 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="23865cb9-dfc5-4cf8-9bdd-3049cfc9f76f" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BL/BaseClasses/Layer.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/BaseClasses/Layer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BL/Layers/Convolutional.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Layers/Convolutional.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BL/Layers/FullyConnected.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Layers/FullyConnected.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BL/Layers/MathHelper.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Layers/MathHelper.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BL/Layers/MaxPooling.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Layers/MaxPooling.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BL/Gradient_Decent/MomentumBased.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Gradient_Decent/MomentumBased.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BL/Network.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Network.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BL/Regularization/Dropout.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Regularization/Dropout.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Program.py" beforeDir="false" afterPath="$PROJECT_DIR$/Program.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -192,13 +187,6 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/BL/Network.py</url>
-          <line>83</line>
-          <option name="timeStamp" value="18" />
-        </line-breakpoint>
-      </breakpoints>
       <default-breakpoints>
         <breakpoint type="python-exception">
           <properties notifyOnTerminate="true" exception="BaseException">

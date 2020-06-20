@@ -5,49 +5,37 @@ from BL.HyperParameterContainer import HyperParameterContainer
 
 
 class MomentumBased(GradientDescent):
-    def __init__(self, numberOfLayersWithWAndB, friction=0.9):
+    def __init__(self, numberOfLayers, friction=0.9):
         super().__init__()
-        self.__velocities = {
-            number : [[],[]] for number in numberOfLayersWithWAndB
-        }
+        self.__W_velocities = { number+1 : None for number in range(numberOfLayers) }
+        self.__B_velocities = { number+1: None for number in range(numberOfLayers) }
         self.__friction = friction
 
-    def setVelocityMatrix(self, numberOfLayer, wShape, bShape):
-        layersVelocity = self.__velocities.get(numberOfLayer)
-        if layersVelocity != None:
-            layersVelocity[0] = np.random.normal(
-                    loc=0,
-                    scale=np.sqrt(1),
-                    size=(wShape)
-            )
-            layersVelocity[1] = np.random.normal(
-                    loc=0,
-                    scale=np.sqrt(1),
-                    size=(bShape)
-            )
+    def initiaze(self, arr):
+        return np.random.normal(
+            loc=0,
+            scale = np.sqrt(1),
+            shape=arr.shape
+        )
 
     def changeWeights(self, w, gradient, layerNumber):
-        velocity = self.__velocities.get(layerNumber)
-        if velocity != None:
-            vW = velocity[0]
-            velocity = self.__friction * vW
-            newGradient = HyperParameterContainer.learningRate/HyperParameterContainer.mini_batch_size * gradient
-            newVW = np.subtract(velocity, newGradient)
-            self.__velocities[layerNumber][0] = newVW
-            addition = np.add(w, newVW)
-            return addition
-
-        return w
+        vw = self.__W_velocities[layerNumber]
+        if vw == None:
+            vw = self.initiaze(w)
+        vw = self.__friction * vw
+        newGradient = HyperParameterContainer.learningRate/HyperParameterContainer.mini_batch_size * gradient
+        newVW = np.subtract(vw, newGradient)
+        self.__W_velocities[layerNumber] = newVW
+        addition = np.add(w, newVW)
+        return addition
 
     def changeBiases(self, b, gradient, layerNumber):
-        velocity = self.__velocities.get(layerNumber)
-        if velocity != None:
-            vB = velocity[1]
-            gradient = gradient.reshape(vB.shape)
-            velocity = self.__friction * vB
-            newGradient = HyperParameterContainer.learningRate/HyperParameterContainer.mini_batch_size * gradient
-            newVB = np.subtract(velocity, newGradient)
-            self.__velocities[layerNumber][1] = newVB
-            return np.add(b, newVB)
-
-        return b
+        vb = self.__B_velocities[layerNumber]
+        if vb == None:
+            vb = self.initiaze(b)
+        gradient = gradient.reshape(vb.shape)
+        vb = self.__friction * vb
+        newGradient = HyperParameterContainer.learningRate/HyperParameterContainer.mini_batch_size * gradient
+        newVB = np.subtract(vb, newGradient)
+        self.__B_velocities[layerNumber] = newVB
+        return np.add(b, newVB)
