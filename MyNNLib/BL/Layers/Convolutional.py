@@ -21,12 +21,13 @@ class Convolutional(Layer):
 
     def __initialize_filters(self):
         mini_batch_size = HyperParameterContainer.mini_batch_size
-        self.__output_image_dims = _MathHelper.get_output_image_dims(self.__input_image_dims, self.__sizeOfLocalReceptiveField, self.__stride)
-        biases = np.random.normal(loc = 0, scale = 1, size = (self.__numberOfFilters,))
+        self.__output_image_dims = _MathHelper.get_output_image_dims(self.__input_image_dims, self.__sizeOfLocalReceptiveField,
+                                                                     self.__stride)
+        biases = np.random.normal(loc = 0, scale = 1.0, size = (self.__numberOfFilters,))
         num_of_repeats = (mini_batch_size,) + self.__output_image_dims
         self._biases = _MathHelper.repeat(biases, axis=(0, 2, 3), num_of_repeats=num_of_repeats, should_expand=(True, True, True))
         scale = np.sqrt(1/(self.__numberOfFilters * np.prod(self.__sizeOfLocalReceptiveField[0:])))
-        weights = np.random.normal(loc=0, scale=scale, size= (self.__numberOfFilters, self.__sizeOfLocalReceptiveField[0], self.__sizeOfLocalReceptiveField[1]))
+        weights = np.random.normal(loc=0, scale=scale, size = (self.__numberOfFilters,) + self.__sizeOfLocalReceptiveField)
         self._weights = _MathHelper.repeat(weights, axis=0, num_of_repeats=mini_batch_size)
 
     def feedforward(self, inputs):
@@ -63,11 +64,9 @@ class Convolutional(Layer):
         gradient_descent = HyperParameterContainer.gradientDescent
         self._biases = gradient_descent.changeBiases(self._biases, error, self.number)
         gradient = _MathHelper.conv(self._current_input, error, self.__stride)
-        self._weights = gradient_descent.changeWeights(
-            self._weights,
-            gradient,
-            self.number
-        )
+        self._weights = gradient_descent.changeWeights(self._weights, gradient, self.number)
+        if _MathHelper.IsNan(self._weights):
+            raise Exception("Weights in the conv layer are NaN")
 
     def saveToDb(self, db : BaseDB, neworkId):
         super().saveToDb(db, neworkId)

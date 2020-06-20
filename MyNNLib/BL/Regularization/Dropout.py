@@ -2,6 +2,7 @@ import numpy as np
 
 from BL.BaseClasses.Regularization import Regularization
 from BL.HyperParameterContainer import HyperParameterContainer
+from BL.Layers.MathHelper import _MathHelper
 
 
 class Dropout(Regularization):
@@ -14,7 +15,7 @@ class Dropout(Regularization):
 
     def changeParams(self, w, b, layerNumber):
         matrix = self.__layersWeights.get(layerNumber)
-        if matrix is None == False:
+        if matrix is not None:
             if matrix['number_of_runs'] == self.__number_of_runs:
                 matrix['number_of_runs'] = 0
                 formerWeights = matrix['weights']

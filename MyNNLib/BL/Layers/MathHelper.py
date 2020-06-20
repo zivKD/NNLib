@@ -1,8 +1,11 @@
 import numpy as np
-
-from BL.HyperParameterContainer import HyperParameterContainer
+import warnings
 
 class _MathHelper():
+    @staticmethod
+    def IsNan(matrix):
+        return np.isnan(np.sum(matrix))
+
     @staticmethod
     def repeat(matrix, axis, num_of_repeats, should_expand=(True,)):
         if(type(matrix) != 'numpy.ndarray'):
@@ -48,12 +51,22 @@ class _MathHelper():
         return var_pad
 
     @staticmethod
+    def conv_with_warnings(matrix, kernel, stride=1, pad=0):
+        with warnings.catch_warnings():
+            warnings.filterwarnings('error')
+            try:
+                _MathHelper.conv(matrix, kernel, stride, pad)
+            except Warning as warn:
+                print(warn)
+
+    @staticmethod
     def conv(matrix, kernel, stride=1, pad=0):
         if pad > 0:
             matrix = _MathHelper.pad_arr(matrix, pad)
         x, y = _MathHelper.get_output_image_dims(matrix.shape[-2:], kernel.shape[-2:], stride)
         kernel = np.repeat(kernel[:, :, None, :, :], x, axis=2)
         kernel = np.repeat(kernel[:, :, :, None, :, :], y, axis=3)
-        receptedMatrix = _MathHelper.get_local_receptive_fields(matrix, stride, (x, y), kernel.shape[-2:])
-        convolutionProduct = np.sum(np.multiply(receptedMatrix, kernel), axis=(4, 5))
-        return convolutionProduct
+        recepted_matrix = _MathHelper.get_local_receptive_fields(matrix, stride, (x, y), kernel.shape[-2:])
+        product = np.multiply(recepted_matrix, kernel)
+        convolution_product = np.sum(product, axis=(4, 5))
+        return convolution_product

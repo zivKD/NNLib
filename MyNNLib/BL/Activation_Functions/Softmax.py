@@ -3,8 +3,10 @@ import numpy as np
 
 class Softmax(ActivationFunction):
     def function(self, z):
-        e_x = np.exp(z - np.max(z))
-        return e_x / e_x.sum()
+        maxValue = np.max(z)
+        e_x = np.exp(z - maxValue)
+        returnValue = e_x / e_x.sum(axis=0)
+        return returnValue
 
     def derivative(self, z):
         return self.function(z) - 1

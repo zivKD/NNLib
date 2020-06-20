@@ -1,6 +1,6 @@
 from BL.BaseClasses.GradientDescent import GradientDescent
 import numpy as np
-
+from BL.Layers.MathHelper import _MathHelper
 from BL.HyperParameterContainer import HyperParameterContainer
 
 
@@ -14,7 +14,7 @@ class MomentumBased(GradientDescent):
     def initiaze(self, arr):
         return np.random.normal(
             loc=0,
-            scale = np.sqrt(1),
+            scale = 1.0,
             size = arr.shape
         )
 

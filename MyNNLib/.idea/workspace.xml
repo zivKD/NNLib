@@ -3,17 +3,22 @@
   <component name="ChangeListManager">
     <list default="true" id="23865cb9-dfc5-4cf8-9bdd-3049cfc9f76f" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BL/Activation_Functions/Softmax.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Activation_Functions/Softmax.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BL/Gradient_Decent/MomentumBased.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Gradient_Decent/MomentumBased.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BL/Layers/Convolutional.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Layers/Convolutional.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BL/Layers/FullyConnected.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Layers/FullyConnected.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BL/Layers/MathHelper.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Layers/MathHelper.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BL/Network.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Network.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BL/Regularization/Dropout.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Regularization/Dropout.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Program.py" beforeDir="false" afterPath="$PROJECT_DIR$/Program.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FavoritesManager">
+    <favorites_list name="MyNNLib" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -37,7 +42,7 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="C:/Projects/ML" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
@@ -127,42 +132,42 @@
       <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state x="309" y="0" key="CommitChangelistDialog2/0.0.1280.680@0.0.1280.680" timestamp="1590829573233" />
-    <state x="421" y="98" key="FileChooserDialogImpl" timestamp="1592426882495">
+    <state x="421" y="98" key="FileChooserDialogImpl" timestamp="1592659647495">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state x="421" y="98" key="FileChooserDialogImpl/0.0.1280.680@0.0.1280.680" timestamp="1592426882495" />
-    <state width="1259" height="163" key="GridCell.Tab.0.bottom" timestamp="1592659353188">
+    <state x="421" y="98" key="FileChooserDialogImpl/0.0.1280.680@0.0.1280.680" timestamp="1592659647495" />
+    <state width="1259" height="204" key="GridCell.Tab.0.bottom" timestamp="1592684872529">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="163" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1592659353188" />
-    <state width="1259" height="163" key="GridCell.Tab.0.center" timestamp="1592659353187">
+    <state width="1259" height="204" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1592684872529" />
+    <state width="1259" height="204" key="GridCell.Tab.0.center" timestamp="1592684872529">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="163" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1592659353187" />
-    <state width="1259" height="163" key="GridCell.Tab.0.left" timestamp="1592659353187">
+    <state width="1259" height="204" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1592684872529" />
+    <state width="1259" height="204" key="GridCell.Tab.0.left" timestamp="1592684872529">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="163" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1592659353187" />
-    <state width="1259" height="163" key="GridCell.Tab.0.right" timestamp="1592659353188">
+    <state width="1259" height="204" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1592684872529" />
+    <state width="1259" height="204" key="GridCell.Tab.0.right" timestamp="1592684872529">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="163" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1592659353188" />
-    <state width="1259" height="204" key="GridCell.Tab.1.bottom" timestamp="1592659107213">
+    <state width="1259" height="204" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1592684872529" />
+    <state width="1259" height="204" key="GridCell.Tab.1.bottom" timestamp="1592684878401">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.1.bottom/0.0.1280.680@0.0.1280.680" timestamp="1592659107213" />
-    <state width="1259" height="204" key="GridCell.Tab.1.center" timestamp="1592659107213">
+    <state width="1259" height="204" key="GridCell.Tab.1.bottom/0.0.1280.680@0.0.1280.680" timestamp="1592684878401" />
+    <state width="1259" height="204" key="GridCell.Tab.1.center" timestamp="1592684878401">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.1.center/0.0.1280.680@0.0.1280.680" timestamp="1592659107213" />
-    <state width="1259" height="204" key="GridCell.Tab.1.left" timestamp="1592659107213">
+    <state width="1259" height="204" key="GridCell.Tab.1.center/0.0.1280.680@0.0.1280.680" timestamp="1592684878401" />
+    <state width="1259" height="204" key="GridCell.Tab.1.left" timestamp="1592684878401">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.1.left/0.0.1280.680@0.0.1280.680" timestamp="1592659107213" />
-    <state width="1259" height="204" key="GridCell.Tab.1.right" timestamp="1592659107213">
+    <state width="1259" height="204" key="GridCell.Tab.1.left/0.0.1280.680@0.0.1280.680" timestamp="1592684878401" />
+    <state width="1259" height="204" key="GridCell.Tab.1.right" timestamp="1592684878401">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.1.right/0.0.1280.680@0.0.1280.680" timestamp="1592659107213" />
+    <state width="1259" height="204" key="GridCell.Tab.1.right/0.0.1280.680@0.0.1280.680" timestamp="1592684878401" />
     <state x="144" y="0" key="SettingsEditor" timestamp="1590499442177">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
@@ -183,10 +188,10 @@
       <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state x="383" y="0" key="refactoring.ChangeSignatureDialog/0.0.1280.680@0.0.1280.680" timestamp="1589468703781" />
-    <state x="303" y="1" width="672" height="678" key="search.everywhere.popup" timestamp="1591163048192">
+    <state x="303" y="1" width="672" height="678" key="search.everywhere.popup" timestamp="1592684576736">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state x="303" y="1" width="672" height="678" key="search.everywhere.popup/0.0.1280.680@0.0.1280.680" timestamp="1591163048192" />
+    <state x="303" y="1" width="672" height="678" key="search.everywhere.popup/0.0.1280.680@0.0.1280.680" timestamp="1592684576736" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -201,6 +206,7 @@
     <watches-manager>
       <configuration name="PythonConfigurationType">
         <watch expression="self" />
+        <watch expression="layerNumber" />
       </configuration>
     </watches-manager>
   </component>

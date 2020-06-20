@@ -1,6 +1,4 @@
 import numpy as np
-
-from BL.Activation_Functions.Sigmoid import Sigmoid
 from BL.Activation_Functions.Softmax import Softmax
 from BL.BaseClasses.Layer import Layer
 from BL.HyperParameterContainer import HyperParameterContainer
@@ -35,7 +33,8 @@ class FullyConnected(Layer) :
 
     def backpropagate(self, error):
         self.change_by_gradient(error)
-        return self.calculate_this_layer_error(error)
+        thisLayerError = self.calculate_this_layer_error(error)
+        return thisLayerError
 
     def calculate_this_layer_error(self, error):
         weights = self._weights.transpose()

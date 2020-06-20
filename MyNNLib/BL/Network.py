@@ -4,6 +4,7 @@ from BL.BaseClasses.Layer import Layer
 from BL.BaseClasses.Regularization import Regularization
 from BL.Gradient_Decent.MomentumBased import MomentumBased
 from BL.HyperParameterContainer import HyperParameterContainer
+from BL.Layers.MathHelper import _MathHelper
 from DAL.BaseDB import BaseDB
 import numpy as np
 
@@ -84,11 +85,11 @@ class Network():
 
 
     def __backprop(self, output, y):
-        error = np.multiply(
-            self.costFunction.derivative(self.layers[-1]._current_weighted_input, output, y),
-            self.last_layer_activation_function.derivative(self.layers[-1]._current_weighted_input)
-        )
+        deltaC = self.costFunction.derivative(self.layers[-1]._current_activation, output, y)
+        derivative = self.last_layer_activation_function.derivative(self.layers[-1]._current_weighted_input)
+        error = np.multiply(deltaC, derivative)
         for layer in reversed(self.layers):
+            # print(_MathHelper.IsNan(error))
             error = layer.backpropagate(error)
 
     def __saveToDb(self):

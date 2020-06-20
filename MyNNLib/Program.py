@@ -13,9 +13,12 @@ from DAL.Mongo.MongoDB import MongoDB
 
 # TODO: Design the system better so it will keep all the SOLID principles and functionality programming
 # TODO: Find a replacement to a loop on the mini-batch
-# TODO: Separate fully connected layer and softmax layer
-# TODO: Understand why the weights in the fully-connected layer (possibly in all the layers) get so big -
-# this causes the NaN because inf * -inf = NaN
+# TODO: The reason there is the NaN problem because the values after the softmax activation are too small,
+# so python converts them to Nan.
+# TODO: Install the bigFloat lib so there won't be warnings about underflow in softmax - could be the cause to problem above
+
+import numpy as np
+np.seterr(all='warn')
 
 training_set, validation_set, test_set = DataLoader.load()
 activationFunc = RELU()
