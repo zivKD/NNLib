@@ -5,18 +5,28 @@ from BL.HyperParameterContainer import HyperParameterContainer
 class _MathHelper():
     @staticmethod
     def repeat(matrix, axis, num_of_repeats, should_expand=(True,)):
-        for i in range(len(axis)):
-            if(should_expand[i]):
+        if(type(matrix) != 'numpy.ndarray'):
+            matrix = np.array(matrix)
+        if(type(axis) == int):
+            if((type(should_expand) == tuple and should_expand[0]) or should_expand):
                 matrix = np.expand_dims(matrix, axis=axis)
-        for i in range(len(axis)):
-            matrix = matrix.repeat(num_of_repeats[i], axis=axis[i])
+            matrix = matrix.repeat(num_of_repeats, axis=axis)
+        else:
+            if(len(should_expand) == len(axis)):
+                for i in range(len(axis)):
+                    if(should_expand[i]):
+                        matrix = np.expand_dims(matrix, axis=axis[i])
+            for i in range(len(axis)):
+                matrix = matrix.repeat(num_of_repeats[i], axis=axis[i])
+
+        return matrix
 
     @staticmethod
     def get_output_image_dims(imageDims, lrfDims, stride):
-        return [
+        return (
             (1 + (imageDims[0] - lrfDims[0]) // stride),
             (1 + (imageDims[1] - lrfDims[1]) // stride)
-        ]
+        )
 
     @staticmethod
     def get_num_of_local_receptive_fields(imageDims, lrfDims, stride,

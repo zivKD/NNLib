@@ -16,14 +16,15 @@ class Convolutional(Layer):
         self.__initialize_filters()
         self._expected_input_shape = (HyperParameterContainer.mini_batch_size, self.__numberOfInputFeatureMaps) + \
                                      self.__input_image_dims[:]
-        self._expected_output_shape = (HyperParameterContainer.mini_batch_size, self.__numberOfFilters) +\
-                                      self.__outputImageDims[:]
+        self._expected_output_shape = (HyperParameterContainer.mini_batch_size, self.__numberOfFilters) + \
+                                      self.__output_image_dims[:]
 
     def __initialize_filters(self):
         mini_batch_size = HyperParameterContainer.mini_batch_size
-        self.__outputImageDims = _MathHelper.get_output_image_dims(self.__input_image_dims, self.__sizeOfLocalReceptiveField, self.__stride)
-        biases = np.random.normal(loc = 0, scale = 1, size = (self.__numberOfFilters))
-        self._biases = _MathHelper.repeat(biases, (0, 2, 3), (mini_batch_size) + self.__outputImageDims[:])
+        self.__output_image_dims = _MathHelper.get_output_image_dims(self.__input_image_dims, self.__sizeOfLocalReceptiveField, self.__stride)
+        biases = np.random.normal(loc = 0, scale = 1, size = (self.__numberOfFilters,))
+        num_of_repeats = (mini_batch_size,) + self.__output_image_dims
+        self._biases = _MathHelper.repeat(biases, axis=(0, 2, 3), num_of_repeats=num_of_repeats, should_expand=(True, True, True))
         scale = np.sqrt(1/(self.__numberOfFilters * np.prod(self.__sizeOfLocalReceptiveField[0:])))
         weights = np.random.normal(loc=0, scale=scale, size= (self.__numberOfFilters, self.__sizeOfLocalReceptiveField[0], self.__sizeOfLocalReceptiveField[1]))
         self._weights = _MathHelper.repeat(weights, axis=0, num_of_repeats=mini_batch_size)
@@ -52,10 +53,10 @@ class Convolutional(Layer):
             self._activationFunction.derivative(self._current_weighted_input)
         )
         # Opposite of striding to local receptive fields
-        this_layer_error = _MathHelper.repeat(this_layer_error, axis=(1,), num_of_repeats=self.__numberOfInputFeatureMaps)
+        this_layer_error = _MathHelper.repeat(this_layer_error, axis=1, num_of_repeats=self.__numberOfInputFeatureMaps)
         this_layer_error = _MathHelper.get_local_receptive_fields(this_layer_error, self.__stride,
                                                                   self.__input_image_dims,
-                                                                  self.__outputImageDims)
+                                                                  self.__output_image_dims)
         return np.sum(this_layer_error, axis=(4, 5))
 
     def change_by_gradient(self, error):

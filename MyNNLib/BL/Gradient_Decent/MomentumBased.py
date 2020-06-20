@@ -15,12 +15,12 @@ class MomentumBased(GradientDescent):
         return np.random.normal(
             loc=0,
             scale = np.sqrt(1),
-            shape=arr.shape
+            size = arr.shape
         )
 
     def changeWeights(self, w, gradient, layerNumber):
         vw = self.__W_velocities[layerNumber]
-        if vw == None:
+        if vw is None:
             vw = self.initiaze(w)
         vw = self.__friction * vw
         newGradient = HyperParameterContainer.learningRate/HyperParameterContainer.mini_batch_size * gradient
@@ -31,7 +31,7 @@ class MomentumBased(GradientDescent):
 
     def changeBiases(self, b, gradient, layerNumber):
         vb = self.__B_velocities[layerNumber]
-        if vb == None:
+        if vb is None:
             vb = self.initiaze(b)
         gradient = gradient.reshape(vb.shape)
         vb = self.__friction * vb

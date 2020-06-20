@@ -45,7 +45,7 @@ class FullyConnected(Layer) :
         dots = []
         for i in range(len(error)):
             dots.append(np.dot(weights[i], error[i]))
-        dots = _MathHelper.repeat(dots, axis=(1,), num_of_repeats=self.__n_out, should_expand=(False,))
+        dots = _MathHelper.repeat(dots, axis=1, num_of_repeats=self.__n_out, should_expand=False)
         nextError = np.multiply(dots, activationDerivative)
         nextError = nextError.reshape(HyperParameterContainer.mini_batch_size, self.__n_in, self.__n_out)
         return np.average(nextError, axis=-1).reshape(HyperParameterContainer.mini_batch_size, self.__n_in)
@@ -53,7 +53,7 @@ class FullyConnected(Layer) :
     def change_by_gradient(self, error):
         wGradient = np.dot(error, self._current_activation.transpose())
         num_of_repeats = (HyperParameterContainer.mini_batch_size,
-                          self._weights.shape[1] / wGradient.shape[1], self._weights.shape[2] / wGradient.shape[2])
+                          self._weights.shape[1] / wGradient.shape[0], self._weights.shape[2] / wGradient.shape[1])
         wGradient = _MathHelper.repeat(
             wGradient,
             axis=(0,1,2),

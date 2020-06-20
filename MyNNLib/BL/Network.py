@@ -28,7 +28,7 @@ class Network():
         self.last_layer_activation_function = last_layer_activation_function
         self.gradient_decent = HyperParameterContainer.gradientDescent
         self.mini_batch_size = HyperParameterContainer.mini_batch_size
-        self.number_of_epochs = HyperParameterContainer.mini_batch_size
+        self.number_of_epochs = HyperParameterContainer.number_of_epochs
         self.layers = layers
         self.training_set = training_set
         self.validation_set = validation_set
@@ -53,6 +53,7 @@ class Network():
                 for k in range(0, n, self.mini_batch_size)
             ]
             monitoring_counter = 1
+            batch_number_counter = 1
             for mini_batch in mini_batches:
                 x = np.array([batch[0].ravel() for batch in mini_batch]).transpose()
                 y = np.array([batch[1].ravel() for batch in mini_batch]).transpose()
@@ -62,8 +63,9 @@ class Network():
                     onMonitoring(accuracy)
                     monitoring_counter = 1
                 self.__backprop(output, y)
-                print("epoch:" + str(i+1) +  " batch:" + str(monitoring_counter))
+                print("epoch:",i+1," batch:",batch_number_counter)
                 monitoring_counter += 1
+                batch_number_counter += 1
 
 
         if(self.should_save_to_db):
