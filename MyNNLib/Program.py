@@ -13,12 +13,11 @@ from DAL.Mongo.MongoDB import MongoDB
 
 # TODO: Design the system better so it will keep all the SOLID principles and functionality programming
 # TODO: Find a replacement to a loop on the mini-batch
-# TODO: The reason there is the NaN problem because the values after the softmax activation are too small,
-# so python converts them to Nan.
-# TODO: Install the bigFloat lib so there won't be warnings about underflow in softmax - could be the cause to problem above
+# TODO: The reason there is the NaN problem because the values after the softmax activation are too small \
+#  so python converts them to Nan. TO fix this, I need to install the bigFloat lib so could handel such small values \
+#  the problem with that is installing it on windows requries a binary package, and there only for python 3.6 not 3.8
 
 import numpy as np
-np.seterr(all='warn')
 
 training_set, validation_set, test_set = DataLoader.load()
 activationFunc = RELU()

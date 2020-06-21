@@ -2,14 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="23865cb9-dfc5-4cf8-9bdd-3049cfc9f76f" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/MyNNLib.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/MyNNLib.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BL/Activation_Functions/Softmax.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Activation_Functions/Softmax.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BL/Gradient_Decent/MomentumBased.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Gradient_Decent/MomentumBased.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BL/Layers/Convolutional.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Layers/Convolutional.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BL/Layers/FullyConnected.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Layers/FullyConnected.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BL/Layers/MathHelper.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Layers/MathHelper.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BL/Network.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Network.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BL/Regularization/Dropout.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Regularization/Dropout.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Program.py" beforeDir="false" afterPath="$PROJECT_DIR$/Program.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -42,7 +37,7 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="C:/Projects/ML" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
@@ -54,33 +49,53 @@
       <recent name="C:\Projects\MyNNLibGitHub\MyNNLib\BL\BaseClasses" />
     </key>
   </component>
-  <component name="RunManager">
-    <configuration name="Program" type="PythonConfigurationType" factoryName="Python" temporary="true">
+  <component name="RunManager" selected="Python.Program3.8">
+    <configuration name="Program" type="PythonConfigurationType" factoryName="Python">
       <module name="MyNNLib" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="C:\Users\user\AppData\Local\Programs\Python\Python38\python.exe" />
+      <option name="SDK_HOME" value="C:\Users\user\AppData\Local\Programs\Python\Python36\python-3.6.exe" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Program.py" />
+      <option name="SCRIPT_NAME" value="Program" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
+      <option name="MODULE_MODE" value="true" />
       <option name="REDIRECT_INPUT" value="false" />
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <recent_temporary>
-      <list>
-        <item itemvalue="Python.Program" />
-      </list>
-    </recent_temporary>
+    <configuration name="Program3.8" type="PythonConfigurationType" factoryName="Python">
+      <module name="MyNNLib" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Python Interpeters\Scripts\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="Program" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="true" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Python.Program" />
+      <item itemvalue="Python.Program3.8" />
+    </list>
   </component>
   <component name="ServiceViewManager">
     <option name="viewStates">
@@ -108,10 +123,10 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state x="96" y="0" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1590499398984">
+    <state x="96" y="0" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1592693386369">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state x="96" y="0" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1280.680@0.0.1280.680" timestamp="1590499398984" />
+    <state x="96" y="0" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1280.680@0.0.1280.680" timestamp="1592693386369" />
     <state x="392" y="150" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1589463311477">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
@@ -132,54 +147,58 @@
       <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state x="309" y="0" key="CommitChangelistDialog2/0.0.1280.680@0.0.1280.680" timestamp="1590829573233" />
-    <state x="421" y="98" key="FileChooserDialogImpl" timestamp="1592659647495">
+    <state x="421" y="98" key="FileChooserDialogImpl" timestamp="1592693381396">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state x="421" y="98" key="FileChooserDialogImpl/0.0.1280.680@0.0.1280.680" timestamp="1592659647495" />
-    <state width="1259" height="204" key="GridCell.Tab.0.bottom" timestamp="1592684872529">
+    <state x="421" y="98" key="FileChooserDialogImpl/0.0.1280.680@0.0.1280.680" timestamp="1592693381396" />
+    <state width="1259" height="204" key="GridCell.Tab.0.bottom" timestamp="1592771387105">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1592684872529" />
-    <state width="1259" height="204" key="GridCell.Tab.0.center" timestamp="1592684872529">
+    <state width="1259" height="204" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1592771387105" />
+    <state width="1259" height="204" key="GridCell.Tab.0.center" timestamp="1592771387105">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1592684872529" />
-    <state width="1259" height="204" key="GridCell.Tab.0.left" timestamp="1592684872529">
+    <state width="1259" height="204" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1592771387105" />
+    <state width="1259" height="204" key="GridCell.Tab.0.left" timestamp="1592771387105">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1592684872529" />
-    <state width="1259" height="204" key="GridCell.Tab.0.right" timestamp="1592684872529">
+    <state width="1259" height="204" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1592771387105" />
+    <state width="1259" height="204" key="GridCell.Tab.0.right" timestamp="1592771387105">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1592684872529" />
-    <state width="1259" height="204" key="GridCell.Tab.1.bottom" timestamp="1592684878401">
+    <state width="1259" height="204" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1592771387105" />
+    <state width="1259" height="204" key="GridCell.Tab.1.bottom" timestamp="1592771390409">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.1.bottom/0.0.1280.680@0.0.1280.680" timestamp="1592684878401" />
-    <state width="1259" height="204" key="GridCell.Tab.1.center" timestamp="1592684878401">
+    <state width="1259" height="204" key="GridCell.Tab.1.bottom/0.0.1280.680@0.0.1280.680" timestamp="1592771390409" />
+    <state width="1259" height="204" key="GridCell.Tab.1.center" timestamp="1592771390408">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.1.center/0.0.1280.680@0.0.1280.680" timestamp="1592684878401" />
-    <state width="1259" height="204" key="GridCell.Tab.1.left" timestamp="1592684878401">
+    <state width="1259" height="204" key="GridCell.Tab.1.center/0.0.1280.680@0.0.1280.680" timestamp="1592771390408" />
+    <state width="1259" height="204" key="GridCell.Tab.1.left" timestamp="1592771390408">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.1.left/0.0.1280.680@0.0.1280.680" timestamp="1592684878401" />
-    <state width="1259" height="204" key="GridCell.Tab.1.right" timestamp="1592684878401">
+    <state width="1259" height="204" key="GridCell.Tab.1.left/0.0.1280.680@0.0.1280.680" timestamp="1592771390408" />
+    <state width="1259" height="204" key="GridCell.Tab.1.right" timestamp="1592771390409">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1259" height="204" key="GridCell.Tab.1.right/0.0.1280.680@0.0.1280.680" timestamp="1592684878401" />
-    <state x="144" y="0" key="SettingsEditor" timestamp="1590499442177">
+    <state width="1259" height="204" key="GridCell.Tab.1.right/0.0.1280.680@0.0.1280.680" timestamp="1592771390409" />
+    <state x="144" y="0" key="SettingsEditor" timestamp="1592769870226">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state x="144" y="0" key="SettingsEditor/0.0.1280.680@0.0.1280.680" timestamp="1590499442177" />
+    <state x="144" y="0" key="SettingsEditor/0.0.1280.680@0.0.1280.680" timestamp="1592769870226" />
     <state width="498" height="446" key="SwitcherDM" timestamp="1589914616066">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state width="498" height="446" key="SwitcherDM/0.0.1280.680@0.0.1280.680" timestamp="1589914616066" />
-    <state x="349" y="168" key="com.intellij.ide.util.TipDialog" timestamp="1591554703746">
+    <state width="647" height="347" key="XDebugger.FullValuePopup" timestamp="1592771345383">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state x="349" y="168" key="com.intellij.ide.util.TipDialog/0.0.1280.680@0.0.1280.680" timestamp="1591554703746" />
+    <state width="647" height="347" key="XDebugger.FullValuePopup/0.0.1280.680@0.0.1280.680" timestamp="1592771345383" />
+    <state x="349" y="168" key="com.intellij.ide.util.TipDialog" timestamp="1592688197353">
+      <screen x="0" y="0" width="1280" height="680" />
+    </state>
+    <state x="349" y="168" key="com.intellij.ide.util.TipDialog/0.0.1280.680@0.0.1280.680" timestamp="1592688197353" />
     <state x="216" y="79" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1590826885875">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
@@ -195,6 +214,14 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <condition expression="self.number == 7" language="Python" />
+          <url>file://$PROJECT_DIR$/BL/Layers/FullyConnected.py</url>
+          <line>27</line>
+          <option name="timeStamp" value="70" />
+        </line-breakpoint>
+      </breakpoints>
       <default-breakpoints>
         <breakpoint type="python-exception">
           <properties notifyOnTerminate="true" exception="BaseException">
