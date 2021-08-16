@@ -14,8 +14,9 @@ from DAL.Mongo.MongoDB import MongoDB
 # TODO: Design the system better so it will keep all the SOLID principles and functionality programming
 # TODO: Find a replacement to a loop on the mini-batch
 # TODO: The reason there is the NaN problem because the values after the softmax activation are too small \
-#  so python converts them to Nan. TO fix this, I need to install the bigFloat lib so could handel such small values \
-#  the problem with that is installing it on windows requries a binary package, and there only for python 3.6 not 3.8
+#  so python converts them to Nan. Another problem is that the input are affected greatly, because in the first round \
+#  the values are not so small, but for some reason the inputs become very big\small even though in first look the weights\biases \
+#  look normal
 
 import numpy as np
 

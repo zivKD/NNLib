@@ -2,7 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="52dea8d2-6b1e-4e7e-babd-7d74e00654f0" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MyNNLib/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/MyNNLib/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyNNLib/BL/Network.py" beforeDir="false" afterPath="$PROJECT_DIR$/MyNNLib/BL/Network.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyNNLib/Program.py" beforeDir="false" afterPath="$PROJECT_DIR$/MyNNLib/Program.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,9 +52,9 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state x="421" y="98" key="FileChooserDialogImpl" timestamp="1592554232970">
+    <state x="349" y="168" key="com.intellij.ide.util.TipDialog" timestamp="1629120157344">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state x="421" y="98" key="FileChooserDialogImpl/0.0.1280.680@0.0.1280.680" timestamp="1592554232970" />
+    <state x="349" y="168" key="com.intellij.ide.util.TipDialog/0.0.1280.680@0.0.1280.680" timestamp="1629120157344" />
   </component>
 </project>

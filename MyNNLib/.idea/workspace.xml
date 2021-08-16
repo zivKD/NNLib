@@ -2,9 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="23865cb9-dfc5-4cf8-9bdd-3049cfc9f76f" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/MyNNLib.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/MyNNLib.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BL/Network.py" beforeDir="false" afterPath="$PROJECT_DIR$/BL/Network.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Program.py" beforeDir="false" afterPath="$PROJECT_DIR$/Program.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -37,7 +36,7 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$USER_HOME$/Downloads/AOSproject/AOSproject" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
@@ -93,8 +92,8 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python.Program" />
       <item itemvalue="Python.Program3.8" />
+      <item itemvalue="Python.Program" />
     </list>
   </component>
   <component name="ServiceViewManager">
@@ -123,103 +122,22 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state x="96" y="0" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1592693386369">
+    <state x="421" y="98" key="FileChooserDialogImpl" timestamp="1610633457770">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state x="96" y="0" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1280.680@0.0.1280.680" timestamp="1592693386369" />
-    <state x="392" y="150" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1589463311477">
+    <state x="421" y="98" key="FileChooserDialogImpl/0.0.1280.680@0.0.1280.680" timestamp="1610633457770" />
+    <state x="349" y="168" key="com.intellij.ide.util.TipDialog" timestamp="1610633422747">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state x="392" y="150" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1280.680@0.0.1280.680" timestamp="1589463311477" />
-    <state x="446" y="59" key="#com.intellij.ide.util.MemberChooser" timestamp="1589463668841">
-      <screen x="0" y="0" width="1280" height="680" />
-    </state>
-    <state x="446" y="59" key="#com.intellij.ide.util.MemberChooser/0.0.1280.680@0.0.1280.680" timestamp="1589463668841" />
-    <state x="232" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1590383489964">
-      <screen x="0" y="0" width="1280" height="680" />
-    </state>
-    <state x="232" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.1280.680@0.0.1280.680" timestamp="1590383489964" />
-    <state x="371" y="90" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1590082782100">
-      <screen x="0" y="0" width="1280" height="680" />
-    </state>
-    <state x="371" y="90" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1280.680@0.0.1280.680" timestamp="1590082782100" />
-    <state x="309" y="0" key="CommitChangelistDialog2" timestamp="1590829573233">
-      <screen x="0" y="0" width="1280" height="680" />
-    </state>
-    <state x="309" y="0" key="CommitChangelistDialog2/0.0.1280.680@0.0.1280.680" timestamp="1590829573233" />
-    <state x="421" y="98" key="FileChooserDialogImpl" timestamp="1592693381396">
-      <screen x="0" y="0" width="1280" height="680" />
-    </state>
-    <state x="421" y="98" key="FileChooserDialogImpl/0.0.1280.680@0.0.1280.680" timestamp="1592693381396" />
-    <state width="1259" height="204" key="GridCell.Tab.0.bottom" timestamp="1592771387105">
-      <screen x="0" y="0" width="1280" height="680" />
-    </state>
-    <state width="1259" height="204" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1592771387105" />
-    <state width="1259" height="204" key="GridCell.Tab.0.center" timestamp="1592771387105">
-      <screen x="0" y="0" width="1280" height="680" />
-    </state>
-    <state width="1259" height="204" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1592771387105" />
-    <state width="1259" height="204" key="GridCell.Tab.0.left" timestamp="1592771387105">
-      <screen x="0" y="0" width="1280" height="680" />
-    </state>
-    <state width="1259" height="204" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1592771387105" />
-    <state width="1259" height="204" key="GridCell.Tab.0.right" timestamp="1592771387105">
-      <screen x="0" y="0" width="1280" height="680" />
-    </state>
-    <state width="1259" height="204" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1592771387105" />
-    <state width="1259" height="204" key="GridCell.Tab.1.bottom" timestamp="1592771390409">
-      <screen x="0" y="0" width="1280" height="680" />
-    </state>
-    <state width="1259" height="204" key="GridCell.Tab.1.bottom/0.0.1280.680@0.0.1280.680" timestamp="1592771390409" />
-    <state width="1259" height="204" key="GridCell.Tab.1.center" timestamp="1592771390408">
-      <screen x="0" y="0" width="1280" height="680" />
-    </state>
-    <state width="1259" height="204" key="GridCell.Tab.1.center/0.0.1280.680@0.0.1280.680" timestamp="1592771390408" />
-    <state width="1259" height="204" key="GridCell.Tab.1.left" timestamp="1592771390408">
-      <screen x="0" y="0" width="1280" height="680" />
-    </state>
-    <state width="1259" height="204" key="GridCell.Tab.1.left/0.0.1280.680@0.0.1280.680" timestamp="1592771390408" />
-    <state width="1259" height="204" key="GridCell.Tab.1.right" timestamp="1592771390409">
-      <screen x="0" y="0" width="1280" height="680" />
-    </state>
-    <state width="1259" height="204" key="GridCell.Tab.1.right/0.0.1280.680@0.0.1280.680" timestamp="1592771390409" />
-    <state x="144" y="0" key="SettingsEditor" timestamp="1592769870226">
-      <screen x="0" y="0" width="1280" height="680" />
-    </state>
-    <state x="144" y="0" key="SettingsEditor/0.0.1280.680@0.0.1280.680" timestamp="1592769870226" />
-    <state width="498" height="446" key="SwitcherDM" timestamp="1589914616066">
-      <screen x="0" y="0" width="1280" height="680" />
-    </state>
-    <state width="498" height="446" key="SwitcherDM/0.0.1280.680@0.0.1280.680" timestamp="1589914616066" />
-    <state width="647" height="347" key="XDebugger.FullValuePopup" timestamp="1592771345383">
-      <screen x="0" y="0" width="1280" height="680" />
-    </state>
-    <state width="647" height="347" key="XDebugger.FullValuePopup/0.0.1280.680@0.0.1280.680" timestamp="1592771345383" />
-    <state x="349" y="168" key="com.intellij.ide.util.TipDialog" timestamp="1592688197353">
-      <screen x="0" y="0" width="1280" height="680" />
-    </state>
-    <state x="349" y="168" key="com.intellij.ide.util.TipDialog/0.0.1280.680@0.0.1280.680" timestamp="1592688197353" />
-    <state x="216" y="79" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1590826885875">
-      <screen x="0" y="0" width="1280" height="680" />
-    </state>
-    <state x="216" y="79" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.0.1280.680@0.0.1280.680" timestamp="1590826885875" />
-    <state x="383" y="0" key="refactoring.ChangeSignatureDialog" timestamp="1589468703781">
-      <screen x="0" y="0" width="1280" height="680" />
-    </state>
-    <state x="383" y="0" key="refactoring.ChangeSignatureDialog/0.0.1280.680@0.0.1280.680" timestamp="1589468703781" />
-    <state x="303" y="1" width="672" height="678" key="search.everywhere.popup" timestamp="1592684576736">
-      <screen x="0" y="0" width="1280" height="680" />
-    </state>
-    <state x="303" y="1" width="672" height="678" key="search.everywhere.popup/0.0.1280.680@0.0.1280.680" timestamp="1592684576736" />
+    <state x="349" y="168" key="com.intellij.ide.util.TipDialog/0.0.1280.680@0.0.1280.680" timestamp="1610633422747" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <condition expression="self.number == 7" language="Python" />
-          <url>file://$PROJECT_DIR$/BL/Layers/FullyConnected.py</url>
-          <line>27</line>
-          <option name="timeStamp" value="70" />
+          <url>file://$PROJECT_DIR$/BL/Activation_Functions/Softmax.py</url>
+          <line>8</line>
+          <option name="timeStamp" value="79" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

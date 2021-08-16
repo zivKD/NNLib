@@ -49,10 +49,10 @@ class Network():
         for i in range(self.number_of_epochs):
             n = len(self.training_set)
             np.random.shuffle(self.training_set)
-            mini_batches = [
+            mini_batches = np.array([
                 self.training_set[k:k + self.mini_batch_size]
                 for k in range(0, n, self.mini_batch_size)
-            ]
+            ])
             monitoring_counter = 1
             batch_number_counter = 1
             for mini_batch in mini_batches:
