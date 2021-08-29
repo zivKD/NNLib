@@ -1,2 +1,1 @@
-pub mod base;
-pub mod loss_fns;
+pub mod activations_fns;
