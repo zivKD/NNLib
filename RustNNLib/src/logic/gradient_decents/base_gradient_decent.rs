@@ -1,6 +1,6 @@
 use crate::Arr;
 
-pub trait LossFN {
-    fn output<'a>(&self, a: &'a mut Arr, y: &'a Arr) -> Arr;
-    fn propogate<'a>(&self, a: &'a mut Arr, y: &'a Arr) -> Arr;
+pub trait GradientDecent {
+    fn change_weights<'a>(&self, w: &'a Arr, gradient: &'a Arr) -> Arr;
+    fn change_biases<'a>(&self, b: &'a Arr, gradient: &'a Arr) -> Arr;
 }
