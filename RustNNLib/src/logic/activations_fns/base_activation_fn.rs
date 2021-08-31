@@ -1,8 +1,6 @@
-use ndarray::{ Array2 };
+use crate::Arr;
 
-pub type Arr = Array2<f64>;
-
-pub trait activation_fn {
+pub trait ActivationFN {
     fn forward<'a>(&self, z: &'a mut Arr) -> &'a mut Arr;
     fn propogate<'a>(&self, z: &'a mut Arr) -> &'a mut Arr;
 }

@@ -1,9 +1,9 @@
-use crate::logic::activations_fns::base_activation_fn::activation_fn;
-use crate::logic::activations_fns::base_activation_fn::Arr;
+use crate::logic::activations_fns::base_activation_fn::ActivationFN;
+use crate::Arr;
 
 pub struct init {}
 
-impl activation_fn for init {
+impl ActivationFN for init {
     fn forward<'a>(&self, z: &'a mut Arr) -> &'a mut Arr {
         z.mapv_inplace(|x| {
             1.0 / (1.0 + f64::exp(-x))
