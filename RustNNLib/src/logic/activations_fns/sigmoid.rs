@@ -4,18 +4,15 @@ use crate::Arr;
 pub struct init {}
 
 impl ActivationFN for init {
-    fn forward<'a>(&self, z: &'a mut Arr) -> &'a mut Arr {
-        z.mapv_inplace(|x| {
+    fn forward<'a>(&self, z: &'a Arr) -> Arr {
+        z.mapv(|x| {
             1.0 / (1.0 + f64::exp(-x))
-        });
-        z
+        })
     }
 
-    fn propogate<'a>(&self, z: &'a mut Arr) -> &'a mut Arr {
-        self.forward(z);
-        z.mapv_inplace(|x| {
+    fn propogate<'a>(&self, z: &'a Arr) -> Arr {
+        self.forward(z).mapv(|x| {
             (1. - x) * x
-        });
-        z
+        })
     }
 }
