@@ -9,6 +9,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cdb031dd78e28731d87d56cc8ffef4a8f36ca26c38fe2de700543e627f8a464a"
 
 [[package]]
+name = "byteorder"
+version = "1.4.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "14c189c53d098945499cdfa7ecc63567cf3886b3332b312a5b4585d8d3a6a610"
+
+[[package]]
 name = "cfg-if"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -52,6 +58,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "mnist"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9fd2e5236a5f13d41d4f6eba34f535d037cb9fc4b244896886a7ebe0764142a5"
+dependencies = [
+ "byteorder",
+]
+
+[[package]]
 name = "ndarray"
 version = "0.15.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -69,6 +84,7 @@ name = "nnTools"
 version = "0.1.0"
 dependencies = [
  "ferris-says",
+ "mnist",
  "ndarray",
  "rand",
 ]
