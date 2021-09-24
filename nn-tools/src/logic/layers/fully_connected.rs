@@ -1,7 +1,9 @@
+use std::iter::FromIterator;
+
 use crate::logic::gradient_decents::base_gradient_decent::GradientDecent;
 use crate::logic::activations_fns::base_activation_fn::ActivationFN;
-use crate::Arr;
-use ndarray::Zip;
+use crate::{Arr, ArrViewMut};
+use ndarray::{Array1, ArrayBase, Axis, Zip};
 use crate::logic::layers::base_layer::Layer;
 
 pub struct init<'a> {
@@ -39,12 +41,21 @@ impl init<'_> {
 }
 
 impl Layer for init<'_> {
-    fn feedforward(&mut self, inputs: Arr) -> Arr {
+    fn feedforward(&mut self, inputs: ArrViewMut) -> Arr {
         let mut dots = inputs.dot(self.weights);
-        Zip::from(&mut dots).and(&mut *self.biases).for_each(|dot, &mut bias| *dot += bias);
+        println!("got here 3a");
+        // Probably not cost affective, should improve performenece
+        let mut repeated_biases = Arr::from_shape_fn((dots.shape()[0], dots.shape()[1]), 
+                                                                            |(_i, j)| *self.biases.get((j, 0)).unwrap()
+                                                                            );
+        Zip::from(&mut dots).and(&mut repeated_biases).for_each(|dot, &mut bias| *dot += bias);
+        println!("got here 3b");
         self.current_weighted_inputs = dots.clone();
+        println!("got here 3c");
         let a = self.activation_fn.forward(&dots);
+        println!("got here 3d");
         self.current_activations = a.clone();
+        println!("got here 3e");
         a
     }
 
