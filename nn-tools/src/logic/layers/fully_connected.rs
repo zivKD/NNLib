@@ -42,12 +42,13 @@ impl init<'_> {
 
 impl Layer for init<'_> {
     fn feedforward(&mut self, inputs: ArrViewMut) -> Arr {
-        let mut dots = inputs.dot(self.weights);
+        // Probably not cost affective, should improve performenece
+        println!("got here 3a'");
+        let mut dots = self.weights.dot(&inputs);
         println!("got here 3a");
         // Probably not cost affective, should improve performenece
         let mut repeated_biases = Arr::from_shape_fn((dots.shape()[0], dots.shape()[1]), 
-                                                                            |(_i, j)| *self.biases.get((j, 0)).unwrap()
-                                                                            );
+                                                                            |(_i, j)| *self.biases.get((j, 0)).unwrap());
         Zip::from(&mut dots).and(&mut repeated_biases).for_each(|dot, &mut bias| *dot += bias);
         println!("got here 3b");
         self.current_weighted_inputs = dots.clone();
@@ -61,11 +62,17 @@ impl Layer for init<'_> {
 
     fn propogate(&mut self, gradient: Arr) -> Arr {
         let w_gradient : Arr = gradient.dot(&self.current_activations.t());
+        println!("got here 8b");
         self.gradient_decent.change_weights(self.weights, &w_gradient);
+        println!("got here 8c");
         self.gradient_decent.change_biases(self.biases, &gradient);
+        println!("got here 8d");
         let mut activation_derivative = self.activation_fn.propogate(&mut self.current_weighted_inputs);
+        println!("got here 8e");
         let weighted_error: Arr = self.weights.dot(&gradient);
+        println!("got here 8f");
         Zip::from(&mut activation_derivative).and(&weighted_error).for_each(|x, &y| *x *= y);
+        println!("got here 8g");
         activation_derivative
     }
 }

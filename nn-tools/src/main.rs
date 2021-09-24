@@ -39,7 +39,7 @@ fn main() {
     
     let mut trn_img_f64 : Vec<f64> = mnist.trn_img.iter().map(|x| *x as f64).collect();
     let mut trn_lbl_f64 : Vec<f64> = mnist.trn_lbl.iter().map(|x| *x as f64).collect();
-    let trn_img = Arr::from_shape_vec(((trn_size*rows) as usize, cols as usize), trn_img_f64).unwrap();
+    let trn_img = Arr::from_shape_vec(((trn_size*rows*cols) as usize, 1), trn_img_f64).unwrap();
     let trn_lbl = Arr::from_shape_vec((trn_size as usize, 1 as usize), trn_lbl_f64).unwrap();
 
     // let mut val_img_f64 : Vec<f64> = mnist.val_img.iter().map(|x| *x as f64).collect();
@@ -54,9 +54,10 @@ fn main() {
 
     let epoches = 1;
     let mini_batch_size = 10;
+    let inputs_size = rows*cols;
     let stochastic = stochastic::init::new(0.03,mini_batch_size);
     let sigmoid = sigmoid::init {};
-    let mut w1 = Arr::zeros((28, 30));
+    let mut w1 = Arr::zeros((30, (rows*cols) as usize));
     let mut b1 = Arr::zeros((30, 1));
     let mut layer_one = fully_connected::init::new(
         784,
@@ -67,7 +68,7 @@ fn main() {
         &stochastic
     );
 
-    let mut w2 = Arr::zeros((30, 10));
+    let mut w2 = Arr::zeros((10, 30));
     let mut b2 = Arr::zeros((10, 1));
     let mut layer_two = fully_connected::init::new(
        30,
@@ -83,34 +84,34 @@ fn main() {
 
     let mut i = 0;
     while i < epoches {
-        let mut lower_bound = 0u32;
-        let mut higher_bound = trn_size/mini_batch_size as u32;
+        let mut lower_bound = 0;
+        let mut higher_bound = mini_batch_size * inputs_size as i32;
         let mut train_set = trn_img.clone();
         let train_lbl: Arr = trn_lbl.clone();
         println!("got here 1");
-        while higher_bound <= trn_size*rows {
-            let mini_batch = train_set.slice_mut(s![(lower_bound as usize)..(higher_bound as usize), ..]);
+        while higher_bound <= trn_size as i32 {
+            let mini_batch = train_set.slice_mut(s![(lower_bound as usize)..(higher_bound as usize), ..])
+                                                            .into_shape((inputs_size as usize, mini_batch_size as usize)).unwrap();
             println!("got here 2");
-            let mini_batch_lbs = train_lbl.slice(s![(lower_bound as usize)..(higher_bound as usize), ..]).to_owned();
+            let mini_batch_lbs = train_lbl.slice(s![(lower_bound as usize)..(mini_batch_size as usize), ..]).to_owned();
             println!("got here 3");
             let mut inputs = layer_one.feedforward(mini_batch);
             println!("got here 4");
             let view_inputs = inputs.view_mut(); 
             println!("got here 5");
             let outputs = layer_two.feedforward(view_inputs); 
-            println!("got here 6");
-            //ERRma
-            let mut max_outputs = outputs.map_axis(Axis(0), |x| x[x.argmax().unwrap()]).
-                                                            into_shape((trn_size as usize, 1)).unwrap();
-            println!("got here 7");
+            println!("got here 6 {:?}", outputs.shape());
+            let mut max_outputs = outputs.map_axis(Axis(1), |x| *x.get( x.argmax().unwrap()).unwrap()).
+                                                            into_shape((mini_batch_size as usize, 1)).unwrap();
+            println!("got here 7 {:?} {:?}", mini_batch_lbs.shape(), max_outputs.shape());
             let error = quadratic.propogate(&mut max_outputs, &mini_batch_lbs);
             println!("got here 8");
             let next_error = layer_two.propogate(error);
             println!("got here 9");
             layer_one.propogate(next_error);
             println!("got here 10");
-            lower_bound+=trn_size/mini_batch_size as u32;
-            higher_bound+=trn_size/mini_batch_size as u32;
+            lower_bound+= mini_batch_size;
+            higher_bound+= mini_batch_size;
         }
 
         let mini_batch = train_set.slice_mut(s![0..10, ..]);
