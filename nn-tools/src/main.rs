@@ -1,8 +1,10 @@
 pub mod logic;
 pub mod data;
-use ndarray::{Array, Array2, ArrayViewMut, ArrayViewMut2, Axis, Slice, s};
+use std::cmp::min;
+
+use ndarray::{Array, Array2, ArrayBase, ArrayView2, ArrayViewMut, ArrayViewMut2, Axis, Slice, s};
 pub type Arr = Array2<f64>;
-pub type ArrViewMut<'a> = ArrayViewMut2<'a, f64>;
+pub type ArrView<'a> = ArrayView2<'a, f64>;
 use ndarray_stats::QuantileExt;
 
 use logic::{
@@ -14,6 +16,8 @@ use logic::{
 use logic::{activations_fns::sigmoid, gradient_decents::stochastic, layers::fully_connected, loss_fns::quadratic};
 use ndarray::{ arr2 };
 use mnist::{Mnist,MnistBuilder};
+
+use crate::logic::utils::{repeat, repeated_axis_zero};
 
 
 /*
@@ -88,37 +92,46 @@ fn main() {
         let mut higher_bound = mini_batch_size * inputs_size as i32;
         let mut train_set = trn_img.clone();
         let train_lbl: Arr = trn_lbl.clone();
-        println!("got here 1");
         while higher_bound <= trn_size as i32 {
-            let mini_batch = train_set.slice_mut(s![(lower_bound as usize)..(higher_bound as usize), ..])
+            println!("got here 1");
+            let mini_batch: ArrView = train_set.slice(s![(lower_bound as usize)..(higher_bound as usize), ..])
                                                             .into_shape((inputs_size as usize, mini_batch_size as usize)).unwrap();
-            println!("got here 2");
             let mini_batch_lbs = train_lbl.slice(s![(lower_bound as usize)..(mini_batch_size as usize), ..]).to_owned();
-            println!("got here 3");
+             /*
+                Return a 10-dimensional unit vector with a 1.0 in the jth
+                position and zeroes elsewhere.  This is used to convert a digit
+                (0...9) into a corresponding desired output from the neural
+                network.
+            */
+            let mini_batch_lbs = Arr::from_shape_fn((mini_batch_size as usize, 10), |(i, j)| {
+                let mut val = 0.;
+                if *mini_batch_lbs.get((i, 0)).unwrap() as usize == j {
+                    val = 1.;
+                }
+
+                val
+            });
+            println!("mini batch shape: {:?}", mini_batch.shape());
             let mut inputs = layer_one.feedforward(mini_batch);
-            println!("got here 4");
-            let view_inputs = inputs.view_mut(); 
-            println!("got here 5");
-            let outputs = layer_two.feedforward(view_inputs); 
-            println!("got here 6 {:?}", outputs.shape());
-            let mut max_outputs = outputs.map_axis(Axis(1), |x| *x.get( x.argmax().unwrap()).unwrap()).
-                                                            into_shape((mini_batch_size as usize, 1)).unwrap();
-            println!("got here 7 {:?} {:?}", mini_batch_lbs.shape(), max_outputs.shape());
-            let error = quadratic.propogate(&mut max_outputs, &mini_batch_lbs);
-            println!("got here 8");
-            let next_error = layer_two.propogate(error);
-            println!("got here 9");
-            layer_one.propogate(next_error);
-            println!("got here 10");
+            println!("layer 1 outputs: {:?}", inputs.shape());
+            let view_inputs = inputs.view(); 
+            let mut outputs = layer_two.feedforward(view_inputs); 
+            println!("layer 2 outputs: {:?}", outputs.shape());
+            let error = quadratic.propogate(&mut outputs, &mini_batch_lbs) ;
+            println!("error shape: {:?}", error.shape());
+            let next_error = layer_two.propogate(error,view_inputs);
+            println!("error shape: {:?}", next_error.shape());
+            layer_one.propogate(next_error, mini_batch);
+            println!("got here 14");
             lower_bound+= mini_batch_size;
             higher_bound+= mini_batch_size;
         }
 
-        let mini_batch = train_set.slice_mut(s![0..10, ..]);
-        let mut inputs = layer_one.feedforward(mini_batch);
-        let view_inputs = inputs.view_mut(); 
-        let mut outputs = layer_two.feedforward(view_inputs); 
-        println!("{:?}", quadratic.output(&mut outputs, &trn_lbl));
+        // let mini_batch = train_set.slice_mut(s![0..10, ..]);
+        // let mut inputs = layer_one.feedforward(mini_batch);
+        // let view_inputs = inputs.view_mut(); 
+        // let mut outputs = layer_two.feedforward(view_inputs); 
+        // println!("{:?}", quadratic.output(&mut outputs, &trn_lbl));
         i+=1;
    }
 }

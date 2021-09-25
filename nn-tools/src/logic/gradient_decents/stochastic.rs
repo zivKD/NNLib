@@ -20,12 +20,14 @@ impl GradientDecent for init {
     fn change_weights<'a>(&self, w: &'a mut Arr, gradient: & Arr) {
         let rate = self.learning_rate / self.mini_batch_size as f64;
         let balanced_gradient = rate * gradient;
+        println!("w shape: {:?} gradient shape: {:?}", w.shape(), balanced_gradient.shape());
         Zip::from(w).and(&balanced_gradient).for_each(|x, &y| *x -= y);
     }
 
     fn change_biases<'a>(&self, b: &'a mut Arr, gradient: & Arr) {
         let rate = self.learning_rate / self.mini_batch_size as f64;
         let balanced_gradient = rate * gradient;
+        println!("b shape: {:?} gradient shape: {:?}", b.shape(), balanced_gradient.shape());
         Zip::from(b).and(&balanced_gradient).for_each(|x, &y| *x -= y);
     }
 }

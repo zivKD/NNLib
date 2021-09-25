@@ -14,7 +14,7 @@ impl LossFN for init {
     }
 
     fn propogate<'a>(&self, a: &'a mut Arr, y: &'a Arr) -> Arr {
-        y - &a.view()
+        &a.view() - y
     }
 }
 
