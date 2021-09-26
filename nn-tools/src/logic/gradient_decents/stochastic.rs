@@ -4,11 +4,11 @@ use ndarray::Zip;
 
 pub struct init {
     learning_rate: f64,
-    mini_batch_size: i32
+    mini_batch_size: usize
 }
 
 impl init {
-    pub fn new(learning_rate: f64, mini_batch_size: i32) -> Self {
+    pub fn new(learning_rate: f64, mini_batch_size: usize) -> Self {
         init {
             learning_rate,
             mini_batch_size
@@ -20,14 +20,12 @@ impl GradientDecent for init {
     fn change_weights<'a>(&self, w: &'a mut Arr, gradient: & Arr) {
         let rate = self.learning_rate / self.mini_batch_size as f64;
         let balanced_gradient = rate * gradient;
-        println!("w shape: {:?} gradient shape: {:?}", w.shape(), balanced_gradient.shape());
         Zip::from(w).and(&balanced_gradient).for_each(|x, &y| *x -= y);
     }
 
     fn change_biases<'a>(&self, b: &'a mut Arr, gradient: & Arr) {
         let rate = self.learning_rate / self.mini_batch_size as f64;
         let balanced_gradient = rate * gradient;
-        println!("b shape: {:?} gradient shape: {:?}", b.shape(), balanced_gradient.shape());
         Zip::from(b).and(&balanced_gradient).for_each(|x, &y| *x -= y);
     }
 }
