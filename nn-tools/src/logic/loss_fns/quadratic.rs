@@ -1,9 +1,9 @@
 use crate::Arr;
 use crate::logic::loss_fns::base_loss_fn::LossFN; 
 
-pub struct init {}
+pub struct Init {}
 
-impl LossFN for init {
+impl LossFN for Init {
     fn output<'a>(&self, a: &'a mut Arr, y: &'a Arr) -> Arr {
        let mut pos  = &a.view() - y;
        pos.mapv_inplace(|x| {
@@ -24,7 +24,7 @@ mod tests {
     use crate::Arr;
     use crate::logic::utils::round_decimal;
     use ndarray::arr2;
-    const QUADRATIC: init = init {};
+    const QUADRATIC: Init = Init {};
 
     #[test]
     fn correct_output(){

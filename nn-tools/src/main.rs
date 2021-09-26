@@ -1,12 +1,8 @@
 pub mod logic;
 pub mod data;
-use std::cmp::min;
-
-use ndarray::{Array, Array2, ArrayBase, ArrayView2, ArrayViewMut, ArrayViewMut2, Axis, Slice, s};
+use ndarray::{Array2, ArrayView2, s};
 pub type Arr = Array2<f64>;
 pub type ArrView<'a> = ArrayView2<'a, f64>;
-use ndarray_stats::QuantileExt;
-
 use logic::{
     activations_fns::base_activation_fn::ActivationFN, 
     gradient_decents::base_gradient_decent::GradientDecent, 
@@ -14,11 +10,7 @@ use logic::{
     loss_fns::base_loss_fn::LossFN
 };
 use logic::{activations_fns::sigmoid, gradient_decents::stochastic, layers::fully_connected, loss_fns::quadratic};
-use ndarray::{ arr2 };
-use mnist::{Mnist,MnistBuilder};
-
-use crate::logic::utils::{repeat, repeated_axis_zero};
-
+use mnist::{MnistBuilder};
 
 /*
 TODO:
@@ -41,8 +33,8 @@ fn main() {
         .test_set_length(tst_size as u32)
         .finalize();
     
-    let mut trn_img_f64 : Vec<f64> = mnist.trn_img.iter().map(|x| *x as f64).collect();
-    let mut trn_lbl_f64 : Vec<f64> = mnist.trn_lbl.iter().map(|x| *x as f64).collect();
+    let trn_img_f64 : Vec<f64> = mnist.trn_img.iter().map(|x| *x as f64).collect();
+    let trn_lbl_f64 : Vec<f64> = mnist.trn_lbl.iter().map(|x| *x as f64).collect();
     let trn_img = Arr::from_shape_vec((trn_size*rows*cols, 1), trn_img_f64).unwrap();
     let trn_lbl = Arr::from_shape_vec((trn_size, 1), trn_lbl_f64).unwrap();
 
@@ -59,13 +51,11 @@ fn main() {
     let epoches = 1;
     let mini_batch_size = 10 as usize;
     let inputs_size = rows*cols as usize;
-    let stochastic = stochastic::init::new(0.03,mini_batch_size);
-    let sigmoid = sigmoid::init {};
+    let stochastic = stochastic::Init::new(0.03,mini_batch_size);
+    let sigmoid = sigmoid::Init {};
     let mut w1 = Arr::zeros((30, rows*cols));
     let mut b1 = Arr::zeros((30, 1));
-    let mut layer_one = fully_connected::init::new(
-        784,
-        30,
+    let mut layer_one = fully_connected::Init::new(
         &mut w1,
         &mut b1,
         &sigmoid,
@@ -74,16 +64,14 @@ fn main() {
 
     let mut w2 = Arr::zeros((10, 30));
     let mut b2 = Arr::zeros((10, 1));
-    let mut layer_two = fully_connected::init::new(
-       30,
-        10,
+    let mut layer_two = fully_connected::Init::new(
         &mut w2,
         &mut b2,
         &sigmoid,
         &stochastic
     );
 
-    let quadratic = quadratic::init {};
+    let quadratic = quadratic::Init {};
 
 
     let mut i = 0;
@@ -92,6 +80,7 @@ fn main() {
         let mut lower_bound = 0;
         let mut higher_bound = mini_batch_size * inputs_size;
         while higher_bound < trn_size*inputs_size {
+            println!("running: {}", iteration);
             let mini_batch: ArrView = trn_img.slice(s![lower_bound..higher_bound, ..]);
             let mini_batch = mini_batch
                                                             .into_shape((inputs_size, mini_batch_size)).unwrap();
@@ -121,10 +110,7 @@ fn main() {
             higher_bound = iteration * mini_batch_size * inputs_size;
         }
 
-        // let mini_batch = train_set.slice_mut(s![0..10, ..]);
-        // let mut inputs = layer_one.feedforward(mini_batch);
-        // let view_inputs = inputs.view_mut(); 
-        // let mut outputs = layer_two.feedforward(view_inputs); 
+        // TODO ADD CHECK WITH TEST SET
         i+=1;
    }
 }

@@ -6,9 +6,11 @@ pub fn round_decimal(places: u32, x: f64) -> f64 {
 }
 
 pub fn repeat(get_fn: &dyn Fn((usize, usize),) -> f64, desired_shape: &(usize, usize)) -> Arr {
-        Arr::from_shape_fn(*desired_shape, get_fn)
+    // Probably not cost affective, should improve performenece
+    Arr::from_shape_fn(*desired_shape, get_fn)
 }
 
 pub fn repeated_axis_zero(arr: &Arr, desired_shape: &(usize, usize)) -> Arr {
-    repeat(&|(i, j)| *arr.get((i, 0)).unwrap(), desired_shape)
+    // Probably not cost affective, should improve performenece
+    repeat(&|(i, _j)| *arr.get((i, 0)).unwrap(), desired_shape)
 }

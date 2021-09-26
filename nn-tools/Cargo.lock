@@ -126,7 +126,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "nnTools"
+name = "nn_tools"
 version = "0.1.0"
 dependencies = [
  "ferris-says",
