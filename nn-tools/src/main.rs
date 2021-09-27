@@ -37,16 +37,29 @@ fn main() {
     let trn_lbl_f64 : Vec<f64> = mnist.trn_lbl.iter().map(|x| *x as f64).collect();
     let trn_img = Arr::from_shape_vec((trn_size*rows*cols, 1), trn_img_f64).unwrap();
     let trn_lbl = Arr::from_shape_vec((trn_size, 1), trn_lbl_f64).unwrap();
+    /* Return a 10-dimensional unit vector with a 1.0 in the jth
+        position and zeroes elsewhere.  This is used to convert a digit
+        (0...9) into a corresponding desired output from the neural
+        network.
+    */
+    let trn_lbl = Arr::from_shape_fn((trn_size, 10), |(i, j)| {
+        let mut val = 0.;
+        if *trn_lbl.get((i, 0)).unwrap() as usize == j {
+            val = 1.;
+        }
 
-    // let mut val_img_f64 : Vec<f64> = mnist.val_img.iter().map(|x| *x as f64).collect();
-    // let mut val_lbl_f64 : Vec<f64> = mnist.val_lbl.iter().map(|x| *x as f64).collect();
-    // let val_img = Arr::from_shape_vec(((val_size*rows) as usize, cols as usize), val_img_f64);
-    // let val_lbl = Arr::from_shape_vec(((val_size*rows) as usize, cols as usize), val_lbl_f64);
+        val
+    });
 
-    // let mut tst_img_f64 : Vec<f64> = mnist.tst_img.iter().map(|x| *x as f64).collect();
-    // let mut tst_lbl_f64 : Vec<f64> = mnist.tst_lbl.iter().map(|x| *x as f64).collect();
-    // let tst_img = Arr::from_shape_vec(((tst_size*rows) as usize, cols as usize), tst_img_f64);
-    // let tst_lbl = Arr::from_shape_vec(((tst_size*rows) as usize, cols as usize), tst_lbl_f64);
+    // let tst_img_f64 : Vec<f64> = mnist.tst_img.iter().map(|x| *x as f64).collect();
+    // let tst_lbl_f64 : Vec<f64> = mnist.tst_lbl.iter().map(|x| *x as f64).collect();
+    // let tst_img = Arr::from_shape_vec((tst_size*rows*cols, 1), tst_img_f64).unwrap();
+    // let tst_lbl = Arr::from_shape_vec((tst_size, 1), tst_lbl_f64).unwrap();
+
+    let val_img_f64 : Vec<f64> = mnist.val_img.iter().map(|x| *x as f64).collect();
+    let val_lbl_f64 : Vec<f64> = mnist.val_lbl.iter().map(|x| *x as f64).collect();
+    let val_img = Arr::from_shape_vec((val_size*rows*cols, 1), val_img_f64).unwrap();
+    let val_lbl = Arr::from_shape_vec((val_size, 1), val_lbl_f64).unwrap();
 
     let epoches = 1;
     let mini_batch_size = 10 as usize;
@@ -85,20 +98,6 @@ fn main() {
             let mini_batch = mini_batch
                                                             .into_shape((inputs_size, mini_batch_size)).unwrap();
             let mini_batch_lbs = trn_lbl.slice(s![(iteration-1)*mini_batch_size..iteration*mini_batch_size, ..]).to_owned();
-             /*
-                Return a 10-dimensional unit vector with a 1.0 in the jth
-                position and zeroes elsewhere.  This is used to convert a digit
-                (0...9) into a corresponding desired output from the neural
-                network.
-            */
-            let mini_batch_lbs = Arr::from_shape_fn((mini_batch_size, 10), |(i, j)| {
-                let mut val = 0.;
-                if *mini_batch_lbs.get((i, 0)).unwrap() as usize == j {
-                    val = 1.;
-                }
-
-                val
-            });
             let inputs = layer_one.feedforward(mini_batch);
             let view_inputs = inputs.view(); 
             let mut outputs = layer_two.feedforward(view_inputs); 
@@ -110,7 +109,7 @@ fn main() {
             higher_bound = iteration * mini_batch_size * inputs_size;
         }
 
-        // TODO ADD CHECK WITH TEST SET
+
         i+=1;
    }
 }
