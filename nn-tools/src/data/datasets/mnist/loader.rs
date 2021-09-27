@@ -75,6 +75,7 @@ impl Loader<'_> {
         let val_lbl_f64 : Vec<f64> = self.get_vectorized_set(mnist.val_lbl);
         let val_img = Arr::from_shape_vec((val_size*self.input_rows_size*self.input_cols_size, 1), val_img_f64).unwrap();
         let val_lbl = Arr::from_shape_vec((val_size, 1), val_lbl_f64).unwrap();
+        let val_lbl = self.get_lbl_set(val_lbl, val_size);
 
 
         return (trn_img, trn_lbl, tst_img, tst_lbl, val_img, val_lbl);
@@ -90,9 +91,9 @@ impl Loader<'_> {
             (0...9) into a corresponding desired output from the neural
             network.
         */
-        Arr::from_shape_fn((lbls_size , 10), |(i, j)| {
+        Arr::from_shape_fn((10, lbls_size), |(i, j)| {
             let mut val = 0.;
-            if *lbls_set.get((i, 0)).unwrap() as usize == j {
+            if *lbls_set.get((j, 0)).unwrap() as usize == i {
                 val = 1.;
             }
 

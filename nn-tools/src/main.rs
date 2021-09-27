@@ -75,10 +75,6 @@ fn main() {
     let layers_vec: Vec<&mut dyn Layer> = vec!(&mut layer_one, &mut layer_two);
     let layers: RefCell<Vec<&mut dyn Layer>> = RefCell::new(layers_vec);
 
-    // let mut val_network = network::Network::new(
-    // );
-
-
     let mut i = 0;
     while i < epoches {
         network::Network::new(
@@ -89,7 +85,7 @@ fn main() {
             trn_size,
             layers.borrow_mut(),
             &quadratic
-        ).run(true);
+        ).run(false);
 
         network::Network::new(
             &val_img,

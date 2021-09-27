@@ -1,3 +1,4 @@
+use ndarray::Slice;
 use ndarray::Axis;
 use core::cell::RefMut;
 use ndarray::{Zip, s};
@@ -47,7 +48,10 @@ impl Network<'_> {
             let mini_batch: ArrView = self.data_set.slice(s![lower_bound..higher_bound, ..]);
             let mini_batch = mini_batch
                                                             .into_shape((self.inputs_size, self.mini_batch_size)).unwrap();
-            let mini_batch_lbs = self.lbl_set.slice(s![(iteration-1)*self.mini_batch_size..iteration*self.mini_batch_size, ..]).to_owned();
+            let mini_batch_lbs = self.lbl_set.slice_axis(
+                Axis(1), 
+                Slice::from((iteration-1)*self.mini_batch_size..iteration*self.mini_batch_size)
+            ).to_owned();
             let mut activations = vec!();
             let inputs = mini_batch.to_owned();
             activations.push(inputs);
@@ -62,10 +66,15 @@ impl Network<'_> {
 
             if print_result {
                 let accuracy= Zip::from(activations[i].columns()).and(mini_batch_lbs.columns()).
-                    map_collect(|x, y| x.argmax().unwrap() == y.argmax().unwrap()).
+                    map_collect(|x, y| {
+                        let max_index_in_outputs = x.argmax().unwrap();
+                        let max_index_in_lbls = y.argmax().unwrap();
+                        max_index_in_outputs == max_index_in_lbls
+                    }).
                     iter().filter(|x| **x).collect::<Vec<&bool>>().len();
 
-                println!("network accuracy: {}", accuracy);
+                let success_percentage = (accuracy as f64 /self.mini_batch_size as f64) * 100.;
+                println!("network accuracy: {}%", success_percentage);
             }
 
             let mut error = self.loss_fn.propogate(&mut activations[i], &mini_batch_lbs);
