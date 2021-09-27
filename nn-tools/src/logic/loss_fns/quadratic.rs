@@ -38,7 +38,7 @@ mod tests {
     fn correct_propogate() {
         let mut a : Arr = arr2(&[[1.0, 0.532, 0.814], [0.3103, 0.4348, 0.12]]);
         let y: Arr = arr2(&[[0.8, 0.6, 0.5], [0.2, 0.4, 0.2]]);
-        let result: Arr = arr2(&[[-0.2, 0.068, -0.314], [-0.1103, -0.0348, 0.08]]);
+        let result: Arr = arr2(&[[0.2, -0.068, 0.314], [0.1103, 0.0348, -0.08]]);
         assert_eq!(QUADRATIC.propogate(&mut a, &y).mapv(|x| round_decimal(4, x)), result);
     }
 }

@@ -4,26 +4,26 @@ use crate::{Arr, ArrView};
 
 use super::{layers::base_layer::Layer, loss_fns::base_loss_fn::LossFN};
 
-pub struct Network {
+pub struct Network<'a> {
     data_set : Arr,
     lbl_set: Arr,
     mini_batch_size: usize,
     inputs_size: usize,
     data_set_size: usize,
-    layers: Vec<Box<dyn Layer>>,
-    loss_fn: Box<dyn LossFN>,
+    layers: Vec<&'a mut Layer>,
+    loss_fn: &'a LossFN,
 }
 
-impl Network {
-    pub fn new(
+impl Network<'_> {
+    pub fn new<'a>(
         data_set : Arr,
         lbl_set: Arr,
         mini_batch_size: usize,
         inputs_size: usize,
         data_set_size: usize,
-        layers: Vec<Box<dyn Layer>>,
-        loss_fn: Box<dyn LossFN>,
-    ) -> Network {
+        layers: Vec<&'a mut Layer>,
+        loss_fn: &'a LossFN
+    ) -> Network<'a> {
         Network {
             data_set,
             lbl_set,
@@ -46,7 +46,7 @@ impl Network {
                                                             .into_shape((self.inputs_size, self.mini_batch_size)).unwrap();
             let mini_batch_lbs = self.lbl_set.slice(s![(iteration-1)*self.mini_batch_size..iteration*self.mini_batch_size, ..]).to_owned();
             let mut activations = vec!();
-            let mut inputs = mini_batch.to_owned();
+            let inputs = mini_batch.to_owned();
             activations.push(inputs);
             let mut i = 0;
             for layer in &mut self.layers {
@@ -56,13 +56,15 @@ impl Network {
             }
 
             let mut i = activations.len() - 1;
-            let mut error = self.loss_fn.propogate(&mut activations[i], &mini_batch_lbs) ;
+            let mut error = self.loss_fn.propogate(&mut activations[i], &mini_batch_lbs);
             self.layers.reverse();
 
             for layer in &mut self.layers {
                 i-=1;
                 error = layer.propogate(error, activations[i].view());
             }
+
+            self.layers.reverse();
 
             iteration+=1;
             lower_bound = (iteration - 1) * (self.mini_batch_size * self.inputs_size);
