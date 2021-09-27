@@ -1,3 +1,4 @@
+use core::cell::RefMut;
 use ndarray::s;
 
 use crate::{Arr, ArrView};
@@ -5,23 +6,23 @@ use crate::{Arr, ArrView};
 use super::{layers::base_layer::Layer, loss_fns::base_loss_fn::LossFN};
 
 pub struct Network<'a> {
-    data_set : Arr,
-    lbl_set: Arr,
+    data_set : &'a Arr,
+    lbl_set: &'a Arr,
     mini_batch_size: usize,
     inputs_size: usize,
     data_set_size: usize,
-    layers: Vec<&'a mut Layer>,
+    layers: RefMut<'a, Vec<&'a mut Layer>>,
     loss_fn: &'a LossFN,
 }
 
 impl Network<'_> {
     pub fn new<'a>(
-        data_set : Arr,
-        lbl_set: Arr,
+        data_set : &'a Arr,
+        lbl_set: &'a Arr,
         mini_batch_size: usize,
         inputs_size: usize,
         data_set_size: usize,
-        layers: Vec<&'a mut Layer>,
+        layers: RefMut<'a, Vec<&'a mut Layer>>,
         loss_fn: &'a LossFN
     ) -> Network<'a> {
         Network {
@@ -39,7 +40,7 @@ impl Network<'_> {
         let mut iteration = 1;
         let mut lower_bound = 0;
         let mut higher_bound = self.mini_batch_size * self.inputs_size;
-        while higher_bound < self.data_set_size*self.inputs_size {
+        while higher_bound <= self.data_set_size*self.inputs_size {
             println!("running: {}", iteration);
             let mini_batch: ArrView = self.data_set.slice(s![lower_bound..higher_bound, ..]);
             let mini_batch = mini_batch
@@ -49,7 +50,7 @@ impl Network<'_> {
             let inputs = mini_batch.to_owned();
             activations.push(inputs);
             let mut i = 0;
-            for layer in &mut self.layers {
+            for layer in self.layers.iter_mut() {
                 let new_inputs = layer.feedforward(activations[i].view());
                 activations.push(new_inputs);
                 i+=1;
@@ -58,7 +59,7 @@ impl Network<'_> {
             let mut i = activations.len() - 1;
             let mut error = self.loss_fn.propogate(&mut activations[i], &mini_batch_lbs);
 
-            for layer in &mut self.layers.iter_mut().rev() {
+            for layer in self.layers.iter_mut().rev() {
                 i-=1;
                 error = layer.propogate(error, activations[i].view());
             }

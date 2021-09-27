@@ -1,5 +1,7 @@
 pub mod logic;
 pub mod data;
+use std::{cell::RefCell, rc::Rc};
+
 use ndarray::{Array2, ArrayView2, s};
 pub type Arr = Array2<f64>;
 pub type ArrView<'a> = ArrayView2<'a, f64>;
@@ -15,6 +17,7 @@ use logic::{activations_fns::sigmoid, gradient_decents::stochastic, layers::full
 
 /*
 TODO:
+    1. Need to add support of usage of Arc and shit in order to run the validation set
     1. How to optimize the library, when to use borrowing, when to copy and so on...
 */
 
@@ -68,21 +71,36 @@ fn main() {
 
     let quadratic = quadratic::Init {};
 
-    let layers: Vec<&mut Layer> = vec!(&mut layer_one, &mut layer_two);
-    let mut network = network::Network::new(
-        trn_img,
-        trn_lbl,
-        mini_batch_size,
-        inputs_size,
-        trn_size,
-        layers,
-        &quadratic
-    );
+
+    let layers_vec: Vec<&mut dyn Layer> = vec!(&mut layer_one, &mut layer_two);
+    let layers: RefCell<Vec<&mut dyn Layer>> = RefCell::new(layers_vec);
+
+    // let mut val_network = network::Network::new(
+    // );
 
 
     let mut i = 0;
     while i < epoches {
-        network.run();
+        network::Network::new(
+            &trn_img,
+            &trn_lbl,
+            mini_batch_size,
+            inputs_size,
+            trn_size,
+            layers.borrow_mut(),
+            &quadratic
+        ).run();
+
+        network::Network::new(
+            &val_img,
+            &val_lbl,
+            val_size,
+            inputs_size,
+            val_size,
+            layers.borrow_mut(),
+            &quadratic
+        ).run();
+
         i+=1;
    }
 }
