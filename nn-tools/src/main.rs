@@ -79,30 +79,10 @@ fn main() {
         &quadratic
     );
 
-    network.run();
 
     let mut i = 0;
-//     while i < epoches {
-//         let mut iteration = 1;
-//         let mut lower_bound = 0;
-//         let mut higher_bound = mini_batch_size * inputs_size;
-//         while higher_bound < trn_size*inputs_size {
-//             println!("running: {}", iteration);
-//             let mini_batch: ArrView = trn_img.slice(s![lower_bound..higher_bound, ..]);
-//             let mini_batch = mini_batch
-//                                                             .into_shape((inputs_size, mini_batch_size)).unwrap();
-//             let mini_batch_lbs = trn_lbl.slice(s![(iteration-1)*mini_batch_size..iteration*mini_batch_size, ..]).to_owned();
-//             let inputs = layer_one.feedforward(mini_batch);
-//             let view_inputs = inputs.view(); 
-//             let mut outputs = layer_two.feedforward(view_inputs); 
-//             let error = quadratic.propogate(&mut outputs, &mini_batch_lbs) ;
-//             let next_error = layer_two.propogate(error,view_inputs);
-//             layer_one.propogate(next_error, mini_batch);
-//             iteration+=1;
-//             lower_bound = (iteration - 1) * (mini_batch_size * inputs_size);
-//             higher_bound = iteration * mini_batch_size * inputs_size;
-//         }
-
-//         i+=1;
-//    }
+    while i < epoches {
+        network.run();
+        i+=1;
+   }
 }

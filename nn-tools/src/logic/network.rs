@@ -57,14 +57,11 @@ impl Network<'_> {
 
             let mut i = activations.len() - 1;
             let mut error = self.loss_fn.propogate(&mut activations[i], &mini_batch_lbs);
-            self.layers.reverse();
 
-            for layer in &mut self.layers {
+            for layer in &mut self.layers.iter_mut().rev() {
                 i-=1;
                 error = layer.propogate(error, activations[i].view());
             }
-
-            self.layers.reverse();
 
             iteration+=1;
             lower_bound = (iteration - 1) * (self.mini_batch_size * self.inputs_size);
