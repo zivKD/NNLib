@@ -89,7 +89,7 @@ fn main() {
             trn_size,
             layers.borrow_mut(),
             &quadratic
-        ).run();
+        ).run(true);
 
         network::Network::new(
             &val_img,
@@ -99,7 +99,7 @@ fn main() {
             val_size,
             layers.borrow_mut(),
             &quadratic
-        ).run();
+        ).run(true);
 
         i+=1;
    }

@@ -1,5 +1,7 @@
+use ndarray::Axis;
 use core::cell::RefMut;
-use ndarray::s;
+use ndarray::{Zip, s};
+use ndarray_stats::QuantileExt;
 
 use crate::{Arr, ArrView};
 
@@ -23,7 +25,7 @@ impl Network<'_> {
         inputs_size: usize,
         data_set_size: usize,
         layers: RefMut<'a, Vec<&'a mut Layer>>,
-        loss_fn: &'a LossFN
+        loss_fn: &'a LossFN,
     ) -> Network<'a> {
         Network {
             data_set,
@@ -36,7 +38,7 @@ impl Network<'_> {
         }
     }
 
-    pub fn run(&mut self) {
+    pub fn run(&mut self, print_result: bool) {
         let mut iteration = 1;
         let mut lower_bound = 0;
         let mut higher_bound = self.mini_batch_size * self.inputs_size;
@@ -57,6 +59,15 @@ impl Network<'_> {
             }
 
             let mut i = activations.len() - 1;
+
+            if print_result {
+                let accuracy= Zip::from(activations[i].columns()).and(mini_batch_lbs.columns()).
+                    map_collect(|x, y| x.argmax().unwrap() == y.argmax().unwrap()).
+                    iter().filter(|x| **x).collect::<Vec<&bool>>().len();
+
+                println!("network accuracy: {}", accuracy);
+            }
+
             let mut error = self.loss_fn.propogate(&mut activations[i], &mini_batch_lbs);
 
             for layer in self.layers.iter_mut().rev() {
