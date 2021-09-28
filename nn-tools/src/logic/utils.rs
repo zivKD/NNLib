@@ -1,6 +1,8 @@
+use rand::thread_rng;
 use ndarray::{Array1, Array2, ArrayView1};
 use ndarray::{Axis, Zip};
 use ndarray_rand::RandomExt;
+use rand::prelude::SliceRandom;
 use crate::Arr;
 
 pub fn round_decimal(places: u32, x: f64) -> f64 {
@@ -18,38 +20,31 @@ pub fn repeated_axis_zero(arr: &Arr, desired_shape: &(usize, usize)) -> Arr {
     repeat(&|(i, _j)| *arr.get((i, 0)).unwrap(), desired_shape)
 }
 
-//TODO
-pub fn shuffle_rows(data_set: &Arr, lbl_set: &Arr, inputs_size: usize, set_size: usize) -> (Arr, Arr) {
-    // data_set trn_size*inputs_size X 1
-    // lbl_set 10 X trn_size
-    // inputs_size <-> 10
-    // Vec<Vec<(input, output)>> trn_sizeX(10, inputs_size)
-    println!("got here 1");
+// NOT WORKING
+pub fn shuffle_sets(data_set: &Arr, lbl_set: &Arr, inputs_size: usize, set_size: usize) -> (Arr, Arr) {
     let reshaped_data_set = data_set.to_shape((inputs_size, set_size)).unwrap();
-    println!("got here 2");
-    let zip: Array1<(ArrayView1<f64>, ArrayView1<f64>)> = Zip::from(reshaped_data_set.columns()).
-    and(lbl_set.columns()).map_collect(|c1:  ArrayView1<f64>, c2: ArrayView1<f64>| (c1, c2));
-    println!("zip shape {:?}", zip.shape());
-    let shuffled: Array1<(ArrayView1<f64>, ArrayView1<f64>)> = 
-        zip.sample_axis(Axis(0), zip.len_of(Axis(0)), ndarray_rand::SamplingStrategy::WithReplacement);
-    println!("got here 4");
-    let new_data_set: Arr = Arr::from_shape_fn((inputs_size * set_size, 1), |(i, j)| {
-        let index_set = i % set_size;
-        let index_inputs = i % inputs_size;
-        *shuffled.get(index_set).expect(&format!("i: {} set index: {} index index: {}", i, index_set, index_inputs)).
-        0.get(index_inputs).expect(&format!("i: {} set index: {} index index: {}", i, index_set, index_inputs))
+    let mut zip: Vec<(ArrayView1<f64>, ArrayView1<f64>)> = Zip::from(reshaped_data_set.columns()).and(lbl_set.columns()).
+            map_collect(|c1:  ArrayView1<f64>, c2: ArrayView1<f64>| (c1, c2)).to_vec();
+    zip.shuffle(&mut thread_rng());
+    let mut new_vec: Vec<f64> = vec!();
+    zip.iter().for_each(|x| {
+        let mut vec = x.0.to_vec();
+        new_vec.append(&mut vec)
     });
-    println!("got here 5");
-    let new_lbl_set: Arr = Arr::from_shape_fn((10, set_size), |(i, j)| {
-        let index = (j / set_size) * set_size + j % set_size;
-        shuffled.get(index).unwrap().1[i]
+    let new_data_set = Arr::from_shape_vec((set_size*inputs_size, 1), new_vec).unwrap();
+    let mut new_vec: Vec<f64> = vec!();
+    zip.iter().for_each(|x| {
+        let mut vec = x.1.to_vec();
+        new_vec.append(&mut vec)
     });
-    println!("got here 6");
-
-    (new_data_set, new_lbl_set)
+    let new_lbls_set = Arr::from_shape_vec((2, set_size), new_vec).unwrap();
+    (new_data_set, new_lbls_set)
 }
+
 #[cfg(test)]
 mod tests {
+    use std::collections::HashMap;
+
     use ndarray_rand::rand_distr::Uniform;
 
     use super::*;
@@ -57,37 +52,48 @@ mod tests {
 
     #[test]
     fn shuffle_correct(){
-        // trn_size = 8, inputs_size = 4
-        let data_set = Arr::random((32, 1), Uniform::new(0.,10.));
-        let lbl_set = Arr::random((10, 8), Uniform::new(0.,10.));
-        let (new_data_set, new_lbl_set) = shuffle_rows(&data_set, &lbl_set, 4, 8);
+        // trn_size = 4, inputs_size = 3
+        let data_set = Arr::random((12, 1), Uniform::new(0.,10.));
+        let lbl_set = Arr::random((2, 4), Uniform::new(0.,10.));
+        let (new_data_set, new_lbl_set) = shuffle_sets(&data_set, &lbl_set, 3, 4);
+        println!("lbl: {:?} new lbl: {:?}", lbl_set, new_lbl_set);
+        // println!("trn: {:?} new trn: {:?}", data_set, new_data_set);
         assert_eq!(data_set.shape(), new_data_set.shape());
-        println!("got here 7");
         assert_eq!(lbl_set.shape(), new_lbl_set.shape());
-        println!("got here 8");
-        let row = data_set.row(0);
-        let mut new_row_index = 0;
-        for new_row in new_data_set.rows() {
-            let equality = Zip::from(&new_row).and(&row).map_collect(|x, y| x == y).iter().filter(|b| **b).collect::<Vec<&bool>>().len();
-            if equality == new_row.len() {
-                break;
-            }
-            new_row_index+=1;
-        }
+        let mut i = 0;
+        let mut j = 0;
+        let mut indices_match: HashMap<i32, i32> = HashMap::new();
+        for r1 in data_set.rows() {
+            for r2 in new_data_set.rows() {
+                if r2.len() == Zip::from(&r1).and(&r2).map_collect(|f1, f2| f1 == f2).iter().filter(|b| **b).collect::<Vec<&bool>>().len() {
+                    indices_match.insert(i, j);
+                }
 
-        println!("got here 9");
-        let lbl_row = lbl_set.index_axis(Axis(0), new_row_index % 10);
-        println!("got here 10");
-        let mut new_row_index_lbl = 0;
-        for new_row in new_lbl_set.rows() {
-            let equality = Zip::from(&new_row).and(&lbl_row).map_collect(|x, y| x == y).iter().filter(|b| **b).collect::<Vec<&bool>>().len();
-            if equality == new_row.len() {
-                break;
+                j+=1;
             }
 
-            new_row_index_lbl+=1;
+            j=0;
+            i+=1;
         }
-        println!("original {:?} new {:?}", data_set, new_data_set);
-        assert_eq!(new_row_index % 10, new_row_index_lbl);
+
+        assert_eq!(indices_match.len(), 12);
+
+        let mut i = 0;
+        let mut j = 0;
+        let mut indices_match: HashMap<i32, i32> = HashMap::new();
+        for r1 in lbl_set.rows() {
+            for r2 in new_lbl_set.rows() {
+                if r2.len() == Zip::from(&r1).and(&r2).map_collect(|f1, f2| f1 == f2).iter().filter(|b| **b).collect::<Vec<&bool>>().len() {
+                    indices_match.insert(i, j);
+                }
+
+                j+=1;
+            }
+
+            j=0;
+            i+=1;
+        }
+
+        assert_eq!(indices_match.len(), 2);
     }
 }
