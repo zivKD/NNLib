@@ -1,6 +1,5 @@
 pub mod logic;
 pub mod data;
-use ndarray::Axis;
 use std::{cell::RefCell};
 
 use ndarray::{Array2, ArrayView2};
@@ -15,11 +14,11 @@ use logic::{
 };
 use data::datasets::mnist::loader::Loader;
 use logic::{activations_fns::sigmoid, gradient_decents::stochastic, layers::fully_connected, loss_fns::quadratic};
-use ndarray_rand::{RandomExt, rand_distr::{StandardNormal, Uniform}};
+use ndarray_rand::{RandomExt, rand_distr::{Uniform}};
 
 /*
 TODO:
-    1. Need to add support of usage of Arc and shit in order to run the validation set
+    1. Why is it stuck at 9.9%
     1. How to optimize the library, when to use borrowing, when to copy and so on...
 */
 
@@ -48,6 +47,8 @@ fn main() {
         val_lbl
     ) = mnist_loader.build();
 
+    // weights = np.random.normal(loc=0, scale=np.sqrt(1/n_out), size=(n_in, n_out))
+    // biases = np.random.normal(loc=0, scale=1, size = (n_out,))
     let epoches = 30;
     let mini_batch_size = 10 as usize;
     let inputs_size = rows*cols as usize;

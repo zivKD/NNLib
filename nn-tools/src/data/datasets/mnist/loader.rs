@@ -101,3 +101,74 @@ impl Loader<'_> {
         })
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use mnist::Mnist;
+    use ndarray_stats::QuantileExt;
+
+    use super::*;
+    // intg test
+    #[test]
+    fn first_image_is_identical(){
+        let (trn_size, tst_size, val_size, rows, cols) = (50_000 as usize, 10_000 as usize, 10_000 as usize, 28 as usize, 28 as usize);
+        let mnist = MnistBuilder::new()
+            .base_path("./src/data/datasets/mnist/files")
+            .training_images_filename("train-images.idx3-ubyte")
+            .training_labels_filename("train-labels.idx1-ubyte")
+            .test_images_filename("t10k-images.idx3-ubyte")
+            .test_labels_filename("t10k-labels.idx1-ubyte")
+            .label_format_digit()
+            .training_set_length(trn_size as u32)
+            .validation_set_length(val_size as u32)
+            .test_set_length(tst_size as u32)
+            .finalize();
+
+        let mnist_loader = Loader::new(
+            "./src/data/datasets/mnist/files",
+            "train-labels.idx1-ubyte",
+            "train-images.idx3-ubyte",
+            "t10k-labels.idx1-ubyte",
+            "t10k-images.idx3-ubyte",
+            trn_size as u32,
+            tst_size as u32,
+            val_size as u32,
+            rows,
+            cols
+        );
+
+        let (
+            trn_img, 
+            trn_lbl, 
+            tst_img, 
+            tst_lbl, 
+            val_img, 
+            val_lbl
+        ) = mnist_loader.build();
+
+        let first_image_by_mnist = (0..1000).map(|i| *mnist.trn_img.get(i).unwrap() as f64).collect::<Vec<f64>>();
+        let first_image_by_loader = (0..1000).map(|i| *trn_img.get((i, 0)).unwrap()).collect::<Vec<f64>>();
+        let first_lbls_by_mnist = (0..1000).map(|i| *mnist.trn_lbl.get(i).unwrap() as usize).collect::<Vec<usize>>();
+        let first_lbls_by_loader = (0..1000).map(|i| trn_lbl.column(i).argmax().unwrap()).collect::<Vec<usize>>();
+
+        assert_eq!(first_image_by_mnist, first_image_by_loader);
+        assert_eq!(first_lbls_by_mnist, first_lbls_by_loader);
+
+        let first_image_by_mnist = (0..1000).map(|i| *mnist.tst_img.get(i).unwrap() as f64).collect::<Vec<f64>>();
+        let first_image_by_loader = (0..1000).map(|i| *tst_img.get((i, 0)).unwrap()).collect::<Vec<f64>>();
+        let first_lbls_by_mnist = (0..1000).map(|i| *mnist.tst_lbl.get(i).unwrap() as usize).collect::<Vec<usize>>();
+        let first_lbls_by_loader = (0..1000).map(|i| tst_lbl.column(i).argmax().unwrap()).collect::<Vec<usize>>();
+
+        assert_eq!(first_image_by_mnist, first_image_by_loader);
+        assert_eq!(first_lbls_by_mnist, first_lbls_by_loader);
+
+
+        let first_image_by_mnist = (0..1000).map(|i| *mnist.val_img.get(i).unwrap() as f64).collect::<Vec<f64>>();
+        let first_image_by_loader = (0..1000).map(|i| *val_img.get((i, 0)).unwrap()).collect::<Vec<f64>>();
+        let first_lbls_by_mnist = (0..1000).map(|i| *mnist.val_lbl.get(i).unwrap() as usize).collect::<Vec<usize>>();
+        let first_lbls_by_loader = (0..1000).map(|i| val_lbl.column(i).argmax().unwrap()).collect::<Vec<usize>>();
+
+        assert_eq!(first_image_by_mnist, first_image_by_loader);
+        assert_eq!(first_lbls_by_mnist, first_lbls_by_loader);
+    }
+}
