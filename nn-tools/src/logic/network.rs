@@ -1,3 +1,4 @@
+use ndarray::Order;
 use ndarray::Slice;
 use ndarray::Axis;
 use core::cell::RefMut;
@@ -39,6 +40,8 @@ impl Network<'_> {
         }
     }
 
+    // mnb 0 at 0 at 523: 0.80859 + mnb 1 at 1 at 519: 0.50781
+
     pub fn run(&mut self, print_result: bool) {
         let mut iteration = 1;
         let mut lower_bound = 0;
@@ -46,7 +49,7 @@ impl Network<'_> {
         while higher_bound <= self.data_set_size*self.inputs_size {
             let mini_batch: ArrView = self.data_set.slice(s![lower_bound..higher_bound, ..]);
             let mini_batch = mini_batch
-                                                            .into_shape((self.inputs_size, self.mini_batch_size)).unwrap();
+                                                            .to_shape(((self.inputs_size, self.mini_batch_size), Order::ColumnMajor)).unwrap();
             let mini_batch_lbs = self.lbl_set.slice_axis(
                 Axis(1), 
                 Slice::from((iteration-1)*self.mini_batch_size..iteration*self.mini_batch_size)
