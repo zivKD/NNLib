@@ -2,7 +2,7 @@ pub mod logic;
 pub mod data;
 use std::{cell::RefCell};
 
-use ndarray::{Array2, ArrayView2};
+use ndarray::{Array2, ArrayView2, s};
 pub type Arr = Array2<f64>;
 pub type ArrView<'a> = ArrayView2<'a, f64>;
 use logic::{
@@ -14,7 +14,7 @@ use logic::{
 };
 use data::datasets::mnist::loader::Loader;
 use logic::{activations_fns::sigmoid, gradient_decents::stochastic, layers::fully_connected, loss_fns::quadratic};
-use ndarray_rand::{RandomExt, rand_distr::{Uniform}};
+use ndarray_rand::{RandomExt, rand_distr::{Normal, Uniform}};
 
 /*
 TODO:
@@ -34,8 +34,6 @@ fn main() {
         trn_size as u32,
         tst_size as u32,
         val_size as u32,
-        rows,
-        cols
     );
 
     let (
@@ -54,8 +52,8 @@ fn main() {
     let inputs_size = rows*cols as usize;
     let stochastic = stochastic::Init::new(3.,mini_batch_size);
     let sigmoid = sigmoid::Init {};
-    let mut w1 = Arr::random((30, rows*cols), Uniform::new(0., 0.03));
-    let mut b1 = Arr::random((30, 1), Uniform::new(0., 1.));
+    let mut w1 = Arr::random((30, rows*cols), Normal::new(0., 0.03).unwrap());
+    let mut b1 = Arr::random((30, 1), Normal::new(0., 1.).unwrap());
     let mut layer_one = fully_connected::Init::new(
         &mut w1,
         &mut b1,
@@ -63,8 +61,8 @@ fn main() {
         &stochastic
     );
 
-    let mut w2 = Arr::random((10, 30), Uniform::new(0., 0.01));
-    let mut b2 = Arr::random((10, 1), Uniform::new(0., 1.));
+    let mut w2 = Arr::random((10, 30), Normal::new(0., 0.01).unwrap());
+    let mut b2 = Arr::random((10, 1), Normal::new(0., 1.).unwrap());
     let mut layer_two = fully_connected::Init::new(
         &mut w2,
         &mut b2,
@@ -91,11 +89,11 @@ fn main() {
         ).run(false);
 
         network::Network::new(
-            &val_img,
-            &val_lbl,
-            val_size,
+            &tst_img,
+            &tst_lbl,
+            tst_size,
             inputs_size,
-            val_size,
+            tst_size,
             layers.borrow_mut(),
             &quadratic
         ).run(true);

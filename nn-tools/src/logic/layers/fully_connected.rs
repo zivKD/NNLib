@@ -43,13 +43,14 @@ impl Layer for Init<'_> {
     fn propogate(&mut self, gradient: Arr, activations: ArrView) -> Arr {
         // δl=δl+1⊙σ′(zl)
         let gradient =  gradient * self.activation_fn.propogate(&self.current_weighted_inputs);
+        // NOT THE STANDARD VERSION δl-1=wl^T*δl
+        let next_gradiet =  self.weights.t().dot(&gradient);
         // ∂C∂wl=δl*al-1^T Reason for transpose is matrix form, originally it's δl_j*al-1_k (so jth neuron in l layer to kth neuron in l layer)
         self.gradient_decent.change_weights(self.weights, &gradient.dot(&activations.t()));
         // CURENTLY SUM, MABYE BETTER IDEA
         let summed_gradient = gradient.sum_axis(Axis(1)).into_shape((gradient.shape()[0], 1)).unwrap();
         // ∂C∂bl=δl
         self.gradient_decent.change_biases(self.biases, &summed_gradient);
-        // NOT THE STANDARD VERSION δl-1=wl^T*δl
-        self.weights.t().dot(&gradient)
+        next_gradiet
     }
 }
