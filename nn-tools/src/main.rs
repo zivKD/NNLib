@@ -1,8 +1,9 @@
 pub mod logic;
 pub mod data;
-use std::{cell::RefCell, rc::Rc};
+use ndarray::Axis;
+use std::{cell::RefCell};
 
-use ndarray::{Array2, ArrayView2, s};
+use ndarray::{Array2, ArrayView2};
 pub type Arr = Array2<f64>;
 pub type ArrView<'a> = ArrayView2<'a, f64>;
 use logic::{
@@ -14,6 +15,7 @@ use logic::{
 };
 use data::datasets::mnist::loader::Loader;
 use logic::{activations_fns::sigmoid, gradient_decents::stochastic, layers::fully_connected, loss_fns::quadratic};
+use ndarray_rand::RandomExt;
 
 /*
 TODO:
@@ -46,7 +48,7 @@ fn main() {
         val_lbl
     ) = mnist_loader.build();
 
-    let epoches = 1;
+    let epoches = 30;
     let mini_batch_size = 10 as usize;
     let inputs_size = rows*cols as usize;
     let stochastic = stochastic::Init::new(0.03,mini_batch_size);
@@ -96,6 +98,7 @@ fn main() {
             layers.borrow_mut(),
             &quadratic
         ).run(true);
+
 
         i+=1;
    }

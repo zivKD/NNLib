@@ -44,7 +44,6 @@ impl Network<'_> {
         let mut lower_bound = 0;
         let mut higher_bound = self.mini_batch_size * self.inputs_size;
         while higher_bound <= self.data_set_size*self.inputs_size {
-            println!("running: {}", iteration);
             let mini_batch: ArrView = self.data_set.slice(s![lower_bound..higher_bound, ..]);
             let mini_batch = mini_batch
                                                             .into_shape((self.inputs_size, self.mini_batch_size)).unwrap();
