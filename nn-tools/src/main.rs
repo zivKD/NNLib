@@ -15,7 +15,7 @@ use logic::{
 };
 use data::datasets::mnist::loader::Loader;
 use logic::{activations_fns::sigmoid, gradient_decents::stochastic, layers::fully_connected, loss_fns::quadratic};
-use ndarray_rand::RandomExt;
+use ndarray_rand::{RandomExt, rand_distr::{StandardNormal, Uniform}};
 
 /*
 TODO:
@@ -51,10 +51,10 @@ fn main() {
     let epoches = 30;
     let mini_batch_size = 10 as usize;
     let inputs_size = rows*cols as usize;
-    let stochastic = stochastic::Init::new(0.03,mini_batch_size);
+    let stochastic = stochastic::Init::new(3.,mini_batch_size);
     let sigmoid = sigmoid::Init {};
-    let mut w1 = Arr::zeros((30, rows*cols));
-    let mut b1 = Arr::zeros((30, 1));
+    let mut w1 = Arr::random((30, rows*cols), Uniform::new(0., 0.03));
+    let mut b1 = Arr::random((30, 1), Uniform::new(0., 1.));
     let mut layer_one = fully_connected::Init::new(
         &mut w1,
         &mut b1,
@@ -62,8 +62,8 @@ fn main() {
         &stochastic
     );
 
-    let mut w2 = Arr::zeros((10, 30));
-    let mut b2 = Arr::zeros((10, 1));
+    let mut w2 = Arr::random((10, 30), Uniform::new(0., 0.01));
+    let mut b2 = Arr::random((10, 1), Uniform::new(0., 1.));
     let mut layer_two = fully_connected::Init::new(
         &mut w2,
         &mut b2,
@@ -98,7 +98,6 @@ fn main() {
             layers.borrow_mut(),
             &quadratic
         ).run(true);
-
 
         i+=1;
    }
