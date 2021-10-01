@@ -57,7 +57,6 @@ fn main() {
     let mut layer_one = fully_connected::Init::new(
         &mut w1,
         &mut b1,
-        &sigmoid,
         &stochastic
     );
 
@@ -66,11 +65,10 @@ fn main() {
     let mut layer_two = fully_connected::Init::new(
         &mut w2,
         &mut b2,
-        &sigmoid,
         &stochastic
     );
 
-    let quadratic = quadratic::Init {};
+    let quadratic = quadratic::Init::new(&sigmoid);
 
 
     let layers_vec: Vec<&mut dyn Layer> = vec!(&mut layer_one, &mut layer_two);
@@ -85,7 +83,8 @@ fn main() {
             inputs_size,
             trn_size,
             layers.borrow_mut(),
-            &quadratic
+            &quadratic,
+            &sigmoid
         ).run(false);
 
         network::Network::new(
@@ -95,7 +94,8 @@ fn main() {
             inputs_size,
             tst_size,
             layers.borrow_mut(),
-            &quadratic
+            &quadratic,
+            &sigmoid
         ).run(true);
 
         i+=1;

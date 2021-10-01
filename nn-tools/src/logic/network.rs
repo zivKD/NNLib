@@ -7,6 +7,7 @@ use ndarray_stats::QuantileExt;
 
 use crate::{Arr, ArrView};
 
+use super::activations_fns::base_activation_fn::ActivationFN;
 use super::{layers::base_layer::Layer, loss_fns::base_loss_fn::LossFN};
 
 pub struct Network<'a> {
@@ -17,6 +18,7 @@ pub struct Network<'a> {
     data_set_size: usize,
     layers: RefMut<'a, Vec<&'a mut dyn Layer>>,
     loss_fn: &'a dyn LossFN,
+    activation_fn: &'a dyn ActivationFN
 }
 
 impl Network<'_> {
@@ -28,6 +30,7 @@ impl Network<'_> {
         data_set_size: usize,
         layers: RefMut<'a, Vec<&'a mut dyn Layer>>,
         loss_fn: &'a dyn LossFN,
+        activation_fn: &'a dyn ActivationFN
     ) -> Network<'a> {
         Network {
             data_set,
@@ -36,7 +39,8 @@ impl Network<'_> {
             inputs_size,
             data_set_size,
             layers,
-            loss_fn
+            loss_fn,
+            activation_fn
         }
     }
 
@@ -55,12 +59,14 @@ impl Network<'_> {
                 Slice::from((iteration-1)*self.mini_batch_size..iteration*self.mini_batch_size)
             ).to_owned();
             let mut activations = vec!();
+            let mut zs = vec!();
             let inputs = mini_batch.to_owned();
             activations.push(inputs);
+
             let mut i = 0;
             for layer in self.layers.iter_mut() {
-                let new_inputs = layer.feedforward(activations[i].view());
-                activations.push(new_inputs);
+                zs.push(layer.feedforward(activations[i].view()));
+                activations.push(self.activation_fn.forward(&zs[i]));
                 i+=1;
             }
 
@@ -78,7 +84,7 @@ impl Network<'_> {
                 let success_percentage = (accuracy as f64 /self.mini_batch_size as f64) * 100.;
                 println!("network accuracy: {}%", success_percentage);
             } else {
-                let mut error = self.loss_fn.propogate(&mut activations[i], &mini_batch_lbs);
+                let mut error = self.loss_fn.propogate(&mut zs[i-1], &mut activations[i], &mini_batch_lbs);
 
                 for layer in self.layers.iter_mut().rev() {
                     i-=1;
