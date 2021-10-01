@@ -15,8 +15,8 @@ pub struct Network<'a> {
     mini_batch_size: usize,
     inputs_size: usize,
     data_set_size: usize,
-    layers: RefMut<'a, Vec<&'a mut Layer>>,
-    loss_fn: &'a LossFN,
+    layers: RefMut<'a, Vec<&'a mut dyn Layer>>,
+    loss_fn: &'a dyn LossFN,
 }
 
 impl Network<'_> {
@@ -26,8 +26,8 @@ impl Network<'_> {
         mini_batch_size: usize,
         inputs_size: usize,
         data_set_size: usize,
-        layers: RefMut<'a, Vec<&'a mut Layer>>,
-        loss_fn: &'a LossFN,
+        layers: RefMut<'a, Vec<&'a mut dyn Layer>>,
+        loss_fn: &'a dyn LossFN,
     ) -> Network<'a> {
         Network {
             data_set,
@@ -77,13 +77,13 @@ impl Network<'_> {
 
                 let success_percentage = (accuracy as f64 /self.mini_batch_size as f64) * 100.;
                 println!("network accuracy: {}%", success_percentage);
-            }
+            } else {
+                let mut error = self.loss_fn.propogate(&mut activations[i], &mini_batch_lbs);
 
-            let mut error = self.loss_fn.propogate(&mut activations[i], &mini_batch_lbs);
-
-            for layer in self.layers.iter_mut().rev() {
-                i-=1;
-                error = layer.propogate(error, activations[i].view());
+                for layer in self.layers.iter_mut().rev() {
+                    i-=1;
+                    error = layer.propogate(error, activations[i].view());
+                }
             }
 
             iteration+=1;
