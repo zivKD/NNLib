@@ -70,10 +70,11 @@ impl Network<'_> {
                 i+=1;
             }
 
-            let mut i = activations.len() - 1;
+            let num_of_layers = self.layers.len() - 1; 
+            let num_of_activations = activations.len()  - 1;
 
             if print_result {
-                let accuracy= Zip::from(activations[i].columns()).and(mini_batch_lbs.columns()).
+                let accuracy= Zip::from(activations[num_of_activations].columns()).and(mini_batch_lbs.columns()).
                     map_collect(|x, y| {
                         let max_index_in_outputs = x.argmax().unwrap();
                         let max_index_in_lbls = y.argmax().unwrap();
@@ -84,12 +85,15 @@ impl Network<'_> {
                 let success_percentage = (accuracy as f64 /self.mini_batch_size as f64) * 100.;
                 println!("network accuracy: {}%", success_percentage);
             } else {
-                let mut error = self.loss_fn.propogate(&mut zs[i-1], &mut activations[i], &mini_batch_lbs);
+                let error = self.loss_fn.propogate(&mut zs[num_of_layers], &mut activations[num_of_activations], &mini_batch_lbs);
+                let last_layer = &mut self.layers[num_of_layers];
+                let mut next_error = last_layer.propogate(error, activations[num_of_activations-1].view());
 
-                for layer in self.layers.iter_mut().rev() {
-                    i-=1;
-                    error = layer.propogate(error, activations[i].view());
-                }
+                let mut i = 1;
+                for layer in self.layers.split_last_mut().unwrap().1.iter_mut().rev() {
+                    next_error = layer.propogate(&next_error * self.activation_fn.propogate(&zs[num_of_layers - i]), activations[num_of_activations-i-1].view());
+                    i+=1;
+                };
             }
 
             iteration+=1;
