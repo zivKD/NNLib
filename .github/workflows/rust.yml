@@ -10,10 +10,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Move
-      run: cd nn-tools
     - uses: actions/checkout@v2
     - name: Build
       run: cargo build --verbose
+      working-directory: ./nn-tools
     - name: Run tests
       run: cargo test --verbose
+      working-directory: ./nn-tools
