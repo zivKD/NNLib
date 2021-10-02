@@ -1,9 +1,9 @@
 use crate::logic::activations_fns::base_activation_fn::ActivationFN;
 use crate::Arr;
 
-pub struct init {}
+pub struct Init {}
 
-impl ActivationFN for init {
+impl ActivationFN for Init {
     fn forward<'a>(&self, z: &'a Arr) -> Arr {
         z.mapv(|x| {
             1.0 / (1.0 + f64::exp(-x))
@@ -22,7 +22,7 @@ mod tests {
     use super::*;
     use crate::Arr;
     use ndarray::arr2;
-    const SIGMOID: init = init {};
+    const SIGMOID: Init = Init {};
 
     #[test]
     fn sigmoid_forward(){

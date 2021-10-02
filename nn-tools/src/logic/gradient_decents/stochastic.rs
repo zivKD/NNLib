@@ -2,21 +2,21 @@ use crate::Arr;
 use crate::logic::gradient_decents::base_gradient_decent::GradientDecent;
 use ndarray::Zip;
 
-pub struct init {
+pub struct Init {
     learning_rate: f64,
-    mini_batch_size: i32
+    mini_batch_size: usize
 }
 
-impl init {
-    pub fn new(learning_rate: f64, mini_batch_size: i32) -> Self {
-        init {
+impl Init {
+    pub fn new(learning_rate: f64, mini_batch_size: usize) -> Self {
+        Init {
             learning_rate,
             mini_batch_size
         }
     }
 }
 
-impl GradientDecent for init {
+impl GradientDecent for Init {
     fn change_weights<'a>(&self, w: &'a mut Arr, gradient: & Arr) {
         let rate = self.learning_rate / self.mini_batch_size as f64;
         let balanced_gradient = rate * gradient;
@@ -40,7 +40,7 @@ mod tests {
 
     #[test]
     fn stochastic_biases_change(){
-        let stochastic: init = init::new(0.03, 10);
+        let stochastic: Init = Init::new(0.03, 10);
         let gradient : Arr = arr2(&[[1.0, 0.532, 0.814], [0.3103, 0.4348, 0.12]]);
         let mut biases : Arr = arr2(&[[0.1, 0.2, 0.3], [0.4, 0.5, 0.6]]);
         stochastic.change_biases(&mut biases, &gradient);
@@ -50,7 +50,7 @@ mod tests {
 
     #[test]
     fn stochastic_weights_change() {
-        let stochastic: init = init::new(0.03, 10);
+        let stochastic: Init = Init::new(0.03, 10);
         let gradient : Arr = arr2(&[[1.0, 0.532, 0.814], [0.3103, 0.4348, 0.12]]);
         let mut weights : Arr = arr2(&[[0.1, 0.2, 0.3], [0.4, 0.5, 0.6]]);
         stochastic.change_weights(&mut weights, &gradient);
