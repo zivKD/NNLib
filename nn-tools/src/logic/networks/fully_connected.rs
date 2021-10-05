@@ -5,10 +5,10 @@ use core::cell::RefMut;
 use ndarray::{Zip, s};
 use ndarray_stats::QuantileExt;
 
+use crate::logic::activations_fns::base_activation_fn::ActivationFN;
+use crate::logic::layers::base_layer::Layer;
+use crate::logic::loss_fns::base_loss_fn::LossFN;
 use crate::{Arr, ArrView};
-
-use super::activations_fns::base_activation_fn::ActivationFN;
-use super::{layers::base_layer::Layer, loss_fns::base_loss_fn::LossFN};
 
 pub struct Network<'a> {
     data_set : &'a Arr,
