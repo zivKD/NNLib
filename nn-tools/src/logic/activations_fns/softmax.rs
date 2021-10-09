@@ -1,20 +1,51 @@
-// use crate::logic::activations_fns::base_activation_fn::ActivationFN;
-// use crate::Arr;
+use ndarray_stats::QuantileExt;
 
-// pub struct init {}
+use ndarray::Axis;
+use crate::logic::activations_fns::base_activation_fn::ActivationFN;
+use crate::Arr;
 
-// impl ActivationFN for init {
-//     fn forward<'a>(&self, z: &'a mut Arr) -> &'a mut Arr {
-//         // let max_value = z.map_axis(Axis(0), |view| *view.iter().max().unwrap());
-//         // z.mapv_inplace(|x| {
-//         //     f64::exp(x) - max_value
-//         // });
-//         // z
-//     }
+pub struct Init {}
 
-//     fn propogate<'a>(&self, z: &'a mut Arr) -> &'a mut Arr {
-//         // self.forward(z);
-//         // z.mapv_inplace(|x| 1. - x);
-//         // z
-//     }
-// }
+impl ActivationFN for Init {
+    fn forward<'a>(&self, z: &'a Arr) -> Arr {
+        let max_value = z.get(z.argmax().unwrap()).unwrap();
+        let mut exps = z.map(|x| (x-max_value).exp());
+        exps.axis_iter_mut(Axis(0)).for_each(|mut axis| {
+            let sum = axis.sum();
+            axis.mapv_inplace(|x| x/sum);
+        });
+        exps
+    }
+
+    fn propogate<'a>(&self, z: &'a Arr) -> Arr {
+        Arr::default((1,1))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::{Arr, logic::utils::round_decimal};
+    use ndarray::arr2;
+    const SOFTMAX: Init = Init {};
+
+    #[test]
+    fn softmax_forward(){
+        let arr : Arr = arr2(&[[1.,2.,3.], [0.2, 0.5, 0.8]]);
+        let result = arr2(&[
+            [0.090030573, 0.244728471, 0.665240956], 
+            [0.239694479, 0.323553704, 0.436751817]
+        ]);
+        assert_eq!(SOFTMAX.forward(&arr).map(|x| round_decimal(9, *x)), result);
+    }
+
+    #[test]
+    fn softmax_propogate(){
+        // let arr : Arr = arr2(&[[1.,2.,3.], [1.5,2.5,3.5]]);
+        // let result = arr2(&[
+        //     [0.19661193324148185, 0.10499358540350662, 0.045176659730912], 
+        //     [0.14914645207033286, 0.07010371654510807, 0.028453023879735598]
+        // ]);
+        // assert_eq!(softmax(arr), result);
+    }
+}

@@ -1,3 +1,4 @@
+use ndarray_stats::QuantileExt;
 use rand::thread_rng;
 use ndarray::{Array1, Array2, ArrayView1};
 use ndarray::{Axis, Zip};
@@ -19,6 +20,17 @@ pub fn repeated_axis_zero(arr: &Arr, desired_shape: &(usize, usize)) -> Arr {
     // Probably not cost affective, should improve performenece
     repeat(&|(i, _j)| *arr.get((i, 0)).unwrap(), desired_shape)
 }
+
+pub fn softmax(arr: Arr) -> Arr {
+    let max_value = arr.get(arr.argmax().unwrap()).unwrap();
+    let mut exps = arr.map(|x| (x-max_value).exp());
+    exps.axis_iter_mut(Axis(0)).for_each(|mut axis| {
+        let sum = axis.sum();
+        axis.mapv_inplace(|x| x/sum);
+    });
+    exps
+}
+
 
 // NOT WORKING
 // pub fn shuffle_sets(data_set: &Arr, lbl_set: &Arr, inputs_size: usize, set_size: usize) -> (Arr, Arr) {
