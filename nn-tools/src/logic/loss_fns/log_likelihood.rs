@@ -6,11 +6,11 @@ pub struct Init {}
 
 impl LossFN for Init {
     fn output<'a>(&self, a: &'a mut Arr, y: &'a Arr) -> Arr {
-        Zip::from(a).and(y).map_collect(|a_x, y_x| -y_x * a_x.ln() - (1. -* y_x)*((1. - *a_x).ln()))
+        a.map(|x| -x.ln())
     }
 
     fn propogate<'a>(&self,z: &'a mut Arr, a: &'a mut Arr, y: &'a Arr) -> Arr {
-        &a.view() - y
+        a.map(|x| x - 1.)
     }
 }
 

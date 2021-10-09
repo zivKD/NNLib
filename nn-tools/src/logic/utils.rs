@@ -1,6 +1,6 @@
 use ndarray_stats::QuantileExt;
 use rand::thread_rng;
-use ndarray::{Array1, Array2, ArrayView1};
+use ndarray::{Array1, Array2, ArrayView1, Shape};
 use ndarray::{Axis, Zip};
 use ndarray_rand::RandomExt;
 use rand::prelude::SliceRandom;
@@ -21,14 +21,12 @@ pub fn repeated_axis_zero(arr: &Arr, desired_shape: &(usize, usize)) -> Arr {
     repeat(&|(i, _j)| *arr.get((i, 0)).unwrap(), desired_shape)
 }
 
-pub fn softmax(arr: Arr) -> Arr {
-    let max_value = arr.get(arr.argmax().unwrap()).unwrap();
-    let mut exps = arr.map(|x| (x-max_value).exp());
-    exps.axis_iter_mut(Axis(0)).for_each(|mut axis| {
-        let sum = axis.sum();
-        axis.mapv_inplace(|x| x/sum);
-    });
-    exps
+pub fn arr_zeros_with_shape(shape: &[usize]) -> Arr {
+    Arr::zeros((shape[0], shape[1]))
+}
+
+pub fn arr_ones_with_shape(shape: &[usize]) -> Arr {
+    Arr::ones((shape[0], shape[1]))
 }
 
 
