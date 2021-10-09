@@ -3,7 +3,7 @@ use std::{cell::RefMut, cmp::max};
 use ndarray_rand::{RandomExt, rand_distr::{Normal, Uniform}};
 use ndarray_stats::histogram::{Grid, GridBuilder};
 
-use crate::{Arr, logic::{activations_fns::{base_activation_fn::ActivationFN, tanh}, gradient_decents::{base_gradient_decent::GradientDecent, stochastic}, layers::{base_layer::Layer, rnn_step}, loss_fns::base_loss_fn::LossFN, utils::arr_zeros_with_shape}};
+use crate::{Arr, DEFAULT, logic::{activations_fns::{base_activation_fn::ActivationFN, tanh}, gradient_decents::{base_gradient_decent::GradientDecent, stochastic}, layers::{base_layer::Layer, rnn_step}, loss_fns::base_loss_fn::LossFN, utils::arr_zeros_with_shape}};
 
 pub struct Network<'a> {
     data_set : &'a Arr,
@@ -47,7 +47,7 @@ impl Network<'_> {
         let mut state_weights = Arr::random((1,1), Normal::new(0., 0.03).unwrap());
         let mut output_weights = Arr::random((1,1), Normal::new(0., 0.03).unwrap());
         let tanh = tanh::Init {};
-        let mut prev_s = Arr::default((1,1));
+        let mut prev_s = DEFAULT();
         let mut layers = Vec::new();
         for t in (0..self.sequence_size) {
             let mut layer = rnn_step::Init::new(
@@ -68,8 +68,8 @@ impl Network<'_> {
         let mut dW = arr_zeros_with_shape(state_weights.shape());
         let mut dV = arr_zeros_with_shape(output_weights.shape());
         let mut prev_s_t = Arr::zeros((1,1));
-        let diff_s = Arr::zeros((1,1));
-        let default = Arr::zeros((1,1));
+        let diff_s = DEFAULT();
+        let default = DEFAULT();
 
         for t in self.sequence_size..0 {
             let mut dmulv = Arr::zeros((1,1)); // Actually loss fn derviative

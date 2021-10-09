@@ -2,7 +2,7 @@ use ndarray_stats::QuantileExt;
 
 use ndarray::Axis;
 use crate::logic::activations_fns::base_activation_fn::ActivationFN;
-use crate::Arr;
+use crate::{Arr, DEFAULT};
 
 pub struct Init {}
 
@@ -18,7 +18,7 @@ impl ActivationFN for Init {
     }
 
     fn propogate<'a>(&self, z: &'a Arr) -> Arr {
-        Arr::default((1,1))
+        DEFAULT()
     }
 }
 
@@ -37,15 +37,5 @@ mod tests {
             [0.239694479, 0.323553704, 0.436751817]
         ]);
         assert_eq!(SOFTMAX.forward(&arr).map(|x| round_decimal(9, *x)), result);
-    }
-
-    #[test]
-    fn softmax_propogate(){
-        // let arr : Arr = arr2(&[[1.,2.,3.], [1.5,2.5,3.5]]);
-        // let result = arr2(&[
-        //     [0.19661193324148185, 0.10499358540350662, 0.045176659730912], 
-        //     [0.14914645207033286, 0.07010371654510807, 0.028453023879735598]
-        // ]);
-        // assert_eq!(softmax(arr), result);
     }
 }

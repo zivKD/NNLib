@@ -5,6 +5,7 @@ use std::{cell::RefCell};
 use ndarray::{Array2, ArrayView2, s};
 pub type Arr = Array2<f64>;
 pub type ArrView<'a> = ArrayView2<'a, f64>;
+pub fn DEFAULT() -> Arr { Arr::default((1,1)) }
 use logic::{
     activations_fns::base_activation_fn::ActivationFN, 
     gradient_decents::base_gradient_decent::GradientDecent, 

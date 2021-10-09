@@ -1,7 +1,7 @@
 use crate::logic::gradient_decents::base_gradient_decent::GradientDecent;
 use crate::logic::activations_fns::base_activation_fn::ActivationFN;
 use crate::logic::utils::{repeated_axis_zero};
-use crate::{Arr, ArrView};
+use crate::{Arr, ArrView, DEFAULT};
 use ndarray::{Axis, Zip};
 use ndarray_stats::QuantileExt;
 use crate::logic::layers::base_layer::Layer;
@@ -26,17 +26,16 @@ impl Init<'_> {
         output_weights: &'a Arr,
         hidden_activation_fn: &'a dyn ActivationFN,
     ) -> Init<'a> {
-        let default = Arr::default((1,1));
         Init {
             state_weights,
             input_weights,
             output_weights,
             hidden_activation_fn,
-            mulu: Arr::default((1,1)),
-            mulw: Arr::default((1,1)),
-            add: Arr::default((1,1)),
-            s: Arr::default((1,1)),
-            mulv: Arr::default((1,1))
+            mulu: DEFAULT(),
+            mulw: DEFAULT(),
+            add: DEFAULT(),
+            s: DEFAULT(),
+            mulv: DEFAULT()
         }
     }
 }
