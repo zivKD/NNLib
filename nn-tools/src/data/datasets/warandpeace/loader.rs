@@ -1,4 +1,5 @@
 use ndarray::{Order, s};
+use ndarray::ShapeBuilder; // Needed for .strides() method
 
 use crate::Arr;
 use std::collections::HashMap;
@@ -140,17 +141,17 @@ mod tests {
         );
 
         let expected_trn_data = vec!(1., 2., 3., 2., 4., 2., 5., 2., 6., 2., 7., 2., 8., 2., 9., 2., 10., 2., 11., 2.);
-        let expected_trn_data = Arr::from_shape_vec((10, 2), expected_trn_data).unwrap();
+        let expected_trn_data = Arr::from_shape_vec((10, 2).strides((1, 10)), expected_trn_data).unwrap();
         let expected_trn_lbls = vec!(2., 3., 2., 4., 2., 5., 2., 6., 2., 7., 2., 8., 2., 9., 2., 10., 2., 11., 2., 12.);
-        let expected_trn_lbls = Arr::from_shape_vec((10, 2), expected_trn_lbls).unwrap();
+        let expected_trn_lbls = Arr::from_shape_vec((10, 2).strides((1,10)), expected_trn_lbls).unwrap();
         let expected_tst_data = vec!(15., 2., 16., 2., 17., 2., 18., 2., 19., 2.);
-        let expected_tst_data = Arr::from_shape_vec((5, 2), expected_tst_data).unwrap();
+        let expected_tst_data = Arr::from_shape_vec((5, 2).strides((1,5)), expected_tst_data).unwrap();
         let expected_tst_lbls = vec!(2., 16., 2., 17., 2., 18., 2., 19., 2., 20.);
-        let expected_tst_lbls = Arr::from_shape_vec((5, 2), expected_tst_lbls).unwrap();
+        let expected_tst_lbls = Arr::from_shape_vec((5, 2).strides((1,5)), expected_tst_lbls).unwrap();
         let expected_val_data = vec!(2., 22., 2., 23., 2., 24., 2., 25., 2., 26.);
-        let expected_val_data = Arr::from_shape_vec((5, 2), expected_val_data).unwrap();
+        let expected_val_data = Arr::from_shape_vec((5, 2).strides((1,5)), expected_val_data).unwrap();
         let expected_val_lbls = vec!(22., 2., 23., 2., 24., 2., 25., 2., 26., 2.);
-        let expected_val_lbls = Arr::from_shape_vec((5, 2), expected_val_lbls).unwrap();
+        let expected_val_lbls = Arr::from_shape_vec((5, 2).strides((1,5)), expected_val_lbls).unwrap();
         let (
             trn_data, 
             trn_lbls,
