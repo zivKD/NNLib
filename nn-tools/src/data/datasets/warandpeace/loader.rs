@@ -1,4 +1,4 @@
-use ndarray::s;
+use ndarray::{Order, s};
 
 use crate::Arr;
 use std::collections::HashMap;
@@ -38,7 +38,7 @@ impl Loader<'_> {
     }
 
 
-    pub fn build(&self) -> (Arr, Arr, Arr, Arr, Arr, Arr) {
+    pub fn build(&self) -> (Arr, Arr, Arr, Arr, Arr, Arr, usize) {
         let mut total_size = 0;
         let mut token_to_index: HashMap<char, usize> = HashMap::new();
         for line in self.read_lines(self.file_path) {
@@ -51,6 +51,7 @@ impl Loader<'_> {
             }
         } 
 
+        let word_dim = token_to_index.len();
         let train_size = (self.train_set_frac as f64 / 100.) * total_size as f64;
         let test_size = (self.test_set_frac as f64 / 100.) * total_size as f64;
         let validation_size = (self.validation_set_frac as f64 / 100.) * total_size as f64;
@@ -63,7 +64,15 @@ impl Loader<'_> {
         let mut split_idx = 0;
         let mut cur_idx = 0;
         for line in self.read_lines(self.file_path) {
+            if split_idx == 3 {
+                break;
+            }
+
             for char in line.unwrap().chars() {
+                if split_idx == 3 {
+                    break;
+                }
+
                 let numerical_value = *token_to_index.get(&char).unwrap() as f64;
                 splits[split_idx][(cur_idx, 0)] = numerical_value;
                 cur_idx += 1;
@@ -79,7 +88,7 @@ impl Loader<'_> {
         let (tst_data, tst_lbls) = self.get_ordered_data_and_label_sets(&test_set);
         let (val_data, val_lbls) = self.get_ordered_data_and_label_sets(&validation_set);
 
-        (trn_data, trn_lbls, tst_data, tst_lbls, val_data, val_lbls)
+        (trn_data, trn_lbls, tst_data, tst_lbls, val_data, val_lbls, word_dim)
     }
 
     fn get_ordered_data_and_label_sets(&self, set: &Arr) -> (Arr, Arr) {
@@ -96,8 +105,8 @@ impl Loader<'_> {
 
         let new_size = size - extra;
         let num_of_rows = new_size / cur_size;
-        let data_set = set.slice(s![0..new_size, ..]).to_shape((num_of_rows, cur_size)).unwrap().to_owned();
-        let lbl_set = set.slice(s![1..new_size+1, ..]).to_shape((num_of_rows, cur_size)).unwrap().to_owned();
+        let data_set = set.slice(s![0..new_size, ..]).to_shape(((num_of_rows, cur_size), Order::ColumnMajor)).unwrap().to_owned();
+        let lbl_set = set.slice(s![1..new_size+1, ..]).to_shape(((num_of_rows, cur_size), Order::ColumnMajor)).unwrap().to_owned();
         (data_set, lbl_set)
     }
 
@@ -148,9 +157,11 @@ mod tests {
             tst_data,
             tst_lbls,
             val_data,
-            val_lbls
+            val_lbls,
+            word_dim
         ) = loader.build();
 
+        assert_eq!(28, word_dim);
         assert_eq(trn_data, expected_trn_data, "tr-data");
         assert_eq(trn_lbls, expected_trn_lbls, "trn-lbls");
         assert_eq(tst_data, expected_tst_data, "tst-data");

@@ -16,7 +16,7 @@ pub struct Init<'a> {
     mulw : Arr,
     add : Arr,
     pub s: Arr,
-    mulv: Arr,
+    pub mulv: Arr,
 }
 
 impl Init<'_> {
