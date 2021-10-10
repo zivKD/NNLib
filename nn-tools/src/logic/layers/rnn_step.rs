@@ -44,10 +44,13 @@ impl Init<'_> {
     pub fn feedforward(&mut self, inputs: (ArrView, ArrView)) {
         let (inputs_embadding, hidden_state) = inputs;
         let w_frd = self.state_weights.dot(&hidden_state);
+        // println!("got here after dot state_weights * hidden_state");
         let u_frd = self.input_weights.dot(&inputs_embadding);
+        // // println!("got here after dot inputs_weights * inputs_embadd:e());
         let sum_s = &w_frd + &u_frd;
         let ht_activated = self.hidden_activation_fn.forward(&sum_s);
         let yt= self.output_weights.dot(&ht_activated);
+        // println!("got here after dot output_weights * ht_activated {:?}");
         self.mulw = w_frd;
         self.mulu = u_frd;
         self.add = sum_s;
@@ -59,11 +62,14 @@ impl Init<'_> {
         &mut self, inputs: &Arr, prev_s: &Arr, diff_s: &Arr, dmulv: &Arr) -> 
         (Arr, Arr, Arr, Arr) {
         let (dV, dsv) = self.multiplication_backward(self.output_weights, &self.s, dmulv);
+        println!("got here after dot multiplication_backward(self.output_weights, self.s, dmulv)");
         let ds = dsv + diff_s;
         let dadd = self.hidden_activation_fn.propogate(&self.add) * ds;
         let (dmulw, dmulu) = self.add_backward(&self.mulu, &self.mulw, &dadd);
         let (dW, dprev_s) = self.multiplication_backward(self.state_weights, prev_s, &dmulw);
+        println!("got here after dot multiplication_backward(self.state_weights, prev_s, dmulw)");
         let (dU, dx) = self.multiplication_backward(self.input_weights, &inputs.to_owned(), &dmulu);
+        println!("got here after dot multiplication_backward(self.input_weights, inputs, dmulu)");
 
         (dprev_s, dU, dW, dV)
     }

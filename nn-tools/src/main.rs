@@ -71,6 +71,7 @@ fn main() {
         &mut output_weights
     );
 
+    println!("worddim {}", word_dim);
     // println!("trn data shape: {:?}", trn_data.shape());
     // println!("trn lbls shape: {:?}", trn_lbls.shape());
 

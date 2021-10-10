@@ -69,7 +69,7 @@ impl Network<'_> {
             // println!("mini batch shape {:?}", mini_batch.shape());
             // println!("mini batch lbls shape {:?}", mini_batch_lbs.shape());
 
-            // self.run_single_step(&mini_batch, &mini_batch_lbs, print_result);
+            self.run_single_step(&mini_batch, &mini_batch_lbs, print_result);
 
             iteration+=1;
             lower_bound = (iteration - 1) * (self.sequence_size);
@@ -79,6 +79,7 @@ impl Network<'_> {
 
     fn run_single_step(&mut self, inputs: &Arr, lablels: &Arr, print_result: bool) {
         let mut prev_s = arr_zeros_with_shape(&[self.hidden_dim, self.mini_batch_size]);
+        println!("got here after prev_s");
         let mut layers = Vec::new();
 
         for t in 0..self.sequence_size {
@@ -95,14 +96,20 @@ impl Network<'_> {
             layers.push(layer);
         }
 
+        println!("got here after done forward");
+
         let mut dU = arr_zeros_with_shape(self.input_weights.shape());
         let mut dW = arr_zeros_with_shape(self.state_weights.shape());
         let mut dV = arr_zeros_with_shape(self.output_weights.shape());
         let mut prev_s_t = arr_zeros_with_shape(&[self.hidden_dim, self.mini_batch_size]);
         let diff_s = arr_zeros_with_shape(&[self.hidden_dim, self.mini_batch_size]);
 
-        for t in self.sequence_size..0 {
+        println!("got here after all initializations");
+
+        for t in (0..self.sequence_size).rev() {
+            println!("got here in for with t: {}", t);
             let mut dmulv = self.cross_entropy_with_softmax_propgate(&layers[t].mulv, lablels);
+            println!("got here after cross entropy with softmax");
             let input = self.get_input(inputs, t);
             let (mut dprev_s, mut dU_t, mut dW_t, dV_t) = 
                     layers[t].propogate(&input, &prev_s_t, &diff_s, &dmulv);
@@ -130,9 +137,9 @@ impl Network<'_> {
             dV = dV + dV_t;
         }
 
-        self.gradient_decent.change_weights(self.input_weights, &dU);
-        self.gradient_decent.change_weights(self.state_weights, &dW);
-        self.gradient_decent.change_weights(self.output_weights, &dV);
+        // self.gradient_decent.change_weights(self.input_weights, &dU);
+        // self.gradient_decent.change_weights(self.state_weights, &dW);
+        // self.gradient_decent.change_weights(self.output_weights, &dV);
     }
 
     fn get_input(&self, inputs: &Arr, t: usize) -> Arr {
@@ -144,6 +151,7 @@ impl Network<'_> {
     fn cross_entropy_with_softmax_propgate(&self, a: &Arr, y: &Arr) -> Arr {
         let softmax = softmax::Init {};
         let mut probs = softmax.forward(a);
+        println!("lables shape: {:?} and activations shape {:?}", &y.shape(), a.shape());
         y.iter().enumerate().for_each(|(index, value)| {
             probs[(index, *value as usize)] -= 1.;
         });
