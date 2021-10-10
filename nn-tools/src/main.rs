@@ -1,6 +1,5 @@
 pub mod logic;
 pub mod data;
-use std::{cell::RefCell, mem::min_align_of_val};
 
 use ndarray::{Array2, ArrayView2, s};
 pub type Arr = Array2<f64>;
@@ -35,26 +34,27 @@ fn main() {
         word_dim
     ) = loader.build();
 
-    println!("first mini batch {:?}", trn_data.column(0));
-    println!("first mini batch lbls {:?}", trn_lbls.column(0));
     let new_mini_batch_size = trn_data.shape()[1];
     let bptt_truncate = 5;
     let hidden_dim = 100;
     let tanh = tanh::Init {};
     let stochastic = stochastic::Init::new(0.005, mini_batch_size);
+    let learning_rate = 0.005;
 
     let mut inputs_weights: Arr = Arr::random(
         (hidden_dim, word_dim), 
-        Uniform::new(-f64::sqrt(-(1./word_dim as f64)), f64::sqrt(1./word_dim as f64))
+        Normal::new(0., learning_rate).unwrap()
     );
     let mut state_weights = Arr::random(
         (hidden_dim, hidden_dim), 
-        Uniform::new(-f64::sqrt(-(1./hidden_dim as f64)), f64::sqrt(1./hidden_dim as f64))
+        Normal::new(0., learning_rate).unwrap()
     );
     let mut output_weights = Arr::random(
         (word_dim, hidden_dim), 
-        Uniform::new(-f64::sqrt(-(1./hidden_dim as f64)), f64::sqrt(1./hidden_dim as f64))
+        Normal::new(0., learning_rate).unwrap()
     );
+
+    // Uniform::new(-f64::sqrt(-(1./hidden_dim as f64)), f64::sqrt(1./hidden_dim as f64))
 
     let mut rnn_network = rnn::Network::new(
         &trn_data,
@@ -70,6 +70,9 @@ fn main() {
         &mut state_weights,
         &mut output_weights
     );
+
+    // println!("trn data shape: {:?}", trn_data.shape());
+    // println!("trn lbls shape: {:?}", trn_lbls.shape());
 
     let mut i = 0;
     while i < 30 {

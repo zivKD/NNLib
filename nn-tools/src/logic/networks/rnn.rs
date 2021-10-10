@@ -57,23 +57,23 @@ impl Network<'_> {
     pub fn run(&mut self, print_result: bool) {
         let mut iteration = 1;
         let mut lower_bound = 0;
-        let mut higher_bound = self.mini_batch_size * self.sequence_size;
-        while higher_bound <= self.data_set.len() * self.sequence_size {
+        let mut higher_bound = self.sequence_size;
+        while higher_bound <= (self.data_set.shape()[0] - self.sequence_size) {
             let mini_batch: ArrView = self.data_set.slice(s![lower_bound..higher_bound, ..]);
             let mini_batch = mini_batch
                                                             .to_shape(((self.sequence_size, self.mini_batch_size), Order::ColumnMajor)).unwrap().to_owned();
             let mini_batch_lbs = self.labels_set.slice_axis(
-                Axis(1), 
-                Slice::from((iteration-1)*self.mini_batch_size..iteration*self.mini_batch_size)
+                Axis(0), 
+                Slice::from((iteration-1)*self.sequence_size..iteration*self.sequence_size)
             ).to_owned();
-            println!("mini batch shape {:?}", mini_batch.shape());
-            println!("mini batch lbls shape {:?}", mini_batch_lbs.shape());
+            // println!("mini batch shape {:?}", mini_batch.shape());
+            // println!("mini batch lbls shape {:?}", mini_batch_lbs.shape());
 
             // self.run_single_step(&mini_batch, &mini_batch_lbs, print_result);
 
             iteration+=1;
-            lower_bound = (iteration - 1) * (self.mini_batch_size * self.sequence_size);
-            higher_bound = iteration * self.mini_batch_size * self.sequence_size;
+            lower_bound = (iteration - 1) * (self.sequence_size);
+            higher_bound = iteration * self.sequence_size;
         }
     }
 
