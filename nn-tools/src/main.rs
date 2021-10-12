@@ -11,7 +11,11 @@ use data::datasets::warandpeace::loader::{self, Loader};
 use logic::{activations_fns::sigmoid, gradient_decents::stochastic, layers::fully_connected, loss_fns::quadratic};
 use ndarray_rand::{RandomExt, rand_distr::{Normal, Uniform}};
 
+use crate::logic::utils::one_hot_encoding;
 
+/* TODOs: 
+    1. loader should return in usize not in f64
+*/
 fn main() {
     let mini_batch_size = 10;
     let sequence_size = 50;
@@ -56,8 +60,10 @@ fn main() {
 
     // Uniform::new(-f64::sqrt(-(1./hidden_dim as f64)), f64::sqrt(1./hidden_dim as f64))
 
+    let encoded_trn_data = one_hot_encoding(&trn_data, word_dim);
+    // let encoded_trn_lbls = one_hot_encoding(&trn_lbls, word_dim);
     let mut rnn_network = rnn::Network::new(
-        &trn_data,
+        &encoded_trn_data,
         &trn_lbls,
         new_mini_batch_size,
         sequence_size,
@@ -70,10 +76,6 @@ fn main() {
         &mut state_weights,
         &mut output_weights
     );
-
-    println!("worddim {}", word_dim);
-    // println!("trn data shape: {:?}", trn_data.shape());
-    // println!("trn lbls shape: {:?}", trn_lbls.shape());
 
     let mut i = 0;
     while i < 30 {

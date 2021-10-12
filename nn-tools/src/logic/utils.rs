@@ -1,10 +1,12 @@
 use ndarray_stats::QuantileExt;
 use rand::thread_rng;
-use ndarray::{Array1, Array2, ArrayView1, Shape};
+use ndarray::{Array1, Array2, ArrayView1, Order, Shape, ShapeBuilder};
 use ndarray::{Axis, Zip};
 use ndarray_rand::RandomExt;
 use rand::prelude::SliceRandom;
 use crate::Arr;
+use crate::logic::activations_fns::base_activation_fn::ActivationFN;
+use crate::logic::activations_fns::softmax;
 
 pub fn round_decimal(places: u32, x: f64) -> f64 {
     let percision = i32::pow(10, places) as f64;
@@ -29,6 +31,60 @@ pub fn arr_ones_with_shape(shape: &[usize]) -> Arr {
     Arr::ones((shape[0], shape[1]))
 }
 
+pub fn one_hot_encoding(a: &Arr, word_dim: usize) -> Arr {
+    let rows = a.shape()[0];
+    let columns = a.shape()[1];
+    let identity_matrix = Arr::eye(word_dim);
+    let mut one_hot_encoded: Vec<f64> = Vec::new();
+    a.columns().into_iter().enumerate().for_each(|(i, column)| {
+        column.iter().enumerate().for_each(|(j, f)| {
+            let mut row = identity_matrix.row(*f as usize).to_vec();
+            one_hot_encoded.append(&mut row); 
+        });
+    });
+
+
+    Arr::from_shape_vec((word_dim * rows, columns).strides((1, word_dim * rows)), one_hot_encoded).unwrap()
+}
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::Arr;
+    use ndarray::arr2;
+
+    // #[test]
+    // fn cross_softmax_success(){
+    //     // self.word_dim X miniBatchSize
+    //     let mut arr : Arr = arr2(&[[0.21, 0.02], [0.45, 0.73], [0.34, 0.25]]);
+    //     // 1 X miniBatchSize
+    //     let labels : Arr = arr2(&[[2., 1.]]);
+    //     let result = arr2(&[[0.21, 0.02], [0.45, -0.27], [-0.66, 0.25]]);
+    //     cross_entropy_propogate(&mut arr, &labels);
+    //     assert_eq!(result, arr);
+    // }
+
+    #[test]
+    fn one_hot_encoding_success(){
+        let arr : Arr = arr2(&[[1.,3.,5.], [0., 3., 2.]]);
+        let result = arr2(&[
+            [0., 0. , 0.], 
+            [1., 0. , 0.], 
+            [0., 0. , 0.], 
+            [0., 1. , 0.], 
+            [0., 0. , 0.], 
+            [0., 0. , 1.], 
+            [1., 0. , 0.], 
+            [0., 0. , 0.], 
+            [0., 0. , 1.], 
+            [0., 1. , 0.], 
+            [0., 0. , 0.], 
+            [0., 0. , 0.], 
+        ]);
+        assert_eq!(result, one_hot_encoding(&arr, 6));
+    }
+}
 
 // NOT WORKING
 // pub fn shuffle_sets(data_set: &Arr, lbl_set: &Arr, inputs_size: usize, set_size: usize) -> (Arr, Arr) {
