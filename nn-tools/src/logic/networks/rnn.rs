@@ -111,7 +111,7 @@ impl Network<'_> {
         // println!("forward time: {:.2?}", timer1.elapsed());
 
         let mut errors = Vec::new();
-        for t in (0..self.sequence_size) {
+        for t in 0..self.sequence_size {
             // let get_last_layer_timer = Instant::now();
             let last_layer_labels = self.get_last_layer_labels(&labels, t).to_owned();
             // println!("last_layer time: {:.2?}", get_last_layer_timer.elapsed());
@@ -127,7 +127,7 @@ impl Network<'_> {
                 loss += -errors[t].iter().filter(|f| **f < 0.).sum::<f64>() as f64;
             }
 
-            println!("error is {}", loss / (self.mini_batch_size * self.sequence_size * self.word_dim) as f64)
+            println!("error is {}", loss / (self.mini_batch_size * self.sequence_size) as f64)
         }
         
         let mut dU = arr_zeros_with_shape(self.input_weights.shape());
