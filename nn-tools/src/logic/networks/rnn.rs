@@ -1,6 +1,6 @@
 use crate::ArrView;
 use ndarray::Slice;
-use std::{cell::RefMut, cmp::max, time::Instant};
+use std::{cell::RefMut, cmp::max, ops::DerefMut, time::Instant};
 
 use ndarray::{Axis, Order, s};
 use ndarray_rand::{RandomExt, rand_distr::{Normal, Uniform, uniform::UniformFloat}};
@@ -18,9 +18,9 @@ pub struct Network<'a> {
     hidden_dim: usize,
     gradient_decent: &'a dyn GradientDecent,
     activation_fn: &'a dyn ActivationFN,
-    input_weights: &'a mut Arr,
-    state_weights: &'a mut Arr,
-    output_weights: &'a mut Arr,
+    input_weights: RefMut<'a, &'a mut Arr>,
+    state_weights: RefMut<'a, &'a mut Arr>,
+    output_weights: RefMut<'a, &'a mut Arr>,
     loss_fn: &'a dyn LossFN,
 }
 
@@ -35,9 +35,9 @@ impl Network<'_> {
         hidden_dim: usize,
         gradient_decent: &'a dyn GradientDecent,
         activation_fn: &'a dyn ActivationFN,
-        input_weights: &'a mut Arr,
-        state_weights: &'a mut Arr,
-        output_weights: &'a mut Arr,
+        input_weights: RefMut<'a, &'a mut Arr>,
+        state_weights: RefMut<'a, &'a mut Arr>,
+        output_weights: RefMut<'a, &'a mut Arr>,
         loss_fn: &'a dyn LossFN,
     ) -> Network<'a> {
         Network {
@@ -73,7 +73,7 @@ impl Network<'_> {
 
             self.run_single_step(&mini_batch, &mini_batch_lbs, print_result);
 
-            println!("iteration: {}", iteration);
+            // println!("iteration: {}", iteration);
             iteration+=1;
             lower_bound = (iteration - 1) * size;
             higher_bound = iteration * size;
@@ -128,55 +128,55 @@ impl Network<'_> {
             }
 
             println!("error is {}", loss / (self.mini_batch_size * self.sequence_size) as f64)
-        }
-        
-        let mut dU = arr_zeros_with_shape(self.input_weights.shape());
-        let mut dW = arr_zeros_with_shape(self.state_weights.shape());
-        let mut dV = arr_zeros_with_shape(self.output_weights.shape());
-        let mut prev_s_t = arr_zeros_with_shape(&[self.hidden_dim, self.mini_batch_size]);
-        let diff_s = arr_zeros_with_shape(&[self.hidden_dim, self.mini_batch_size]);
+        } else {
+            let mut dU = arr_zeros_with_shape(self.input_weights.shape());
+            let mut dW = arr_zeros_with_shape(self.state_weights.shape());
+            let mut dV = arr_zeros_with_shape(self.output_weights.shape());
+            let mut prev_s_t = arr_zeros_with_shape(&[self.hidden_dim, self.mini_batch_size]);
+            let diff_s = arr_zeros_with_shape(&[self.hidden_dim, self.mini_batch_size]);
 
-        // let timer2 = Instant::now();
-        for t in (0..self.sequence_size).rev() {
-            let input = self.get_input(inputs, t);
-            // let propogate_timer = Instant::now();
-            let (mut dprev_s, mut dU_t, mut dW_t, dV_t) = 
-                    layers[t].propogate(&input, &prev_s_t, &diff_s, &errors[t]);
-            // println!("propogate time: {:.2?}", propogate_timer.elapsed());
-            prev_s_t = layers[t].s.clone();
-            let dmulv = arr_zeros_with_shape(&[self.word_dim, self.mini_batch_size]); 
-            let bptt_amount = t as i8 - self.bptt_truncate - 1;
-            let max = i8::max(0, bptt_amount) as usize;
-            for i in t.checked_sub(1).unwrap_or(0)..=max {
-                let input = self.get_input(inputs, i);
-                let prev_s_i = if  i == 0 {
-                    arr_zeros_with_shape(&[self.hidden_dim, 1])
-                } else {
-                    layers[i-1].s.clone()
-                };
+            // let timer2 = Instant::now();
+            for t in (0..self.sequence_size).rev() {
+                let input = self.get_input(inputs, t);
+                // let propogate_timer = Instant::now();
+                let (mut dprev_s, mut dU_t, mut dW_t, dV_t) = 
+                        layers[t].propogate(&input, &prev_s_t, &diff_s, &errors[t]);
+                // println!("propogate time: {:.2?}", propogate_timer.elapsed());
+                prev_s_t = layers[t].s.clone();
+                let dmulv = arr_zeros_with_shape(&[self.word_dim, self.mini_batch_size]); 
+                let bptt_amount = t as i8 - self.bptt_truncate - 1;
+                let max = i8::max(0, bptt_amount) as usize;
+                for i in t.checked_sub(1).unwrap_or(0)..=max {
+                    let input = self.get_input(inputs, i);
+                    let prev_s_i = if  i == 0 {
+                        arr_zeros_with_shape(&[self.hidden_dim, 1])
+                    } else {
+                        layers[i-1].s.clone()
+                    };
 
-                let (new_dprev_s, dU_i, dW_i, dV_i) = 
-                        layers[i].propogate(&input, &dprev_s, &prev_s_i, &dmulv);
+                    let (new_dprev_s, dU_i, dW_i, dV_i) = 
+                            layers[i].propogate(&input, &dprev_s, &prev_s_i, &dmulv);
 
-                dprev_s = new_dprev_s;
-                dU_t = dU_t + dU_i;
-                dW_t = dW_t + dW_i;
+                    dprev_s = new_dprev_s;
+                    dU_t = dU_t + dU_i;
+                    dW_t = dW_t + dW_i;
+                }
+
+                dU = dU + dU_t;
+                dW = dW + dW_t;
+                dV = dV + dV_t;
             }
 
-            dU = dU + dU_t;
-            dW = dW + dW_t;
-            dV = dV + dV_t;
-        }
+            // println!("backwards time: {:.2?}", timer2.elapsed());
 
-        // println!("backwards time: {:.2?}", timer2.elapsed());
+            // let timer3 = Instant::now();
+            self.gradient_decent.change_weights(self.input_weights.deref_mut(), &dU);
+            self.gradient_decent.change_weights(self.state_weights.deref_mut(), &dW);
+            self.gradient_decent.change_weights(self.output_weights.deref_mut(), &dV);
+            // println!("gradient time: {:.2?}", timer3.elapsed());
 
-        // let timer3 = Instant::now();
-        self.gradient_decent.change_weights(self.input_weights, &dU);
-        self.gradient_decent.change_weights(self.state_weights, &dW);
-        self.gradient_decent.change_weights(self.output_weights, &dV);
-        // println!("gradient time: {:.2?}", timer3.elapsed());
-
-        // println!("total time: {:.2?}", timer1.elapsed());
+            // println!("total time: {:.2?}", timer1.elapsed());
+            }
     }
 
     fn get_input<'k>(&self, inputs: &'k Arr, t: usize) -> ArrView<'k> {
