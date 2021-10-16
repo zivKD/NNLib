@@ -52,7 +52,7 @@ impl Loader<'_> {
             }
         } 
 
-        let word_dim = token_to_index.len();
+        let word_dim = token_to_index.len() + 1;
         let train_size = (self.train_set_frac as f64 / 100.) * total_size as f64;
         let test_size = (self.test_set_frac as f64 / 100.) * total_size as f64;
         let validation_size = (self.validation_set_frac as f64 / 100.) * total_size as f64;

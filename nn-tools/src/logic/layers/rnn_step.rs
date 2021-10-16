@@ -1,3 +1,4 @@
+use std::time::Instant;
 use crate::logic::gradient_decents::base_gradient_decent::GradientDecent;
 use crate::logic::activations_fns::base_activation_fn::ActivationFN;
 use crate::logic::utils::{repeated_axis_zero};
@@ -43,39 +44,59 @@ impl Init<'_> {
 
 impl Init<'_> {
     pub fn feedforward(&mut self, inputs: (ArrView, ArrView)) {
+        // let decontruction_timer = Instant::now();
         let (inputs_embadding, hidden_state) = inputs;
+        // println!("deconstruction time: {:.2?}", decontruction_timer.elapsed());
+        // let w_frd_timer = Instant::now();
         let w_frd = self.state_weights.dot(&hidden_state);
+        // println!("w_frd time: {:.2?}", w_frd_timer.elapsed());
+        // let u_frd_timer = Instant::now();
         let u_frd = self.input_weights.dot(&inputs_embadding);
+        // println!("u_frd time: {:.2?}", u_frd_timer.elapsed());
+        // let sum_s_timer = Instant::now();
         let sum_s = &w_frd + &u_frd;
+        // println!("sum_s time: {:.2?}", sum_s_timer.elapsed());
+        // let  hidden_activation_timer = Instant::now();
         let ht_activated = self.hidden_activation_fn.forward(&sum_s);
+        // println!("hidden activation time: {:.2?}", hidden_activation_timer.elapsed());
+        // let yt_timer = Instant::now();
         let yt= self.output_weights.dot(&ht_activated);
+        // println!("yt time: {:.2?}", yt_timer.elapsed());
+        // let assign_timer = Instant::now();
         self.mulw = w_frd;
         self.mulu = u_frd;
         self.add = sum_s;
         self.s = ht_activated;
         self.mulv = yt;
+        // println!("assign time: {:.2?}", assign_timer.elapsed());
     }
 
     pub fn propogate(
         &mut self, inputs: &ArrView, prev_s: &Arr, diff_s: &Arr, dmulv: &Arr) -> 
         (Arr, Arr, Arr, Arr) {
+        // let dv_timer = Instant::now();
         let (dV, dsv) = self.multiplication_backward(self.output_weights, &self.s, dmulv);
+        // println!("dv time: {:.2?}", dv_timer.elapsed());
+        // let ds_timer = Instant::now();
         let ds = dsv + diff_s;
+        // println!("ds time: {:.2?}", ds_timer.elapsed());
+        // let dadd_timer = Instant::now();
         let dadd = self.hidden_activation_fn.propogate(&self.add) * ds;
-        let (dmulw, dmulu) = self.add_backward(&self.mulu, &self.mulw, &dadd);
-        let (dW, dprev_s) = self.multiplication_backward(self.state_weights, prev_s, &dmulw);
-        let (dU, dx) = self.multiplication_backward(self.input_weights, &inputs.to_owned(), &dmulu);
+        // println!("dadd time: {:.2?}", dadd_timer.elapsed());
+        // let dmulw_timer = Instant::now();
+        // let (dmulw, dmulu) = self.add_backward(&self.mulu, &self.mulw, &dadd);
+        // println!("dmulw time: {:.2?}", dmulw_timer.elapsed());
+        // let dw_timer = Instant::now();
+        let (dW, dprev_s) = self.multiplication_backward(self.state_weights, prev_s, &dadd);
+        // println!("dw time: {:.2?}", dw_timer.elapsed());
+        // let du_timer = Instant::now();
+        let (dU, dx) = self.multiplication_backward(self.input_weights, &inputs.to_owned(), &dadd);
+        // println!("du time: {:.2?}", du_timer.elapsed());
 
         (dprev_s, dU, dW, dV)
     }
 
     fn multiplication_backward(&self, weights: &Arr, x: &Arr, dz: &Arr) -> (Arr, Arr) {
         (dz.dot(&x.t()), weights.t().dot(dz))
-    }
-
-    fn add_backward(&self, x1: &Arr, x2: &Arr, dz: &Arr) -> (Arr, Arr) {
-        let x1_shape = x1.shape();
-        let x2_shape = x2.shape();
-        (dz * Arr::ones((x1_shape[0], x1_shape[1])), dz * Arr::ones((x2_shape[0], x2_shape[1]))) 
     }
 }

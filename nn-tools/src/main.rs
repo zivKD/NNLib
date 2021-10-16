@@ -1,6 +1,8 @@
 pub mod logic;
 pub mod data;
 
+use std::cmp::min;
+
 use ndarray::{Array2, ArrayView2, s};
 pub type Arr = Array2<f64>;
 pub type ArrView<'a> = ArrayView2<'a, f64>;
@@ -15,12 +17,16 @@ use crate::logic::{activations_fns::softmax, utils::one_hot_encoding};
 
 /* TODOs: 
     1. loader should return in usize not in f64
+    2. functions with performence issues:
+        - decouple rnn from softmax and cross_entropy
+        - cross_entroy_loss_with_softmax
+        - arr.dot which affects feedforward and propogation
 */
 fn main() {
     let mini_batch_size = 10;
     let sequence_size = 50;
     let loader = Loader::new(
-        "./src/data/datasets/warandpeace/files/sources.txt",
+        "./src/data/datasets/warandpeace/files/shortend.txt",
         75,
         10,
         15,
@@ -37,6 +43,7 @@ fn main() {
         val_lbls,
         word_dim
     ) = loader.build();
+
 
     let new_mini_batch_size = trn_data.shape()[1];
     let bptt_truncate = 5;
@@ -60,6 +67,10 @@ fn main() {
 
     // Uniform::new(-f64::sqrt(-(1./hidden_dim as f64)), f64::sqrt(1./hidden_dim as f64))
 
+    println!("data shape: {:?}", trn_data.shape());
+    println!("lbls shape: {:?}", trn_lbls.shape());
+    println!("mini batch size: {}", new_mini_batch_size);
+    println!("word dim: {}", word_dim);
     let encoded_trn_data = one_hot_encoding(&trn_data, word_dim);
     // let encoded_trn_lbls = one_hot_encoding(&trn_lbls, word_dim);
     let softmax = softmax::Init {};
@@ -83,6 +94,6 @@ fn main() {
     println!("trn lbls shape: {:?}", trn_lbls.shape());
     let mut i = 0;
     while i < 30 {
-        rnn_network.run(false);
+        rnn_network.run(true);
     }
 }

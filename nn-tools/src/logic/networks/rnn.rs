@@ -83,33 +83,49 @@ impl Network<'_> {
 
     fn run_single_step(&mut self, inputs: &Arr, labels: &Arr, print_result: bool) {
         // let timer1 = Instant::now();
-        let prev_s_timer = Instant::now();
+        // let prev_s_timer = Instant::now();
         let mut prev_s = arr_zeros_with_shape(&[self.hidden_dim, self.mini_batch_size]);
-        println!("prev_s time: {:.2?}", prev_s_timer.elapsed());
+        // println!("init arr time: {:.2?}", prev_s_timer.elapsed());
 
         let mut layers = Vec::new();
 
         for t in 0..self.sequence_size {
-            let layer_init_timer = Instant::now();
+            // let layer_init_timer = Instant::now();
             let mut layer = rnn_step::Init::new(
                 &self.state_weights,
                 &self.input_weights,
                 &self.output_weights,
                 self.activation_fn
             );
-            println!("layer_init time: {:.2?}", layer_init_timer.elapsed());
+            // println!("layer_init time: {:.2?}", layer_init_timer.elapsed());
 
-            let get_input_timer = Instant::now();
+            // let get_input_timer = Instant::now();
             let input = self.get_input(inputs, t);
-            println!("get_input time: {:.2?}", get_input_timer.elapsed());
-            let feedforward_timer = Instant::now();
+            // println!("get_input time: {:.2?}", get_input_timer.elapsed());
+            // let feedforward_timer = Instant::now();
             layer.feedforward((input, prev_s.view()));
-            println!("feedforward time: {:.2?}", feedforward_timer.elapsed());
+            // println!("feedforward time: {:.2?}", feedforward_timer.elapsed());
             prev_s = layer.s.clone();
             layers.push(layer);
         }
 
         // println!("forward time: {:.2?}", timer1.elapsed());
+
+        // if print_result {
+        //     let mut loss = 0.;
+        //     for t in (0..self.sequence_size).rev() {
+        //         let probs = self.softmax.forward(&layers[t].mulv);
+        //         let last_layer_labels = self.get_last_layer_labels(&labels, t);
+        //         last_layer_labels.
+        //         columns().
+        //         into_iter().
+        //         enumerate().for_each(|(i, c)| c.for_each(|f| {
+        //             loss -= probs[(*f as usize, i)].ln();
+        //         }));
+        //     }
+
+        //     println!("the loss is: {}", loss / (self.mini_batch_size as f64 * labels.shape()[0] as f64))
+        // }
 
         let mut dU = arr_zeros_with_shape(self.input_weights.shape());
         let mut dW = arr_zeros_with_shape(self.state_weights.shape());
@@ -119,17 +135,17 @@ impl Network<'_> {
 
         // let timer2 = Instant::now();
         for t in (0..self.sequence_size).rev() {
-            let get_last_layer_timer = Instant::now();
+            // let get_last_layer_timer = Instant::now();
             let last_layer_labels = self.get_last_layer_labels(&labels, t);
-            println!("last_layer time: {:.2?}", get_last_layer_timer.elapsed());
-            let dmulv_timer = Instant::now();
+            // println!("last_layer time: {:.2?}", get_last_layer_timer.elapsed());
+            // let dmulv_timer = Instant::now();
             let mut dmulv = self.cross_entropy_with_softmax_propgate(&layers[t].mulv, &last_layer_labels);
-            println!("cross_entropy_with time: {:.2?}", dmulv_timer.elapsed());
+            // println!("cross_entropy_with time: {:.2?}", dmulv_timer.elapsed());
             let input = self.get_input(inputs, t);
-            let propogate_timer = Instant::now();
+            // let propogate_timer = Instant::now();
             let (mut dprev_s, mut dU_t, mut dW_t, dV_t) = 
                     layers[t].propogate(&input, &prev_s_t, &diff_s, &dmulv);
-            println!("propogate time: {:.2?}", propogate_timer.elapsed());
+            // println!("propogate time: {:.2?}", propogate_timer.elapsed());
             prev_s_t = layers[t].s.clone();
             dmulv = arr_zeros_with_shape(&[self.word_dim, self.mini_batch_size]); 
             let bptt_amount = t as i8 - self.bptt_truncate - 1;
@@ -157,11 +173,11 @@ impl Network<'_> {
 
         // println!("backwards time: {:.2?}", timer2.elapsed());
 
-        let timer3 = Instant::now();
+        // let timer3 = Instant::now();
         self.gradient_decent.change_weights(self.input_weights, &dU);
         self.gradient_decent.change_weights(self.state_weights, &dW);
         self.gradient_decent.change_weights(self.output_weights, &dV);
-        println!("gradient time: {:.2?}", timer3.elapsed());
+        // println!("gradient time: {:.2?}", timer3.elapsed());
 
         // println!("total time: {:.2?}", timer1.elapsed());
     }
@@ -176,23 +192,7 @@ impl Network<'_> {
 
     fn cross_entropy_with_softmax_propgate(&self, a: &Arr, y: &ArrView) -> Arr {
         let mut probs = self.softmax.forward(a);
-
-        let shape = y.shape();
-        let i_max = shape[0];
-        let j_max = shape[1];
-
-        let mut i = 0;
-        let mut j = 0;
-        while i < i_max {
-            while j < j_max {
-                probs[(y[(i,j)] as usize, i)] -=1.;
-                j+=1;
-            }
-
-            i+=1;
-            j=0;
-        }
-        // y.columns().into_iter().enumerate().for_each(|(i, c)| c.for_each(|f| probs[(*f as usize, i)] -=1.));
+        y.columns().into_iter().enumerate().for_each(|(i, c)| c.for_each(|f| probs[(*f as usize, i)] -=1.));
         probs
     }
 }

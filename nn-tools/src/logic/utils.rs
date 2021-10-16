@@ -36,13 +36,13 @@ pub fn one_hot_encoding(a: &Arr, word_dim: usize) -> Arr {
     let columns = a.shape()[1];
     let identity_matrix = Arr::eye(word_dim);
     let mut one_hot_encoded: Vec<f64> = Vec::new();
+    // a.for_each(|f| one_hot_encoded.append(identity_matrix.row(*f as usize)))
     a.columns().into_iter().enumerate().for_each(|(i, column)| {
         column.iter().enumerate().for_each(|(j, f)| {
             let mut row = identity_matrix.row(*f as usize).to_vec();
             one_hot_encoded.append(&mut row); 
         });
     });
-
 
     Arr::from_shape_vec((word_dim * rows, columns).strides((1, word_dim * rows)), one_hot_encoded).unwrap()
 }
