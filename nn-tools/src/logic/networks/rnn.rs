@@ -110,6 +110,26 @@ impl Network<'_> {
 
         // println!("forward time: {:.2?}", timer1.elapsed());
 
+        let mut errors = Vec::new();
+        for t in (0..self.sequence_size) {
+            // let get_last_layer_timer = Instant::now();
+            let last_layer_labels = self.get_last_layer_labels(&labels, t).to_owned();
+            // println!("last_layer time: {:.2?}", get_last_layer_timer.elapsed());
+            // let dmulv_timer = Instant::now();
+            let mut dmulv = self.loss_fn.propogate(&mut DEFAULT(), &layers[t].mulv, &last_layer_labels); 
+            // println!("cross_entropy_with time: {:.2?}", dmulv_timer.elapsed());
+            errors.push(dmulv);
+        }
+
+        if print_result {
+            let mut loss = 0.;
+            for t in (0..self.sequence_size).rev() {
+                loss += -errors[t].iter().filter(|f| **f < 0.).sum::<f64>() as f64;
+            }
+
+            println!("error is {}", loss / (self.mini_batch_size * self.sequence_size * self.word_dim) as f64)
+        }
+        
         let mut dU = arr_zeros_with_shape(self.input_weights.shape());
         let mut dW = arr_zeros_with_shape(self.state_weights.shape());
         let mut dV = arr_zeros_with_shape(self.output_weights.shape());
@@ -118,19 +138,13 @@ impl Network<'_> {
 
         // let timer2 = Instant::now();
         for t in (0..self.sequence_size).rev() {
-            // let get_last_layer_timer = Instant::now();
-            let last_layer_labels = self.get_last_layer_labels(&labels, t).to_owned();
-            // println!("last_layer time: {:.2?}", get_last_layer_timer.elapsed());
-            // let dmulv_timer = Instant::now();
-            let mut dmulv = self.loss_fn.propogate(&mut DEFAULT(), &layers[t].mulv, &last_layer_labels); 
-            // println!("cross_entropy_with time: {:.2?}", dmulv_timer.elapsed());
             let input = self.get_input(inputs, t);
             // let propogate_timer = Instant::now();
             let (mut dprev_s, mut dU_t, mut dW_t, dV_t) = 
-                    layers[t].propogate(&input, &prev_s_t, &diff_s, &dmulv);
+                    layers[t].propogate(&input, &prev_s_t, &diff_s, &errors[t]);
             // println!("propogate time: {:.2?}", propogate_timer.elapsed());
             prev_s_t = layers[t].s.clone();
-            dmulv = arr_zeros_with_shape(&[self.word_dim, self.mini_batch_size]); 
+            let dmulv = arr_zeros_with_shape(&[self.word_dim, self.mini_batch_size]); 
             let bptt_amount = t as i8 - self.bptt_truncate - 1;
             let max = i8::max(0, bptt_amount) as usize;
             for i in t.checked_sub(1).unwrap_or(0)..=max {

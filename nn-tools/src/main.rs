@@ -23,10 +23,10 @@ use crate::logic::{loss_fns::cross_entropy, utils::one_hot_encoding};
         - arr.dot which affects feedforward and propogation
 */
 fn main() {
-    let mini_batch_size = 10;
-    let sequence_size = 50;
+    let mini_batch_size = 2;
+    let sequence_size = 2;
     let loader = Loader::new(
-        "./src/data/datasets/warandpeace/files/shortend.txt",
+        "./src/data/datasets/warandpeace/files/tst.txt",
         75,
         10,
         15,
