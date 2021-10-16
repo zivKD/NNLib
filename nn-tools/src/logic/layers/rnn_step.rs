@@ -26,16 +26,17 @@ impl Init<'_> {
         output_weights: &'a Arr,
         hidden_activation_fn: &'a dyn ActivationFN,
     ) -> Init<'a> {
+        let default_val = DEFAULT();
         Init {
             state_weights,
             input_weights,
             output_weights,
             hidden_activation_fn,
-            mulu: DEFAULT(),
-            mulw: DEFAULT(),
-            add: DEFAULT(),
-            s: DEFAULT(),
-            mulv: DEFAULT()
+            mulu: default_val.clone(),
+            mulw: default_val.clone(),
+            add: default_val.clone(),
+            s: default_val.clone(),
+            mulv: default_val.clone()
         }
     }
 }
