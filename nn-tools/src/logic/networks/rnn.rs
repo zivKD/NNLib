@@ -1,12 +1,12 @@
+use crate::ArrView;
 use ndarray::Slice;
-use crate::{ArrView, logic::activations_fns::softmax::Init};
 use std::{cell::RefMut, cmp::max, time::Instant};
 
 use ndarray::{Axis, Order, s};
 use ndarray_rand::{RandomExt, rand_distr::{Normal, Uniform, uniform::UniformFloat}};
 use ndarray_stats::histogram::{Grid, GridBuilder};
 
-use crate::{Arr, DEFAULT, logic::{activations_fns::{base_activation_fn::ActivationFN, softmax, tanh}, gradient_decents::{base_gradient_decent::GradientDecent, stochastic}, layers::{base_layer::Layer, rnn_step}, loss_fns::base_loss_fn::LossFN, utils::arr_zeros_with_shape}};
+use crate::{Arr, DEFAULT, logic::{activations_fns::{base_activation_fn::ActivationFN,}, gradient_decents::{base_gradient_decent::GradientDecent, stochastic}, layers::{base_layer::Layer, rnn_step}, loss_fns::base_loss_fn::LossFN, utils::arr_zeros_with_shape}};
 
 pub struct Network<'a> {
     data_set: &'a Arr,
@@ -21,7 +21,7 @@ pub struct Network<'a> {
     input_weights: &'a mut Arr,
     state_weights: &'a mut Arr,
     output_weights: &'a mut Arr,
-    softmax: &'a softmax::Init
+    loss_fn: &'a dyn LossFN,
 }
 
 impl Network<'_> {
@@ -38,9 +38,8 @@ impl Network<'_> {
         input_weights: &'a mut Arr,
         state_weights: &'a mut Arr,
         output_weights: &'a mut Arr,
-        softmax: &'a softmax::Init
+        loss_fn: &'a dyn LossFN,
     ) -> Network<'a> {
-        let softmax_func = softmax::Init {};
         Network {
             data_set,
             labels_set,
@@ -54,7 +53,7 @@ impl Network<'_> {
             input_weights,
             state_weights,
             output_weights,
-            softmax
+            loss_fn,
         }
     }
 
@@ -111,22 +110,6 @@ impl Network<'_> {
 
         // println!("forward time: {:.2?}", timer1.elapsed());
 
-        // if print_result {
-        //     let mut loss = 0.;
-        //     for t in (0..self.sequence_size).rev() {
-        //         let probs = self.softmax.forward(&layers[t].mulv);
-        //         let last_layer_labels = self.get_last_layer_labels(&labels, t);
-        //         last_layer_labels.
-        //         columns().
-        //         into_iter().
-        //         enumerate().for_each(|(i, c)| c.for_each(|f| {
-        //             loss -= probs[(*f as usize, i)].ln();
-        //         }));
-        //     }
-
-        //     println!("the loss is: {}", loss / (self.mini_batch_size as f64 * labels.shape()[0] as f64))
-        // }
-
         let mut dU = arr_zeros_with_shape(self.input_weights.shape());
         let mut dW = arr_zeros_with_shape(self.state_weights.shape());
         let mut dV = arr_zeros_with_shape(self.output_weights.shape());
@@ -136,10 +119,10 @@ impl Network<'_> {
         // let timer2 = Instant::now();
         for t in (0..self.sequence_size).rev() {
             // let get_last_layer_timer = Instant::now();
-            let last_layer_labels = self.get_last_layer_labels(&labels, t);
+            let last_layer_labels = self.get_last_layer_labels(&labels, t).to_owned();
             // println!("last_layer time: {:.2?}", get_last_layer_timer.elapsed());
             // let dmulv_timer = Instant::now();
-            let mut dmulv = self.cross_entropy_with_softmax_propgate(&layers[t].mulv, &last_layer_labels);
+            let mut dmulv = self.loss_fn.propogate(&mut DEFAULT(), &layers[t].mulv, &last_layer_labels); 
             // println!("cross_entropy_with time: {:.2?}", dmulv_timer.elapsed());
             let input = self.get_input(inputs, t);
             // let propogate_timer = Instant::now();
@@ -190,9 +173,4 @@ impl Network<'_> {
         labels.row(t).insert_axis(Axis(0))
     }
 
-    fn cross_entropy_with_softmax_propgate(&self, a: &Arr, y: &ArrView) -> Arr {
-        let mut probs = self.softmax.forward(a);
-        y.columns().into_iter().enumerate().for_each(|(i, c)| c.for_each(|f| probs[(*f as usize, i)] -=1.));
-        probs
-    }
 }

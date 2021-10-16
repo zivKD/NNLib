@@ -13,7 +13,7 @@ use data::datasets::warandpeace::loader::{self, Loader};
 use logic::{activations_fns::sigmoid, gradient_decents::stochastic, layers::fully_connected, loss_fns::quadratic};
 use ndarray_rand::{RandomExt, rand_distr::{Normal, Uniform}};
 
-use crate::logic::{activations_fns::softmax, utils::one_hot_encoding};
+use crate::logic::{loss_fns::cross_entropy, utils::one_hot_encoding};
 
 /* TODOs: 
     1. loader should return in usize not in f64
@@ -73,7 +73,7 @@ fn main() {
     println!("word dim: {}", word_dim);
     let encoded_trn_data = one_hot_encoding(&trn_data, word_dim);
     // let encoded_trn_lbls = one_hot_encoding(&trn_lbls, word_dim);
-    let softmax = softmax::Init {};
+    let cross_entropy = cross_entropy::Init {};
     let mut rnn_network = rnn::Network::new(
         &encoded_trn_data,
         &trn_lbls,
@@ -87,7 +87,7 @@ fn main() {
         &mut inputs_weights,
         &mut state_weights,
         &mut output_weights,
-        &softmax
+        &cross_entropy
     );
 
     println!("encoded train data shape: {:?}", encoded_trn_data.shape());

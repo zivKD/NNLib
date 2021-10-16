@@ -6,7 +6,7 @@ use crate::{Arr, ArrView, DEFAULT};
 use ndarray::{Axis, Zip};
 use ndarray_stats::QuantileExt;
 use crate::logic::layers::base_layer::Layer;
-use crate::logic::activations_fns::{self, softmax};
+use crate::logic::activations_fns::{self};
 
 pub struct Init<'a> {
     state_weights: &'a Arr,

@@ -15,16 +15,14 @@ impl Init<'_> {
 }
 
 impl LossFN for Init<'_> {
-    fn output<'a>(&self, a: &'a mut Arr, y: &'a Arr) -> Arr {
+    fn output<'a>(&self, a: &'a Arr, y: &'a Arr) -> Arr {
        let mut pos  = &a.view() - y;
-       pos.mapv_inplace(|x| {
-           0.5 * f64::powf(x, 2.)
-       });
-
-       pos 
+       pos.map(|x| {
+           0.5 * f64::powf(*x, 2.)
+       })
     }
 
-    fn propogate<'a>(&self,z: &'a mut Arr, a: &'a mut Arr, y: &'a Arr) -> Arr {
+    fn propogate<'a>(&self,z: &'a Arr, a: &'a Arr, y: &'a Arr) -> Arr {
         // // δl=δl+1⊙σ′(zl)
         (&a.view() - y) * self.activation_fn.propogate(z)
     }

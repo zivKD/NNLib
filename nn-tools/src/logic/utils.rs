@@ -6,7 +6,6 @@ use ndarray_rand::RandomExt;
 use rand::prelude::SliceRandom;
 use crate::Arr;
 use crate::logic::activations_fns::base_activation_fn::ActivationFN;
-use crate::logic::activations_fns::softmax;
 
 pub fn round_decimal(places: u32, x: f64) -> f64 {
     let percision = i32::pow(10, places) as f64;
