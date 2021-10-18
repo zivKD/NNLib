@@ -43,7 +43,7 @@ impl Init<'_> {
 }
 
 impl Init<'_> {
-    pub fn feedforward(&mut self, inputs: (ArrView, ArrView)) {
+    pub fn feedforward(&mut self, inputs: (&ArrView, ArrView)) {
         // let decontruction_timer = Instant::now();
         let (inputs_embadding, hidden_state) = inputs;
         // println!("deconstruction time: {:.2?}", decontruction_timer.elapsed());
@@ -51,7 +51,7 @@ impl Init<'_> {
         let w_frd = self.state_weights.dot(&hidden_state);
         // println!("w_frd time: {:.2?}", w_frd_timer.elapsed());
         // let u_frd_timer = Instant::now();
-        let u_frd = self.input_weights.dot(&inputs_embadding);
+        let u_frd = self.input_weights.dot(inputs_embadding);
         // println!("u_frd time: {:.2?}", u_frd_timer.elapsed());
         // let sum_s_timer = Instant::now();
         let sum_s = &w_frd + &u_frd;
@@ -74,24 +74,13 @@ impl Init<'_> {
     pub fn propogate(
         &mut self, inputs: &ArrView, prev_s: &Arr, diff_s: &Arr, dmulv: &Arr) -> 
         (Arr, Arr, Arr, Arr) {
-        // let dv_timer = Instant::now();
-        let (dV, dsv) = self.multiplication_backward(self.output_weights, &self.s, dmulv);
-        // println!("dv time: {:.2?}", dv_timer.elapsed());
-        // let ds_timer = Instant::now();
+        let (dV, dsv) = 
+            self.multiplication_backward(self.output_weights, &self.s, dmulv);
         let ds = dsv + diff_s;
-        // println!("ds time: {:.2?}", ds_timer.elapsed());
-        // let dadd_timer = Instant::now();
-        let dadd = self.hidden_activation_fn.propogate(&self.add) * ds;
-        // println!("dadd time: {:.2?}", dadd_timer.elapsed());
-        // let dmulw_timer = Instant::now();
+        let dadd = self.hidden_activation_fn.propogate(&self.s) * ds;
         // let (dmulw, dmulu) = self.add_backward(&self.mulu, &self.mulw, &dadd);
-        // println!("dmulw time: {:.2?}", dmulw_timer.elapsed());
-        // let dw_timer = Instant::now();
         let (dW, dprev_s) = self.multiplication_backward(self.state_weights, prev_s, &dadd);
-        // println!("dw time: {:.2?}", dw_timer.elapsed());
-        // let du_timer = Instant::now();
         let (dU, dx) = self.multiplication_backward(self.input_weights, &inputs.to_owned(), &dadd);
-        // println!("du time: {:.2?}", du_timer.elapsed());
 
         (dprev_s, dU, dW, dV)
     }

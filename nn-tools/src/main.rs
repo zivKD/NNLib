@@ -16,7 +16,7 @@ use ndarray_rand::{RandomExt, rand_distr::{Normal, Uniform}};
 
 use crate::logic::{loss_fns::cross_entropy, utils::one_hot_encoding};
 
-/* TODOs: 
+/* TODOs:
     1. loader should return in usize not in f64
     2. functions with performence issues:
         - decouple rnn from softmax and cross_entropy
@@ -25,7 +25,7 @@ use crate::logic::{loss_fns::cross_entropy, utils::one_hot_encoding};
 */
 fn main() {
     let mini_batch_size = 10;
-    let sequence_size = 50;
+    let sequence_size = 5;
     let loader = Loader::new(
         "./src/data/datasets/warandpeace/files/shortend.txt",
         75,
@@ -47,23 +47,23 @@ fn main() {
 
 
     let new_mini_batch_size = trn_data.shape()[1];
-    let bptt_truncate = 5;
+    let bptt_truncate = 50;
     let hidden_dim = 100;
     let tanh = tanh::Init {};
-    let stochastic = stochastic::Init::new(0.005, mini_batch_size);
     let learning_rate = 0.005;
+    let stochastic = stochastic::Init::new(learning_rate, mini_batch_size);
 
     let mut inputs_weights: Arr = Arr::random(
         (hidden_dim, word_dim), 
-        Normal::new(0., learning_rate).unwrap()
+        Normal::new(0., 1.).unwrap()
     );
     let mut state_weights = Arr::random(
         (hidden_dim, hidden_dim), 
-        Normal::new(0., learning_rate).unwrap()
+        Normal::new(0., 1.).unwrap()
     );
     let mut output_weights = Arr::random(
         (word_dim, hidden_dim), 
-        Normal::new(0., learning_rate).unwrap()
+        Normal::new(0., 1.).unwrap()
     );
 
     // Uniform::new(-f64::sqrt(-(1./hidden_dim as f64)), f64::sqrt(1./hidden_dim as f64))
@@ -80,7 +80,6 @@ fn main() {
     let output_weights_ref_cell: RefCell<&mut Arr> = RefCell::new(&mut output_weights);
     let input_weights_ref_cell: RefCell<&mut Arr> = RefCell::new(&mut inputs_weights);
     let state_weights_ref_cell: RefCell<&mut Arr> = RefCell::new(&mut state_weights);
-
 
     // println!("encoded train data shape: {:?}", encoded_trn_data.shape());
     // println!("trn lbls shape: {:?}", trn_lbls.shape());
@@ -103,8 +102,8 @@ fn main() {
         ).run(false);
 
         rnn::Network::new(
-            &encoded_trn_data,
-            &trn_lbls,
+            &encoded_tst_data,
+            &tst_lbls,
             new_mini_batch_size,
             sequence_size,
             bptt_truncate,
@@ -117,5 +116,7 @@ fn main() {
             output_weights_ref_cell.borrow_mut(),
             &cross_entropy
         ).run(true);
+
+        i+=1;
     }
 }

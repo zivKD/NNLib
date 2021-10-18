@@ -1,7 +1,6 @@
 use ndarray::{Axis, Zip};
 use ndarray_stats::QuantileExt;
-use crate::{Arr, DEFAULT};
-use crate::logic::activations_fns::base_activation_fn::ActivationFN;
+use crate::{Arr};
 use crate::logic::loss_fns::base_loss_fn::LossFN; 
 
 pub struct Init {
@@ -26,7 +25,7 @@ impl LossFN for Init {
         loss.map_axis(Axis(1), |axis| -axis.sum()).into_shape((loss.shape()[0], 1)).unwrap()
     }
 
-    fn propogate<'a>(&self,z: &'a Arr, a: &'a Arr, y: &'a Arr) -> Arr {
+    fn propogate<'a>(&self,_z: &'a Arr, a: &'a Arr, y: &'a Arr) -> Arr {
         let mut probs = self.softmax_forward(a);
         y.columns().into_iter().enumerate().for_each(|(i, c)| c.for_each(|f| probs[(*f as usize, i)] -=1.));
         probs

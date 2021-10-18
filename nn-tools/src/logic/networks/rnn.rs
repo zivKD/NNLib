@@ -62,6 +62,7 @@ impl Network<'_> {
         let mut lower_bound = 0;
         let size: usize = self.sequence_size * self.word_dim;
         let mut higher_bound = size;
+        let mut loss =  0.;
         while higher_bound <= (self.data_set.shape()[0] - size) {
             let mini_batch: ArrView = self.data_set.slice(s![lower_bound..higher_bound, ..]);
             let mini_batch = mini_batch
@@ -71,22 +72,42 @@ impl Network<'_> {
                 Slice::from((iteration-1)*self.sequence_size..iteration*self.sequence_size)
             ).to_owned();
 
-            self.run_single_step(&mini_batch, &mini_batch_lbs, print_result);
+            // let mut values = Vec::new();
+            // for j in (0..mini_batch.shape()[0]) {
+            //     if(mini_batch[(j, 0)] == 1.) {
+            //         let value = ((j%self.word_dim) + self.word_dim) % self.word_dim;
+            //         values.push(j);
+
+            //     }
+            // }
+            // println!("mini batch: {:?}", mini_batch.column(0).slice(s![0..self.word_dim]));
+            // println!("mini batch lbs: {:?}", mini_batch_lbs.column(1)[0]);
+            let losses = self.run_single_step(&mini_batch, &mini_batch_lbs, print_result);
+            loss += losses.iter().sum::<f64>() / self.sequence_size as f64; 
 
             // println!("iteration: {}", iteration);
             iteration+=1;
             lower_bound = (iteration - 1) * size;
             higher_bound = iteration * size;
         }
+
+        if print_result {
+            println!("loss is {}", loss / iteration as f64);
+        }
     }
 
-    fn run_single_step(&mut self, inputs: &Arr, labels: &Arr, print_result: bool) {
+    fn run_single_step(&mut self, inputs: &Arr, labels: &Arr, print_result: bool) -> Vec<f64> {
         // let timer1 = Instant::now();
         // let prev_s_timer = Instant::now();
         let mut prev_s = arr_zeros_with_shape(&[self.hidden_dim, self.mini_batch_size]);
         // println!("init arr time: {:.2?}", prev_s_timer.elapsed());
 
         let mut layers = Vec::new();
+
+        let mut inputs_sliced = Vec::new();
+        for t in 0..self.sequence_size {
+            inputs_sliced.push(self.get_input(inputs, t));
+        }
 
         for t in 0..self.sequence_size {
             // let layer_init_timer = Instant::now();
@@ -98,11 +119,8 @@ impl Network<'_> {
             );
             // println!("layer_init time: {:.2?}", layer_init_timer.elapsed());
 
-            // let get_input_timer = Instant::now();
-            let input = self.get_input(inputs, t);
-            // println!("get_input time: {:.2?}", get_input_timer.elapsed());
             // let feedforward_timer = Instant::now();
-            layer.feedforward((input, prev_s.view()));
+            layer.feedforward((&inputs_sliced[t], prev_s.view()));
             // println!("feedforward time: {:.2?}", feedforward_timer.elapsed());
             prev_s = layer.s.clone();
             layers.push(layer);
@@ -121,62 +139,60 @@ impl Network<'_> {
             errors.push(dmulv);
         }
 
+        let mut losses = vec!();
+
         if print_result {
             let mut loss = 0.;
             for t in (0..self.sequence_size).rev() {
                 loss += -errors[t].iter().filter(|f| **f < 0.).sum::<f64>() as f64;
             }
+            
+            losses.push(loss);
+        }
 
-            println!("error is {}", loss / (self.mini_batch_size * self.sequence_size) as f64)
-        } else {
-            let mut dU = arr_zeros_with_shape(self.input_weights.shape());
-            let mut dW = arr_zeros_with_shape(self.state_weights.shape());
-            let mut dV = arr_zeros_with_shape(self.output_weights.shape());
-            let mut prev_s_t = arr_zeros_with_shape(&[self.hidden_dim, self.mini_batch_size]);
-            let diff_s = arr_zeros_with_shape(&[self.hidden_dim, self.mini_batch_size]);
+        let mut dU = arr_zeros_with_shape(self.input_weights.shape());
+        let mut dW = arr_zeros_with_shape(self.state_weights.shape());
+        let mut dV = arr_zeros_with_shape(self.output_weights.shape());
+        let mut prev_s_t = arr_zeros_with_shape(&[self.hidden_dim, self.mini_batch_size]);
+        let diff_s = arr_zeros_with_shape(&[self.hidden_dim, self.mini_batch_size]);
 
-            // let timer2 = Instant::now();
-            for t in (0..self.sequence_size).rev() {
-                let input = self.get_input(inputs, t);
-                // let propogate_timer = Instant::now();
-                let (mut dprev_s, mut dU_t, mut dW_t, dV_t) = 
-                        layers[t].propogate(&input, &prev_s_t, &diff_s, &errors[t]);
-                // println!("propogate time: {:.2?}", propogate_timer.elapsed());
-                prev_s_t = layers[t].s.clone();
-                let dmulv = arr_zeros_with_shape(&[self.word_dim, self.mini_batch_size]); 
-                let bptt_amount = t as i8 - self.bptt_truncate - 1;
-                let max = i8::max(0, bptt_amount) as usize;
-                for i in t.checked_sub(1).unwrap_or(0)..=max {
-                    let input = self.get_input(inputs, i);
-                    let prev_s_i = if  i == 0 {
-                        arr_zeros_with_shape(&[self.hidden_dim, 1])
-                    } else {
-                        layers[i-1].s.clone()
-                    };
+        // let timer2 = Instant::now();
+        for t in (0..self.sequence_size).rev() {
+            // let propogate_timer = Instant::now();
+            let (mut dprev_s, mut dU_t, mut dW_t, dV_t) = 
+                    layers[t].propogate(&inputs_sliced[t], &prev_s_t, &diff_s, &errors[t]);
+            // println!("propogate time: {:.2?}", propogate_timer.elapsed());
+            prev_s_t = layers[t].s.clone();
+            let dmulv = arr_zeros_with_shape(&[self.word_dim, self.mini_batch_size]); 
+            let bptt_amount = t as i8 - self.bptt_truncate - 1;
+            let max = i8::max(0, bptt_amount) as usize;
+            for i in t.checked_sub(1).unwrap_or(0)..=max {
+                let input = self.get_input(inputs, i);
+                let prev_s_i = if  i == 0 {
+                    arr_zeros_with_shape(&[self.hidden_dim, 1])
+                } else {
+                    layers[i-1].s.clone()
+                };
 
-                    let (new_dprev_s, dU_i, dW_i, dV_i) = 
-                            layers[i].propogate(&input, &dprev_s, &prev_s_i, &dmulv);
+                let (new_dprev_s, dU_i, dW_i, dV_i) = 
+                        layers[i].propogate(&input, &dprev_s, &prev_s_i, &dmulv);
 
-                    dprev_s = new_dprev_s;
-                    dU_t = dU_t + dU_i;
-                    dW_t = dW_t + dW_i;
-                }
-
-                dU = dU + dU_t;
-                dW = dW + dW_t;
-                dV = dV + dV_t;
+                dprev_s = new_dprev_s;
+                dU_t = dU_t + dU_i;
+                dW_t = dW_t + dW_i;
             }
 
-            // println!("backwards time: {:.2?}", timer2.elapsed());
+            dU = dU + dU_t;
+            dW = dW + dW_t;
+            dV = dV + dV_t;
+        }
 
-            // let timer3 = Instant::now();
-            self.gradient_decent.change_weights(self.input_weights.deref_mut(), &dU);
-            self.gradient_decent.change_weights(self.state_weights.deref_mut(), &dW);
-            self.gradient_decent.change_weights(self.output_weights.deref_mut(), &dV);
-            // println!("gradient time: {:.2?}", timer3.elapsed());
+        self.gradient_decent.change_weights(self.input_weights.deref_mut(), &dU);
+        self.gradient_decent.change_weights(self.state_weights.deref_mut(), &dW);
+        self.gradient_decent.change_weights(self.output_weights.deref_mut(), &dV);
+        
+        losses
 
-            // println!("total time: {:.2?}", timer1.elapsed());
-            }
     }
 
     fn get_input<'k>(&self, inputs: &'k Arr, t: usize) -> ArrView<'k> {
