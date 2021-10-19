@@ -2,12 +2,12 @@
 use crate::logic::activations_fns::base_activation_fn::ActivationFN;
 use crate::Arr;
 
-pub struct init {}
+pub struct Init {}
 
-impl ActivationFN for init {
+impl ActivationFN for Init {
     fn forward<'a>(&self, z: &'a Arr) -> Arr {
         z.mapv(|x| {
-            if(x > 1.) {
+            if x > 1. {
                 1.
             } else {
                 0.
@@ -27,7 +27,7 @@ mod tests {
     use super::*;
     use crate::Arr;
     use ndarray::arr2;
-    const PERCEPTRON: init = init {};
+    const PERCEPTRON: Init = Init {};
 
     #[test]
     fn perceptron_forward(){
@@ -38,14 +38,4 @@ mod tests {
         ]);
         assert_eq!(PERCEPTRON.forward(&arr), result);
     }
-
-    // #[test]
-    // fn perceptron_propogate(){
-    //     let arr : Arr = arr2(&[[1.,2.,3.], [1.5,2.5,3.5]]);
-    //     let result = arr2(&[
-    //         [0.19661193324148185, 0.10499358540350662, 0.045176659730912], 
-    //         [0.14914645207033286, 0.07010371654510807, 0.028453023879735598]
-    //     ]);
-    //     assert_eq!(PERCEPTRON.propogate(&arr), result);
-    // }
 }

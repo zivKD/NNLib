@@ -1,12 +1,11 @@
 use crate::{ArrView, logic::utils::gradient_clipping};
 use ndarray::Slice;
-use std::{cell::RefMut, cmp::max, ops::DerefMut, time::Instant};
-
+use std::{cell::RefMut, ops::DerefMut};
 use ndarray::{Axis, Order, s};
-use ndarray_rand::{RandomExt, rand_distr::{Normal, Uniform, uniform::UniformFloat}};
-use ndarray_stats::histogram::{Grid, GridBuilder};
 
-use crate::{Arr, DEFAULT, logic::{activations_fns::{base_activation_fn::ActivationFN,}, gradient_decents::{base_gradient_decent::GradientDecent, stochastic}, layers::{base_layer::Layer, rnn_step}, loss_fns::base_loss_fn::LossFN, utils::arr_zeros_with_shape}};
+use crate::{Arr, DEFAULT, logic::{activations_fns::{base_activation_fn::ActivationFN,}, loss_fns::base_loss_fn::LossFN, utils::arr_zeros_with_shape}};
+use crate::logic::layers::rnn_step;
+use crate::logic::gradient_decents::base_gradient_decent::GradientDecent;
 
 pub struct Network<'a> {
     data_set: &'a Arr,
@@ -111,7 +110,7 @@ impl Network<'_> {
         let mut errors = Vec::new();
         for t in 0..self.sequence_size {
             let last_layer_labels = self.get_last_layer_labels(&labels, t).to_owned();
-            let mut dmulv = self.loss_fn.propogate(&mut DEFAULT(), &layers[t].mulv, &last_layer_labels); 
+            let dmulv = self.loss_fn.propogate(&mut DEFAULT(), &layers[t].mulv, &last_layer_labels); 
             errors.push(dmulv);
         }
 
@@ -126,14 +125,14 @@ impl Network<'_> {
             losses.push(loss);
         }
 
-        let mut dU = arr_zeros_with_shape(self.input_weights.shape());
-        let mut dW = arr_zeros_with_shape(self.state_weights.shape());
-        let mut dV = arr_zeros_with_shape(self.output_weights.shape());
+        let mut du = arr_zeros_with_shape(self.input_weights.shape());
+        let mut dw = arr_zeros_with_shape(self.state_weights.shape());
+        let mut dv = arr_zeros_with_shape(self.output_weights.shape());
         let mut prev_s_t = arr_zeros_with_shape(&[self.hidden_dim, self.mini_batch_size]);
         let diff_s = arr_zeros_with_shape(&[self.hidden_dim, self.mini_batch_size]);
 
         for t in (0..self.sequence_size).rev() {
-            let (mut dprev_s, mut dU_t, mut dW_t, dV_t) = 
+            let (mut dprev_s, mut du_t, mut dw_t, dv_t) = 
                     layers[t].propogate(&inputs_sliced[t], &prev_s_t, &diff_s, &errors[t]);
             prev_s_t = layers[t].s.clone();
             let dmulv = arr_zeros_with_shape(&[self.word_dim, self.mini_batch_size]); 
@@ -147,22 +146,22 @@ impl Network<'_> {
                     layers[i-1].s.clone()
                 };
 
-                let (new_dprev_s, dU_i, dW_i, dV_i) = 
+                let (new_dprev_s, du_i, dw_i, _) = 
                         layers[i].propogate(&input, &dprev_s, &prev_s_i, &dmulv);
 
                 dprev_s = new_dprev_s;
-                dU_t = dU_t + dU_i;
-                dW_t = dW_t + dW_i;
+                du_t = du_t + du_i;
+                dw_t = dw_t + dw_i;
             }
 
-            dU = dU + dU_t;
-            dW = dW + dW_t;
-            dV = dV + dV_t;
+            du = du + du_t;
+            dw = dw + dw_t;
+            dv = dv + dv_t;
         }
 
-        let clipped_du = gradient_clipping(&dU, -10., 10.);
-        let clipped_dw = gradient_clipping(&dW, -10., 10.);
-        let clipped_dv = gradient_clipping(&dV, -10., 10.);
+        let clipped_du = gradient_clipping(&du, -10., 10.);
+        let clipped_dw = gradient_clipping(&dw, -10., 10.);
+        let clipped_dv = gradient_clipping(&dv, -10., 10.);
 
         self.gradient_decent.change_weights(self.input_weights.deref_mut(), &clipped_du);
         self.gradient_decent.change_weights(self.state_weights.deref_mut(), &clipped_dw);

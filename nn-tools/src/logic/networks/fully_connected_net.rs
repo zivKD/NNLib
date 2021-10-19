@@ -44,7 +44,7 @@ impl Network<'_> {
         }
     }
 
-    pub fn run(&mut self) -> f64 {
+    pub fn run(&mut self, should_propogate: bool) -> f64 {
         let mut iteration = 1;
         let mut lower_bound = 0;
         let mut higher_bound = self.mini_batch_size * self.inputs_size;
@@ -83,15 +83,18 @@ impl Network<'_> {
 
             success_rate = success_rate / self.mini_batch_size as f64;
             accuracy += success_rate;
-            let error = self.loss_fn.propogate(&mut zs[num_of_layers], &mut activations[num_of_activations], &mini_batch_lbs);
-            let last_layer = &mut self.layers[num_of_layers];
-            let mut next_error = last_layer.propogate(error, activations[num_of_activations-1].view());
 
-            let mut i = 1;
-            for layer in self.layers.split_last_mut().unwrap().1.iter_mut().rev() {
-                next_error = layer.propogate(&next_error * self.activation_fn.propogate(&zs[num_of_layers - i]), activations[num_of_activations-i-1].view());
-                i+=1;
-            };
+            if should_propogate {
+                let error = self.loss_fn.propogate(&mut zs[num_of_layers], &mut activations[num_of_activations], &mini_batch_lbs);
+                let last_layer = &mut self.layers[num_of_layers];
+                let mut next_error = last_layer.propogate(error, activations[num_of_activations-1].view());
+
+                let mut i = 1;
+                for layer in self.layers.split_last_mut().unwrap().1.iter_mut().rev() {
+                    next_error = layer.propogate(&next_error * self.activation_fn.propogate(&zs[num_of_layers - i]), activations[num_of_activations-i-1].view());
+                    i+=1;
+                };
+            }
 
             iteration+=1;
             lower_bound = (iteration - 1) * (self.mini_batch_size * self.inputs_size);
@@ -100,5 +103,4 @@ impl Network<'_> {
 
         accuracy
     }
-
 }

@@ -1,5 +1,4 @@
 use crate::logic::gradient_decents::base_gradient_decent::GradientDecent;
-use crate::logic::activations_fns::base_activation_fn::ActivationFN;
 use crate::logic::utils::{repeated_axis_zero};
 use crate::{Arr, ArrView};
 use ndarray::{Axis, Zip};

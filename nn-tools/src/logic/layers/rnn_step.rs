@@ -1,12 +1,5 @@
-use std::time::Instant;
-use crate::logic::gradient_decents::base_gradient_decent::GradientDecent;
 use crate::logic::activations_fns::base_activation_fn::ActivationFN;
-use crate::logic::utils::{repeated_axis_zero};
 use crate::{Arr, ArrView, DEFAULT};
-use ndarray::{Axis, Zip};
-use ndarray_stats::QuantileExt;
-use crate::logic::layers::base_layer::Layer;
-use crate::logic::activations_fns::{self};
 
 pub struct Init<'a> {
     state_weights: &'a Arr,
@@ -60,14 +53,14 @@ impl Init<'_> {
     pub fn propogate(
         &mut self, inputs: &ArrView, prev_s: &Arr, diff_s: &Arr, dmulv: &Arr) -> 
         (Arr, Arr, Arr, Arr) {
-        let (dV, dsv) = 
+        let (dv, dsv) = 
             self.multiplication_backward(self.output_weights, &self.s, dmulv);
         let ds = dsv + diff_s;
         let dadd = self.hidden_activation_fn.propogate(&self.add) * ds;
-        let (dW, dprev_s) = self.multiplication_backward(self.state_weights, prev_s, &dadd);
-        let (dU, dx) = self.multiplication_backward(self.input_weights, &inputs.to_owned(), &dadd);
+        let (dw, dprev_s) = self.multiplication_backward(self.state_weights, prev_s, &dadd);
+        let (du, _) = self.multiplication_backward(self.input_weights, &inputs.to_owned(), &dadd);
 
-        (dprev_s, dU, dW, dV)
+        (dprev_s, du, dw, dv)
     }
 
     fn multiplication_backward(&self, weights: &Arr, x: &Arr, dz: &Arr) -> (Arr, Arr) {

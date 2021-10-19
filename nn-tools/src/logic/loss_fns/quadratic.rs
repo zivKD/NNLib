@@ -16,8 +16,7 @@ impl Init<'_> {
 
 impl LossFN for Init<'_> {
     fn output<'a>(&self, a: &'a Arr, y: &'a Arr) -> Arr {
-       let mut pos  = &a.view() - y;
-       pos.map(|x| {
+       (&a.view() - y).map(|x| {
            0.5 * f64::powf(*x, 2.)
        })
     }
@@ -38,16 +37,16 @@ mod tests {
 
     #[test]
     fn correct_output(){
-        let QUADRATIC: Init = Init::new(&sigmoid::Init{});
+        let quadratic: Init = Init::new(&sigmoid::Init{});
         let mut a : Arr = arr2(&[[1.0, 0.532, 0.814], [0.3103, 0.4348, 0.12]]);
         let y: Arr = arr2(&[[0.8, 0.6, 0.5], [0.2, 0.4, 0.2]]);
         let result: Arr = arr2(&[[0.02, 0.002312, 0.049298], [0.00608305, 0.00060552, 0.0032]]);
-        assert_eq!(QUADRATIC.output(&mut a, &y).mapv(|x| round_decimal(8, x)), result);
+        assert_eq!(quadratic.output(&mut a, &y).mapv(|x| round_decimal(8, x)), result);
     }
 
     #[test]
     fn correct_propogate() {
-        let QUADRATIC: Init = Init::new(&sigmoid::Init{});
+        let quadratic: Init = Init::new(&sigmoid::Init{});
         let mut a : Arr = arr2(&[[1.0, 0.532, 0.814], [0.3103, 0.4348, 0.12]]);
         let mut z : Arr = arr2(&[[1.,2.,3.], [1.5,2.5,3.5]]);
         let y: Arr = arr2(&[[0.8, 0.6, 0.5], [0.2, 0.4, 0.2]]);
@@ -56,6 +55,6 @@ mod tests {
             [0.19661193324148185, 0.10499358540350662, 0.045176659730912], 
             [0.14914645207033286, 0.07010371654510807, 0.028453023879735598]
         ]);
-        assert_eq!(QUADRATIC.propogate(&mut z, &mut a, &y).mapv(|x| round_decimal(6, x)), (a_minus_y * activation_derivative).mapv(|x| round_decimal(6, x)));
+        assert_eq!(quadratic.propogate(&mut z, &mut a, &y).mapv(|x| round_decimal(6, x)), (a_minus_y * activation_derivative).mapv(|x| round_decimal(6, x)));
     }
 }

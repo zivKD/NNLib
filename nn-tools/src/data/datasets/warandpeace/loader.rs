@@ -3,10 +3,8 @@ use ndarray::ShapeBuilder; // Needed for .strides() method
 
 use crate::Arr;
 use std::collections::HashMap;
-use std::convert::TryInto;
 use std::fs::File;
 use std::io::{self, BufRead};
-use std::ops::Add;
 use std::path::Path;
 
 
@@ -61,7 +59,7 @@ impl Loader<'_> {
         let mut test_set = Arr::zeros((test_size as usize, 1));
         let mut validation_set = Arr::zeros((validation_size as usize, 1));
 
-        let mut splits = [&mut train_set, &mut test_set, &mut validation_set];
+        let splits = [&mut train_set, &mut test_set, &mut validation_set];
         let mut split_idx = 0;
         let mut cur_idx = 0;
         for line in self.read_lines(self.file_path) {

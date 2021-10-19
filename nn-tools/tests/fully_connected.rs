@@ -6,9 +6,8 @@ use ndarray_rand::{RandomExt, rand_distr::{Normal}};
 
 
 #[test]
-fn success() {
-    let (trn_size, tst_size, val_size, rows, cols) = (50_000 as usize, 10_000 as usize, 10_000 as usize, 28 as usize, 28 as usize);
-    // Deconstruct the returned Mnist struct.
+fn success_in_running_fully_connected_nn() {
+    let (trn_size, tst_size, val_size, rows, cols) = (5000 as usize, 1000 as usize, 64_000 as usize, 28 as usize, 28 as usize);
     let mnist_loader = Loader::new(
         "./src/data/datasets/mnist/files",
         "train-labels.idx1-ubyte",
@@ -25,11 +24,11 @@ fn success() {
         trn_lbl, 
         tst_img, 
         tst_lbl, 
-        val_img, 
-        val_lbl
+        _, 
+        _ 
     ) = mnist_loader.build();
 
-    let epoches = 10;
+    let epoches = 8;
     let mini_batch_size = 10 as usize;
     let inputs_size = rows*cols as usize;
     let stochastic = stochastic::Init::new(3.,mini_batch_size);
@@ -57,8 +56,9 @@ fn success() {
     let layers: RefCell<Vec<&mut dyn Layer>> = RefCell::new(layers_vec);
 
     let mut i = 0;
-    let mut losses = vec!();
-    losses.push(f64::MAX);
+    let mut prev_accuracy = f64::MIN;
+    let mut counter = 0;
+
     while i < epoches {
         fully_connected_net::Network::new(
             &trn_img,
@@ -69,7 +69,7 @@ fn success() {
             layers.borrow_mut(),
             &quadratic,
             &sigmoid
-        ).run();
+        ).run(true);
 
         let x = fully_connected_net::Network::new(
             &tst_img,
@@ -80,12 +80,19 @@ fn success() {
             layers.borrow_mut(),
             &quadratic,
             &sigmoid
-        ).run();
+        ).run(false);
 
 
-        println!("accuarcy: {}", x);
-        assert!(x <= losses[losses.len().checked_sub(1).unwrap_or(0)]);
-        losses.push(x);
+        println!("accuarcy: {}", 100.*x);
+        if x < prev_accuracy {
+            counter+=1;
+        } else {
+            counter = 0;
+        }
+
+        prev_accuracy = x;
+        assert!(counter <= 1);
+        assert!(x > 0.9 || i <= 2);
         i+=1;
    }
 }

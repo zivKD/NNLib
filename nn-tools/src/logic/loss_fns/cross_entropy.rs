@@ -20,8 +20,7 @@ impl Init {
 
 impl LossFN for Init {
     fn output<'a>(&self, a: &'a Arr, y: &'a Arr) -> Arr {
-        let probs = self.softmax_forward(a);
-        let loss = Zip::from(&probs).and(y).map_collect(|a_x, y_x| y_x * a_x.log(2.));
+        let loss = Zip::from(a).and(y).map_collect(|a_x, y_x| y_x * a_x.log(2.));
         loss.map_axis(Axis(1), |axis| -axis.sum()).into_shape((loss.shape()[0], 1)).unwrap()
     }
 
@@ -40,13 +39,13 @@ mod tests {
     use ndarray::arr2;
     const CROSS_ENTROPY: Init = Init {};
 
-    // #[test]
-    // fn correct_output(){
-    //     let mut a : Arr = arr2(&[[0.2, 0.1, 0.7], [0.123, 0.407, 0.48]]);
-    //     let y: Arr = arr2(&[[1., 0., 0.], [0., 0., 1.]]);
-    //     let result: Arr = arr2(&[[2.321928], [1.058894]]);
-    //     assert_eq!(CROSS_ENTROPY.output(&mut a, &y).mapv(|x| round_decimal(6, x)), result);
-    // }
+    #[test]
+    fn correct_output(){
+        let mut a : Arr = arr2(&[[0.2, 0.1, 0.7], [0.123, 0.407, 0.48]]);
+        let y: Arr = arr2(&[[1., 0., 0.], [0., 0., 1.]]);
+        let result: Arr = arr2(&[[2.321928], [1.058894]]);
+        assert_eq!(CROSS_ENTROPY.output(&mut a, &y).mapv(|x| round_decimal(6, x)), result);
+    }
 
     #[test]
     fn softmax_forward(){
@@ -57,4 +56,14 @@ mod tests {
         ]);
         assert_eq!(CROSS_ENTROPY.softmax_forward(&arr).map(|x| round_decimal(9, *x)), result);
     }
+
+    // #[test]
+    // fn correct_propogate(){
+    //     // self.word_dim X miniBatchSize
+    //     let mut arr : Arr = arr2(&[[0.21, 0.02], [0.45, 0.73], [0.34, 0.25]]);
+    //     // 1 X miniBatchSize
+    //     let labels : Arr = arr2(&[[2., 1.]]);
+    //     let result = arr2(&[[0.21, 0.02], [0.45, -0.27], [-0.66, 0.25]]);
+    //     assert_eq!(result, CROSS_ENTROPY.propogate(&DEFAULT(), &mut arr, &labels));
+    // }
 }

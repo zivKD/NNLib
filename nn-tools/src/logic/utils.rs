@@ -1,11 +1,5 @@
-use ndarray_stats::QuantileExt;
-use rand::thread_rng;
-use ndarray::{Array1, Array2, ArrayView1, Order, Shape, ShapeBuilder};
-use ndarray::{Axis, Zip};
-use ndarray_rand::RandomExt;
-use rand::prelude::SliceRandom;
 use crate::Arr;
-use crate::logic::activations_fns::base_activation_fn::ActivationFN;
+use ndarray::{ShapeBuilder};
 
 pub fn round_decimal(places: u32, x: f64) -> f64 {
     let percision = i32::pow(10, places) as f64;
@@ -73,17 +67,6 @@ mod tests {
     use super::*;
     use crate::Arr;
     use ndarray::arr2;
-
-    // #[test]
-    // fn cross_softmax_success(){
-    //     // self.word_dim X miniBatchSize
-    //     let mut arr : Arr = arr2(&[[0.21, 0.02], [0.45, 0.73], [0.34, 0.25]]);
-    //     // 1 X miniBatchSize
-    //     let labels : Arr = arr2(&[[2., 1.]]);
-    //     let result = arr2(&[[0.21, 0.02], [0.45, -0.27], [-0.66, 0.25]]);
-    //     cross_entropy_propogate(&mut arr, &labels);
-    //     assert_eq!(result, arr);
-    // }
 
     #[test]
     fn one_hot_encoding_success(){

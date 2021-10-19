@@ -18,7 +18,7 @@ fn mnist_loader(){
         10000 as u32,
     );
 
-    let (trn_size, tst_size, val_size, rows, cols) = (50_000 as usize, 10_000 as usize, 10_000 as usize, 28 as usize, 28 as usize);
+    let (trn_size, tst_size, val_size, _, _) = (50_000 as usize, 10_000 as usize, 10_000 as usize, 28 as usize, 28 as usize);
     let mnist = MnistBuilder::new()
         .base_path("./src/data/datasets/mnist/files")
         .training_images_filename("train-images.idx3-ubyte")
