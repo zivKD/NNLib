@@ -1,4 +1,4 @@
-use crate::ArrView;
+use crate::{ArrView, logic::utils::gradient_clipping};
 use ndarray::Slice;
 use std::{cell::RefMut, cmp::max, ops::DerefMut, time::Instant};
 
@@ -72,36 +72,21 @@ impl Network<'_> {
                 Slice::from((iteration-1)*self.sequence_size..iteration*self.sequence_size)
             ).to_owned();
 
-            // let mut values = Vec::new();
-            // for j in (0..mini_batch.shape()[0]) {
-            //     if(mini_batch[(j, 0)] == 1.) {
-            //         let value = ((j%self.word_dim) + self.word_dim) % self.word_dim;
-            //         values.push(j);
-
-            //     }
-            // }
-            // println!("mini batch: {:?}", mini_batch.column(0).slice(s![0..self.word_dim]));
-            // println!("mini batch lbs: {:?}", mini_batch_lbs.column(1)[0]);
             let losses = self.run_single_step(&mini_batch, &mini_batch_lbs, print_result);
             loss += losses.iter().sum::<f64>() / self.sequence_size as f64; 
 
-            // println!("iteration: {}", iteration);
             iteration+=1;
             lower_bound = (iteration - 1) * size;
             higher_bound = iteration * size;
         }
 
         if print_result {
-            println!("loss is {}", loss / iteration as f64);
+            println!("accuracy is {}%", 100 - ((loss / (iteration * self.mini_batch_size) as f64) * 100.) as usize);
         }
     }
 
     fn run_single_step(&mut self, inputs: &Arr, labels: &Arr, print_result: bool) -> Vec<f64> {
-        // let timer1 = Instant::now();
-        // let prev_s_timer = Instant::now();
         let mut prev_s = arr_zeros_with_shape(&[self.hidden_dim, self.mini_batch_size]);
-        // println!("init arr time: {:.2?}", prev_s_timer.elapsed());
-
         let mut layers = Vec::new();
 
         let mut inputs_sliced = Vec::new();
@@ -110,32 +95,23 @@ impl Network<'_> {
         }
 
         for t in 0..self.sequence_size {
-            // let layer_init_timer = Instant::now();
             let mut layer = rnn_step::Init::new(
                 &self.state_weights,
                 &self.input_weights,
                 &self.output_weights,
                 self.activation_fn
             );
-            // println!("layer_init time: {:.2?}", layer_init_timer.elapsed());
 
-            // let feedforward_timer = Instant::now();
             layer.feedforward((&inputs_sliced[t], prev_s.view()));
-            // println!("feedforward time: {:.2?}", feedforward_timer.elapsed());
             prev_s = layer.s.clone();
             layers.push(layer);
         }
 
-        // println!("forward time: {:.2?}", timer1.elapsed());
 
         let mut errors = Vec::new();
         for t in 0..self.sequence_size {
-            // let get_last_layer_timer = Instant::now();
             let last_layer_labels = self.get_last_layer_labels(&labels, t).to_owned();
-            // println!("last_layer time: {:.2?}", get_last_layer_timer.elapsed());
-            // let dmulv_timer = Instant::now();
             let mut dmulv = self.loss_fn.propogate(&mut DEFAULT(), &layers[t].mulv, &last_layer_labels); 
-            // println!("cross_entropy_with time: {:.2?}", dmulv_timer.elapsed());
             errors.push(dmulv);
         }
 
@@ -156,12 +132,9 @@ impl Network<'_> {
         let mut prev_s_t = arr_zeros_with_shape(&[self.hidden_dim, self.mini_batch_size]);
         let diff_s = arr_zeros_with_shape(&[self.hidden_dim, self.mini_batch_size]);
 
-        // let timer2 = Instant::now();
         for t in (0..self.sequence_size).rev() {
-            // let propogate_timer = Instant::now();
             let (mut dprev_s, mut dU_t, mut dW_t, dV_t) = 
                     layers[t].propogate(&inputs_sliced[t], &prev_s_t, &diff_s, &errors[t]);
-            // println!("propogate time: {:.2?}", propogate_timer.elapsed());
             prev_s_t = layers[t].s.clone();
             let dmulv = arr_zeros_with_shape(&[self.word_dim, self.mini_batch_size]); 
             let bptt_amount = t as i8 - self.bptt_truncate - 1;
@@ -187,9 +160,13 @@ impl Network<'_> {
             dV = dV + dV_t;
         }
 
-        self.gradient_decent.change_weights(self.input_weights.deref_mut(), &dU);
-        self.gradient_decent.change_weights(self.state_weights.deref_mut(), &dW);
-        self.gradient_decent.change_weights(self.output_weights.deref_mut(), &dV);
+        let clipped_du = gradient_clipping(&dU, -10., 10.);
+        let clipped_dw = gradient_clipping(&dW, -10., 10.);
+        let clipped_dv = gradient_clipping(&dV, -10., 10.);
+
+        self.gradient_decent.change_weights(self.input_weights.deref_mut(), &clipped_du);
+        self.gradient_decent.change_weights(self.state_weights.deref_mut(), &clipped_dw);
+        self.gradient_decent.change_weights(self.output_weights.deref_mut(), &clipped_dv);
         
         losses
 

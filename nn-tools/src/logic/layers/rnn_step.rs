@@ -44,31 +44,17 @@ impl Init<'_> {
 
 impl Init<'_> {
     pub fn feedforward(&mut self, inputs: (&ArrView, ArrView)) {
-        // let decontruction_timer = Instant::now();
         let (inputs_embadding, hidden_state) = inputs;
-        // println!("deconstruction time: {:.2?}", decontruction_timer.elapsed());
-        // let w_frd_timer = Instant::now();
         let w_frd = self.state_weights.dot(&hidden_state);
-        // println!("w_frd time: {:.2?}", w_frd_timer.elapsed());
-        // let u_frd_timer = Instant::now();
         let u_frd = self.input_weights.dot(inputs_embadding);
-        // println!("u_frd time: {:.2?}", u_frd_timer.elapsed());
-        // let sum_s_timer = Instant::now();
         let sum_s = &w_frd + &u_frd;
-        // println!("sum_s time: {:.2?}", sum_s_timer.elapsed());
-        // let  hidden_activation_timer = Instant::now();
         let ht_activated = self.hidden_activation_fn.forward(&sum_s);
-        // println!("hidden activation time: {:.2?}", hidden_activation_timer.elapsed());
-        // let yt_timer = Instant::now();
         let yt= self.output_weights.dot(&ht_activated);
-        // println!("yt time: {:.2?}", yt_timer.elapsed());
-        // let assign_timer = Instant::now();
         self.mulw = w_frd;
         self.mulu = u_frd;
         self.add = sum_s;
         self.s = ht_activated;
         self.mulv = yt;
-        // println!("assign time: {:.2?}", assign_timer.elapsed());
     }
 
     pub fn propogate(
@@ -77,8 +63,7 @@ impl Init<'_> {
         let (dV, dsv) = 
             self.multiplication_backward(self.output_weights, &self.s, dmulv);
         let ds = dsv + diff_s;
-        let dadd = self.hidden_activation_fn.propogate(&self.s) * ds;
-        // let (dmulw, dmulu) = self.add_backward(&self.mulu, &self.mulw, &dadd);
+        let dadd = self.hidden_activation_fn.propogate(&self.add) * ds;
         let (dW, dprev_s) = self.multiplication_backward(self.state_weights, prev_s, &dadd);
         let (dU, dx) = self.multiplication_backward(self.input_weights, &inputs.to_owned(), &dadd);
 

@@ -25,7 +25,7 @@ use crate::logic::{loss_fns::cross_entropy, utils::one_hot_encoding};
 */
 fn main() {
     let mini_batch_size = 10;
-    let sequence_size = 5;
+    let sequence_size = 50;
     let loader = Loader::new(
         "./src/data/datasets/warandpeace/files/shortend.txt",
         75,
@@ -50,23 +50,23 @@ fn main() {
     let bptt_truncate = 50;
     let hidden_dim = 100;
     let tanh = tanh::Init {};
-    let learning_rate = 0.005;
+    let learning_rate = 0.0001;
     let stochastic = stochastic::Init::new(learning_rate, mini_batch_size);
+    let word_dim_limit = (1./word_dim as f64).sqrt();
+    let hidden_dim_limit = (1./hidden_dim as f64).sqrt();
 
     let mut inputs_weights: Arr = Arr::random(
         (hidden_dim, word_dim), 
-        Normal::new(0., 1.).unwrap()
+        Uniform::new(-word_dim_limit, word_dim_limit)
     );
     let mut state_weights = Arr::random(
         (hidden_dim, hidden_dim), 
-        Normal::new(0., 1.).unwrap()
+        Uniform::new(-hidden_dim_limit, hidden_dim_limit)
     );
     let mut output_weights = Arr::random(
         (word_dim, hidden_dim), 
-        Normal::new(0., 1.).unwrap()
+        Uniform::new(-hidden_dim_limit, hidden_dim_limit)
     );
-
-    // Uniform::new(-f64::sqrt(-(1./hidden_dim as f64)), f64::sqrt(1./hidden_dim as f64))
 
     // println!("data shape: {:?}", trn_data.shape());
     // println!("lbls shape: {:?}", trn_lbls.shape());

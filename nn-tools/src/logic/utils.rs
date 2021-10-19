@@ -35,15 +35,36 @@ pub fn one_hot_encoding(a: &Arr, word_dim: usize) -> Arr {
     let columns = a.shape()[1];
     let identity_matrix = Arr::eye(word_dim);
     let mut one_hot_encoded: Vec<f64> = Vec::new();
-    // a.for_each(|f| one_hot_encoded.append(identity_matrix.row(*f as usize)))
-    a.columns().into_iter().enumerate().for_each(|(i, column)| {
-        column.iter().enumerate().for_each(|(j, f)| {
-            let mut row = identity_matrix.row(*f as usize).to_vec();
-            one_hot_encoded.append(&mut row); 
-        });
+
+    let inv_shape = &[a.shape()[1], a.shape()[0]];
+    iterate_throgh_2d(inv_shape, |(i, j)| {
+        let mut row = identity_matrix.row(a[(j,i)] as usize).to_vec();
+        one_hot_encoded.append(&mut row); 
     });
 
     Arr::from_shape_vec((word_dim * rows, columns).strides((1, word_dim * rows)), one_hot_encoded).unwrap()
+}
+
+pub fn gradient_clipping(gradient: &Arr, min_value: f64, max_value: f64) -> Arr {
+    let mut gradient_clone = gradient.clone();
+    iterate_throgh_2d(gradient.shape(), |(i, j)| {
+        let f = gradient[(i,j)];
+        if f > max_value { 
+            gradient_clone[(i,j)] = max_value;
+        } else if f < min_value {
+            gradient_clone[(i,j)] = min_value;
+        }
+    });
+
+    gradient_clone
+}
+
+fn iterate_throgh_2d<T: FnMut((usize, usize))>(shape: &[usize], mut action: T) {
+    (0..shape[0]).for_each(|i| {
+        (0..shape[1]).for_each(|j| {
+            action((i, j));
+        })
+    });
 }
 
 
@@ -83,82 +104,16 @@ mod tests {
         ]);
         assert_eq!(result, one_hot_encoding(&arr, 6));
     }
+
+    #[test]
+    fn gradient_clipping_success(){
+        let arr : Arr = arr2(&[[1.,2.,3.], [1.5,2.5,3.5]]);
+        let max_value = 3.;
+        let min_value = 2.;
+        let result = arr2(&[
+            [2., 2., 3.], 
+            [2., 2.5, 3.]
+        ]);
+        assert_eq!(gradient_clipping(&arr, min_value, max_value), result);
+    }
 }
-
-// NOT WORKING
-// pub fn shuffle_sets(data_set: &Arr, lbl_set: &Arr, inputs_size: usize, set_size: usize) -> (Arr, Arr) {
-//     let reshaped_data_set = data_set.to_shape((inputs_size, set_size)).unwrap();
-//     let mut zip: Vec<(ArrayView1<f64>, ArrayView1<f64>)> = Zip::from(reshaped_data_set.columns()).and(lbl_set.columns()).
-//             map_collect(|c1:  ArrayView1<f64>, c2: ArrayView1<f64>| (c1, c2)).to_vec();
-//     zip.shuffle(&mut thread_rng());
-//     let mut new_vec: Vec<f64> = vec!();
-//     zip.iter().for_each(|x| {
-//         let mut vec = x.0.to_vec();
-//         new_vec.append(&mut vec)
-//     });
-//     let new_data_set = Arr::from_shape_vec((set_size*inputs_size, 1), new_vec).unwrap();
-//     let mut new_vec: Vec<f64> = vec!();
-//     zip.iter().for_each(|x| {
-//         let mut vec = x.1.to_vec();
-//         new_vec.append(&mut vec)
-//     });
-//     let new_lbls_set = Arr::from_shape_vec((2, set_size), new_vec).unwrap();
-//     (new_data_set, new_lbls_set)
-// }
-
-// #[cfg(test)]
-// mod tests {
-//     use std::collections::HashMap;
-
-//     use ndarray_rand::rand_distr::Uniform;
-
-//     use super::*;
-//     use crate::Arr;
-
-//     #[test]
-//     fn shuffle_correct(){
-//         // trn_size = 4, inputs_size = 3
-//         let data_set = Arr::random((12, 1), Uniform::new(0.,10.));
-//         let lbl_set = Arr::random((2, 4), Uniform::new(0.,10.));
-//         let (new_data_set, new_lbl_set) = shuffle_sets(&data_set, &lbl_set, 3, 4);
-//         println!("lbl: {:?} new lbl: {:?}", lbl_set, new_lbl_set);
-//         // println!("trn: {:?} new trn: {:?}", data_set, new_data_set);
-//         assert_eq!(data_set.shape(), new_data_set.shape());
-//         assert_eq!(lbl_set.shape(), new_lbl_set.shape());
-//         let mut i = 0;
-//         let mut j = 0;
-//         let mut indices_match: HashMap<i32, i32> = HashMap::new();
-//         for r1 in data_set.rows() {
-//             for r2 in new_data_set.rows() {
-//                 if r2.len() == Zip::from(&r1).and(&r2).map_collect(|f1, f2| f1 == f2).iter().filter(|b| **b).collect::<Vec<&bool>>().len() {
-//                     indices_match.insert(i, j);
-//                 }
-
-//                 j+=1;
-//             }
-
-//             j=0;
-//             i+=1;
-//         }
-
-//         assert_eq!(indices_match.len(), 12);
-
-//         let mut i = 0;
-//         let mut j = 0;
-//         let mut indices_match: HashMap<i32, i32> = HashMap::new();
-//         for r1 in lbl_set.rows() {
-//             for r2 in new_lbl_set.rows() {
-//                 if r2.len() == Zip::from(&r1).and(&r2).map_collect(|f1, f2| f1 == f2).iter().filter(|b| **b).collect::<Vec<&bool>>().len() {
-//                     indices_match.insert(i, j);
-//                 }
-
-//                 j+=1;
-//             }
-
-//             j=0;
-//             i+=1;
-//         }
-
-//         assert_eq!(indices_match.len(), 2);
-//     }
-// }
