@@ -91,7 +91,7 @@ fn success_in_running_fully_connected_nn() {
         }
 
         prev_accuracy = x;
-        assert!(counter <= 1);
+        assert!(counter <= 2);
         assert!(x > 0.9 || i <= 2);
         i+=1;
    }
