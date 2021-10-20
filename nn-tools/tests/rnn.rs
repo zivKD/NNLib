@@ -30,8 +30,8 @@ fn success_in_running_rnn() {
         trn_lbls,
         tst_data,
         tst_lbls,
-        val_data,
-        val_lbls,
+        _val_data,
+        _val_lbls,
         word_dim
     ) = loader.build();
 
@@ -58,21 +58,14 @@ fn success_in_running_rnn() {
         Uniform::new(-hidden_dim_limit, hidden_dim_limit)
     );
 
-    // println!("data shape: {:?}", trn_data.shape());
-    // println!("lbls shape: {:?}", trn_lbls.shape());
-    // println!("mini batch size: {}", new_mini_batch_size);
-    // println!("word dim: {}", word_dim);
     let encoded_trn_data = one_hot_encoding(&trn_data, word_dim);
     let encoded_tst_data = one_hot_encoding(&tst_data, word_dim);
-    // let encoded_trn_lbls = one_hot_encoding(&trn_lbls, word_dim);
     let cross_entropy = cross_entropy::Init {};
 
     let output_weights_ref_cell: RefCell<&mut Arr> = RefCell::new(&mut output_weights);
     let input_weights_ref_cell: RefCell<&mut Arr> = RefCell::new(&mut inputs_weights);
     let state_weights_ref_cell: RefCell<&mut Arr> = RefCell::new(&mut state_weights);
 
-    // println!("encoded train data shape: {:?}", encoded_trn_data.shape());
-    // println!("trn lbls shape: {:?}", trn_lbls.shape());
     let mut i = 0;
     while i < 30 {
         rnn_net::Network::new(

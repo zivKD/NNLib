@@ -53,7 +53,7 @@ pub fn gradient_clipping(gradient: &Arr, min_value: f64, max_value: f64) -> Arr 
     gradient_clone
 }
 
-fn iterate_throgh_2d<T: FnMut((usize, usize))>(shape: &[usize], mut action: T) {
+pub fn iterate_throgh_2d<T: FnMut((usize, usize))>(shape: &[usize], mut action: T) {
     (0..shape[0]).for_each(|i| {
         (0..shape[1]).for_each(|j| {
             action((i, j));

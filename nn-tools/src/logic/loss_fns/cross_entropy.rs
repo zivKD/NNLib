@@ -1,5 +1,7 @@
+use crate::DEFAULT;
 use ndarray::{Axis, Zip};
 use ndarray_stats::QuantileExt;
+use crate::logic::utils::{arr_zeros_with_shape, iterate_throgh_2d};
 use crate::{Arr};
 use crate::logic::loss_fns::base_loss_fn::LossFN; 
 
@@ -20,8 +22,13 @@ impl Init {
 
 impl LossFN for Init {
     fn output<'a>(&self, a: &'a Arr, y: &'a Arr) -> Arr {
-        let loss = Zip::from(a).and(y).map_collect(|a_x, y_x| y_x * a_x.log(2.));
-        loss.map_axis(Axis(1), |axis| -axis.sum()).into_shape((loss.shape()[0], 1)).unwrap()
+        let probs = self.softmax_forward(a);
+        let mut loss = arr_zeros_with_shape(y.shape());
+        let inv_shape = &[probs.shape()[1], probs.shape()[0]];
+        iterate_throgh_2d(inv_shape, |(i, _j)| { 
+           loss[(0, i)] = probs[(y[(0, i)] as usize, i)].log(2.); 
+        });
+        loss
     }
 
     fn propogate<'a>(&self,_z: &'a Arr, a: &'a Arr, y: &'a Arr) -> Arr {

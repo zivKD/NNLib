@@ -72,7 +72,7 @@ impl Network<'_> {
             ).to_owned();
 
             let losses = self.run_single_step(&mini_batch, &mini_batch_lbs, print_result);
-            loss += losses.iter().sum::<f64>() / self.sequence_size as f64; 
+            loss += losses.iter().sum::<f64>(); 
 
             iteration+=1;
             lower_bound = (iteration - 1) * size;
@@ -107,19 +107,14 @@ impl Network<'_> {
         }
 
 
-        let mut errors = Vec::new();
-        for t in 0..self.sequence_size {
-            let last_layer_labels = self.get_last_layer_labels(&labels, t).to_owned();
-            let dmulv = self.loss_fn.propogate(&mut DEFAULT(), &layers[t].mulv, &last_layer_labels); 
-            errors.push(dmulv);
-        }
 
         let mut losses = vec!();
 
         if print_result {
             let mut loss = 0.;
             for t in (0..self.sequence_size).rev() {
-                loss += -errors[t].iter().filter(|f| **f < 0.).sum::<f64>() as f64;
+                let last_layer_labels = self.get_last_layer_labels(&labels, t).to_owned();
+                loss += self.loss_fn.output(&layers[t].mulv, &last_layer_labels).sum();
             }
             
             losses.push(loss);
@@ -132,8 +127,10 @@ impl Network<'_> {
         let diff_s = arr_zeros_with_shape(&[self.hidden_dim, self.mini_batch_size]);
 
         for t in (0..self.sequence_size).rev() {
+            let last_layer_labels = self.get_last_layer_labels(&labels, t).to_owned();
+            let dmulv = self.loss_fn.propogate(&mut DEFAULT(), &layers[t].mulv, &last_layer_labels); 
             let (mut dprev_s, mut du_t, mut dw_t, dv_t) = 
-                    layers[t].propogate(&inputs_sliced[t], &prev_s_t, &diff_s, &errors[t]);
+                    layers[t].propogate(&inputs_sliced[t], &prev_s_t, &diff_s, &dmulv);
             prev_s_t = layers[t].s.clone();
             let dmulv = arr_zeros_with_shape(&[self.word_dim, self.mini_batch_size]); 
             let bptt_amount = t as i8 - self.bptt_truncate - 1;
@@ -159,9 +156,11 @@ impl Network<'_> {
             dv = dv + dv_t;
         }
 
-        let clipped_du = gradient_clipping(&du, -10., 10.);
-        let clipped_dw = gradient_clipping(&dw, -10., 10.);
-        let clipped_dv = gradient_clipping(&dv, -10., 10.);
+        let min_clipping_value = -5.;
+        let max_clipping_value = 5.;
+        let clipped_du = gradient_clipping(&du, min_clipping_value, max_clipping_value);
+        let clipped_dw = gradient_clipping(&dw, min_clipping_value, max_clipping_value);
+        let clipped_dv = gradient_clipping(&dv, min_clipping_value, max_clipping_value);
 
         self.gradient_decent.change_weights(self.input_weights.deref_mut(), &clipped_du);
         self.gradient_decent.change_weights(self.state_weights.deref_mut(), &clipped_dw);
