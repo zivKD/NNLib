@@ -72,7 +72,7 @@ impl Network<'_> {
             ).to_owned();
 
             let losses = self.run_single_step(&mini_batch, &mini_batch_lbs, print_result);
-            loss += losses.iter().sum::<f64>(); 
+            loss += losses.iter().sum::<f64>() / self.sequence_size as f64; 
 
             iteration+=1;
             lower_bound = (iteration - 1) * size;
@@ -80,7 +80,8 @@ impl Network<'_> {
         }
 
         if print_result {
-            println!("accuracy is {}%", 100 - ((loss / (iteration * self.mini_batch_size) as f64) * 100.) as usize);
+            let new_loss = -1. * (loss / (iteration * self.mini_batch_size) as f64);
+            println!("loss is: {}", new_loss);
         }
     }
 
