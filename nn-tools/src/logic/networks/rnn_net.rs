@@ -135,12 +135,14 @@ impl Network<'_> {
             let bptt_amount = t as i8 - self.bptt_truncate - 1;
             let max = i8::max(0, bptt_amount) as usize;
             let current_index = t.checked_sub(1).unwrap_or(0);
+            let ht_clone = layers[current_index].s.clone();
+            let prev_s_zero = arr_zeros_with_shape(&[self.hidden_dim, self.mini_batch_size]);
             for i in current_index..=max {
                 let input = self.get_input(inputs, i);
                 let prev_s_i = if  i == 0 {
-                    arr_zeros_with_shape(&[self.hidden_dim, 1])
+                    &prev_s_zero
                 } else {
-                    layers[current_index].s.clone()
+                    &ht_clone
                 };
 
                 let (
@@ -151,7 +153,7 @@ impl Network<'_> {
                     dbs_i,
                     dbo_i
                 ) = 
-                        layers[i].propogate(&input, &dprev_s, &prev_s_i, &dmulv);
+                        layers[i].propogate(&input, &prev_s_i, &dprev_s, &dmulv);
 
                 dprev_s = new_dprev_s;
                 du_t = du_t + du_i;
