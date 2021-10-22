@@ -44,7 +44,7 @@ fn success_in_running_rnn() {
 
 
     let new_mini_batch_size = trn_data.shape()[1];
-    let bptt_truncate = 50;
+    let bptt_truncate = 5;
     let hidden_dim = 100;
     let tanh = tanh::Init {};
     let learning_rate = 0.0001;
