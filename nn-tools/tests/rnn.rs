@@ -64,6 +64,8 @@ fn success_in_running_rnn() {
         (word_dim, hidden_dim), 
         Uniform::new(-hidden_dim_limit, hidden_dim_limit)
     );
+    let mut state_biases = arr_zeros_with_shape(&[hidden_dim, 1]);
+    let mut output_biases = arr_zeros_with_shape(&[word_dim, 1]);
 
     let encoded_trn_data = one_hot_encoding(&trn_data, word_dim);
     let encoded_tst_data = one_hot_encoding(&tst_data, word_dim);
@@ -72,6 +74,8 @@ fn success_in_running_rnn() {
     let output_weights_ref_cell: RefCell<&mut Arr> = RefCell::new(&mut output_weights);
     let input_weights_ref_cell: RefCell<&mut Arr> = RefCell::new(&mut inputs_weights);
     let state_weights_ref_cell: RefCell<&mut Arr> = RefCell::new(&mut state_weights);
+    let state_biases_ref_cell: RefCell<&mut Arr> = RefCell::new(&mut state_biases);
+    let output_biases_ref_cell: RefCell<&mut Arr> = RefCell::new(&mut output_biases);
 
     let mut i = 0;
     while i < 30 {
@@ -88,16 +92,23 @@ fn success_in_running_rnn() {
             input_weights_ref_cell.borrow_mut(),
             state_weights_ref_cell.borrow_mut(),
             output_weights_ref_cell.borrow_mut(),
+            state_biases_ref_cell.borrow_mut(),
+            output_biases_ref_cell.borrow_mut(),
             &cross_entropy
         ).run(false);
 
         let sw_ref = state_weights_ref_cell.borrow();
         let iw_ref = input_weights_ref_cell.borrow();
         let ow_ref = output_weights_ref_cell.borrow();
+        let sb_ref = state_biases_ref_cell.borrow();
+        let ob_ref = output_biases_ref_cell.borrow();
+
         let mut rnn_unit = rnn_step::Init::new(
             &sw_ref,
             &iw_ref,
             &ow_ref,
+            &sb_ref,
+            &ob_ref,
             &tanh,
         );
 

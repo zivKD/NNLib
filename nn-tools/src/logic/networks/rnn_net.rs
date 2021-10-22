@@ -20,6 +20,8 @@ pub struct Network<'a> {
     input_weights: RefMut<'a, &'a mut Arr>,
     state_weights: RefMut<'a, &'a mut Arr>,
     output_weights: RefMut<'a, &'a mut Arr>,
+    state_biases: RefMut<'a, &'a mut Arr>,
+    output_biases: RefMut<'a, &'a mut Arr>,
     loss_fn: &'a dyn LossFN,
 }
 
@@ -37,6 +39,8 @@ impl Network<'_> {
         input_weights: RefMut<'a, &'a mut Arr>,
         state_weights: RefMut<'a, &'a mut Arr>,
         output_weights: RefMut<'a, &'a mut Arr>,
+        state_biases: RefMut<'a, &'a mut Arr>,
+        output_biases: RefMut<'a, &'a mut Arr>,
         loss_fn: &'a dyn LossFN,
     ) -> Network<'a> {
         Network {
@@ -52,6 +56,8 @@ impl Network<'_> {
             input_weights,
             state_weights,
             output_weights,
+            state_biases,
+            output_biases,
             loss_fn,
         }
     }
@@ -61,7 +67,7 @@ impl Network<'_> {
         let mut lower_bound = 0;
         let size: usize = self.sequence_size * self.word_dim;
         let mut higher_bound = size;
-        let mut loss =  0.;
+
         while higher_bound <= (self.data_set.shape()[0] - size) {
             let mini_batch: ArrView = self.data_set.slice(s![lower_bound..higher_bound, ..]);
             let mini_batch = mini_batch
@@ -71,21 +77,15 @@ impl Network<'_> {
                 Slice::from((iteration-1)*self.sequence_size..iteration*self.sequence_size)
             ).to_owned();
 
-            let losses = self.run_single_step(&mini_batch, &mini_batch_lbs, print_result);
-            loss += losses.iter().sum::<f64>() / self.sequence_size as f64; 
+            self.run_single_step(&mini_batch, &mini_batch_lbs);
 
             iteration+=1;
             lower_bound = (iteration - 1) * size;
             higher_bound = iteration * size;
         }
-
-        if print_result {
-            let new_loss = -1. * (loss / (iteration * self.mini_batch_size) as f64);
-            println!("loss is: {}", new_loss);
-        }
     }
 
-    fn run_single_step(&mut self, inputs: &Arr, labels: &Arr, print_result: bool) -> Vec<f64> {
+    fn run_single_step(&mut self, inputs: &Arr, labels: &Arr) {
         let mut prev_s = arr_zeros_with_shape(&[self.hidden_dim, self.mini_batch_size]);
         let mut layers = Vec::new();
 
@@ -99,6 +99,8 @@ impl Network<'_> {
                 &self.state_weights,
                 &self.input_weights,
                 &self.output_weights,
+                &self.state_biases,
+                &self.output_biases,
                 self.activation_fn
             );
 
@@ -108,29 +110,25 @@ impl Network<'_> {
         }
 
 
-
-        let mut losses = vec!();
-
-        if print_result {
-            let mut loss = 0.;
-            for t in (0..self.sequence_size).rev() {
-                let last_layer_labels = self.get_last_layer_labels(&labels, t).to_owned();
-                loss += self.loss_fn.output(&layers[t].mulv, &last_layer_labels).sum();
-            }
-            
-            losses.push(loss);
-        }
-
         let mut du = arr_zeros_with_shape(self.input_weights.shape());
         let mut dw = arr_zeros_with_shape(self.state_weights.shape());
         let mut dv = arr_zeros_with_shape(self.output_weights.shape());
+        let mut dbs = arr_zeros_with_shape(self.state_biases.shape());
+        let mut dbo = arr_zeros_with_shape(self.output_biases.shape());
         let mut prev_s_t = arr_zeros_with_shape(&[self.hidden_dim, self.mini_batch_size]);
         let diff_s = arr_zeros_with_shape(&[self.hidden_dim, self.mini_batch_size]);
 
         for t in (0..self.sequence_size).rev() {
-            let last_layer_labels = self.get_last_layer_labels(&labels, t).to_owned();
+            let last_layer_labels = self.get_layer_lables(&labels, t).to_owned();
             let dmulv = self.loss_fn.propogate(&mut DEFAULT(), &layers[t].mulv, &last_layer_labels); 
-            let (mut dprev_s, mut du_t, mut dw_t, dv_t) = 
+            let (
+                mut dprev_s, 
+                mut du_t, 
+                mut dw_t, 
+                dv_t,
+                mut dbs_t,
+                mut dbo_t
+            ) = 
                     layers[t].propogate(&inputs_sliced[t], &prev_s_t, &diff_s, &dmulv);
             prev_s_t = layers[t].s.clone();
             let dmulv = arr_zeros_with_shape(&[self.word_dim, self.mini_batch_size]); 
@@ -144,17 +142,28 @@ impl Network<'_> {
                     layers[i-1].s.clone()
                 };
 
-                let (new_dprev_s, du_i, dw_i, _) = 
+                let (
+                    new_dprev_s, 
+                    du_i, 
+                    dw_i, 
+                    _,
+                    dbs_i,
+                    dbo_i
+                ) = 
                         layers[i].propogate(&input, &dprev_s, &prev_s_i, &dmulv);
 
                 dprev_s = new_dprev_s;
                 du_t = du_t + du_i;
                 dw_t = dw_t + dw_i;
+                dbs_t = dbs_t + dbs_i;
+                dbo_t = dbo_t + dbo_i;
             }
 
             du = du + du_t;
             dw = dw + dw_t;
             dv = dv + dv_t;
+            dbs = dbs + dbs_t;
+            dbo = dbo + dbo_t;
         }
 
         let min_clipping_value = -5.;
@@ -162,20 +171,21 @@ impl Network<'_> {
         let clipped_du = gradient_clipping(&du, min_clipping_value, max_clipping_value);
         let clipped_dw = gradient_clipping(&dw, min_clipping_value, max_clipping_value);
         let clipped_dv = gradient_clipping(&dv, min_clipping_value, max_clipping_value);
+        let cilpped_dbs = gradient_clipping(&dbs, min_clipping_value, max_clipping_value);
+        let cilpped_dbo = gradient_clipping(&dbo, min_clipping_value, max_clipping_value);
 
         self.gradient_decent.change_weights(self.input_weights.deref_mut(), &clipped_du);
         self.gradient_decent.change_weights(self.state_weights.deref_mut(), &clipped_dw);
         self.gradient_decent.change_weights(self.output_weights.deref_mut(), &clipped_dv);
-        
-        losses
-
+        self.gradient_decent.change_biases(self.state_biases.deref_mut(), &cilpped_dbs);
+        self.gradient_decent.change_weights(self.output_biases.deref_mut(), &cilpped_dbo);
     }
 
     fn get_input<'k>(&self, inputs: &'k Arr, t: usize) -> ArrView<'k> {
         inputs.slice_axis(Axis(0), Slice::from((t*self.word_dim)..(t+1)*self.word_dim))
     }
 
-    fn get_last_layer_labels<'k>(&self, labels: &'k Arr, t: usize) -> ArrView<'k> {
+    fn get_layer_lables<'k>(&self, labels: &'k Arr, t: usize) -> ArrView<'k> {
         labels.row(t).insert_axis(Axis(0))
     }
 
