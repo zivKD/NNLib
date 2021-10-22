@@ -1,4 +1,11 @@
-use nntools::Arr;
+use ndarray::Array2;
+use ndarray::Order;
+use ndarray::Zip;
+use ndarray::Axis;
+use ndarray::s;
+use ndarray_stats::QuantileExt;
+use nntools::logic::utils::arr_zeros_with_shape;
+use nntools::{Arr, logic::layers::rnn_step};
 use core::cell::RefCell;
 use nntools::{data::datasets::warandpeace::loader::{Loader}, logic::{activations_fns::tanh, gradient_decents::stochastic, networks::rnn_net::{self}}};
 use ndarray_rand::{RandomExt, rand_distr::{Uniform}};
@@ -84,23 +91,35 @@ fn success_in_running_rnn() {
             &cross_entropy
         ).run(false);
 
-        rnn_net::Network::new(
-            &encoded_tst_data,
-            &tst_lbls,
-            new_mini_batch_size,
-            sequence_size,
-            bptt_truncate,
-            word_dim,
-            hidden_dim,
-            &stochastic,
+        let sw_ref = state_weights_ref_cell.borrow();
+        let iw_ref = input_weights_ref_cell.borrow();
+        let ow_ref = output_weights_ref_cell.borrow();
+        let mut rnn_unit = rnn_step::Init::new(
+            &sw_ref,
+            &iw_ref,
+            &ow_ref,
             &tanh,
-            input_weights_ref_cell.borrow_mut(),
-            state_weights_ref_cell.borrow_mut(),
-            output_weights_ref_cell.borrow_mut(),
-            &cross_entropy
-        ).run(true);
+        );
 
-        assert_eq!(1, 1);
+        let first_batch_encoded = encoded_tst_data.slice(s![0..word_dim, ..]);
+        let first_batch_encoded = first_batch_encoded.to_shape(((word_dim, new_mini_batch_size), Order::ColumnMajor)).unwrap().to_owned();
+        let prev_s = arr_zeros_with_shape(&[hidden_dim, new_mini_batch_size]);
+        rnn_unit.feedforward((&first_batch_encoded.view(), prev_s.view()));
+        let softmaxed_output = cross_entropy.softmax_forward(&rnn_unit.mulv);
+        let first_batch = tst_data.column(0).slice(s![0..new_mini_batch_size]).to_shape((1, new_mini_batch_size)).unwrap().to_owned();;
+        let first_batch_lbs = tst_lbls.column(0).slice(s![0..new_mini_batch_size]).to_shape((1, new_mini_batch_size)).unwrap().to_owned();;
+        let predictions: Array2<usize> = softmaxed_output.
+            map_axis(Axis(0), |a| a.argmax().unwrap()).
+            to_shape((1, new_mini_batch_size)).unwrap().to_owned();
+        let mut accuracy = 0;
+        Zip::from(&predictions).and(&first_batch_lbs).and(&first_batch).for_each(|p, l, i| {
+            println!("input value: {}, actual value: {}, predicted value: {}",*i, *l, *p);
+            if *p as f64 == *l {
+                accuracy+=1;
+            }
+        });
+        
+        println!("accuracy {}", accuracy);
         i+=1;
     }
 }

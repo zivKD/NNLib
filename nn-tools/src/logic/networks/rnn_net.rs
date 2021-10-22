@@ -172,7 +172,7 @@ impl Network<'_> {
     }
 
     fn get_input<'k>(&self, inputs: &'k Arr, t: usize) -> ArrView<'k> {
-        inputs.slice_axis(Axis(0), Slice::from(t..t+self.word_dim))
+        inputs.slice_axis(Axis(0), Slice::from((t*self.word_dim)..(t+1)*self.word_dim))
     }
 
     fn get_last_layer_labels<'k>(&self, labels: &'k Arr, t: usize) -> ArrView<'k> {

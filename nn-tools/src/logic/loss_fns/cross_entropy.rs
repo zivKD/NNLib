@@ -9,7 +9,7 @@ pub struct Init {
 }
 
 impl Init {
-    fn softmax_forward(&self, z: &Arr) -> Arr {
+    pub fn softmax_forward(&self, z: &Arr) -> Arr {
         let max_value = z.get(z.argmax().unwrap()).unwrap();
         let mut exps = z.map(|x| (x-max_value).exp());
         exps.axis_iter_mut(Axis(0)).for_each(|mut axis| {
@@ -47,7 +47,7 @@ mod tests {
     const CROSS_ENTROPY: Init = Init {};
 
     #[test]
-    fn correct_output(){
+    fn cross_entroy_forward_success(){
         let mut a : Arr = arr2(&[[0.2, 0.1, 0.7], [0.123, 0.407, 0.48]]);
         let y: Arr = arr2(&[[1., 0., 0.], [0., 0., 1.]]);
         let result: Arr = arr2(&[[2.321928], [1.058894]]);
