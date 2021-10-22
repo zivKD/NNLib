@@ -64,6 +64,16 @@ mod tests {
         assert_eq!(CROSS_ENTROPY.softmax_forward(&arr).map(|x| round_decimal(9, *x)), result);
     }
 
+    #[test]
+    fn softmax_forward_with_negative(){
+        let arr = arr2(&[[1.,-1.,-3.], [0.1, -0.2, -0.3]]).t().to_owned();
+        let result = arr2(&[
+            [0.866813332, 0.117310428, 0.01587624],
+            [0.414741873,0.307248336,0.278009791]
+        ]).t().to_owned();
+        assert_eq!(CROSS_ENTROPY.softmax_forward(&arr).map(|x| round_decimal(9, *x)), result);
+    }
+
     // #[test]
     // fn correct_propogate(){
     //     // self.word_dim X miniBatchSize
