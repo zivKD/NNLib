@@ -1,4 +1,7 @@
+use ndarray::Axis;
+
 use crate::logic::activations_fns::base_activation_fn::ActivationFN;
+use crate::logic::utils::repeated_axis_zero;
 use crate::{Arr, ArrView, DEFAULT};
 
 pub struct Init<'a> {
@@ -46,9 +49,17 @@ impl Init<'_> {
         let (inputs_embadding, hidden_state) = inputs;
         let u_frd = self.input_weights.dot(inputs_embadding);
         let w_frd = self.state_weights.dot(&hidden_state);
-        let sum_s = &w_frd + &u_frd + self.state_biases;
+        let repeated_biases = repeated_axis_zero(
+            self.state_biases,
+            &(self.state_biases.shape()[0], w_frd.shape()[1])
+        );
+        let sum_s = &w_frd + &u_frd + repeated_biases;
         let ht_activated = self.hidden_activation_fn.forward(&sum_s);
-        let yt= self.output_weights.dot(&ht_activated) + self.output_biases;
+        let repeated_biases = repeated_axis_zero(
+            self.output_biases,
+            &(self.output_biases.shape()[0], ht_activated.shape()[1])
+        );
+        let yt= self.output_weights.dot(&ht_activated) + repeated_biases;
         self.mulw = w_frd;
         self.mulu = u_frd;
         self.add = sum_s;
@@ -62,11 +73,13 @@ impl Init<'_> {
         let (dv, dsv) = 
             self.multiplication_backward(self.output_weights, &self.s, dmulv);
         let ds = dsv + diff_s;
+        let dbo = dmulv.sum_axis(Axis(1)).into_shape((dmulv.shape()[0], 1)).unwrap();
         let dadd = self.hidden_activation_fn.propogate(&self.add) * ds;
         let (dw, dprev_s) = self.multiplication_backward(self.state_weights, prev_s, &dadd);
         let (du, _) = self.multiplication_backward(self.input_weights, &inputs.to_owned(), &dadd);
+        let dbs = dadd.sum_axis(Axis(1)).into_shape((dadd.shape()[0], 1)).unwrap();
 
-        (dprev_s, du, dw, dv,dadd,dmulv.clone())
+        (dprev_s, du, dw, dv,dbs,dbo)
     }
 
     fn multiplication_backward(&self, weights: &Arr, x: &Arr, dz: &Arr) -> (Arr, Arr) {

@@ -12,7 +12,7 @@ impl Init {
     pub fn softmax_forward(&self, z: &Arr) -> Arr {
         let max_value = z.get(z.argmax().unwrap()).unwrap();
         let mut exps = z.map(|x| (x-max_value).exp());
-        exps.axis_iter_mut(Axis(0)).for_each(|mut axis| {
+        exps.axis_iter_mut(Axis(1)).for_each(|mut axis| {
             let sum = axis.sum();
             axis.mapv_inplace(|x| x/sum);
         });
@@ -56,11 +56,11 @@ mod tests {
 
     #[test]
     fn softmax_forward(){
-        let arr : Arr = arr2(&[[1.,2.,3.], [0.2, 0.5, 0.8]]);
+        let arr = arr2(&[[1.,2.,3.], [0.2, 0.5, 0.8]]).t().to_owned();
         let result = arr2(&[
             [0.090030573, 0.244728471, 0.665240956], 
             [0.239694479, 0.323553704, 0.436751817]
-        ]);
+        ]).t().to_owned();
         assert_eq!(CROSS_ENTROPY.softmax_forward(&arr).map(|x| round_decimal(9, *x)), result);
     }
 

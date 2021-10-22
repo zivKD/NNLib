@@ -134,12 +134,13 @@ impl Network<'_> {
             let dmulv = arr_zeros_with_shape(&[self.word_dim, self.mini_batch_size]); 
             let bptt_amount = t as i8 - self.bptt_truncate - 1;
             let max = i8::max(0, bptt_amount) as usize;
-            for i in t.checked_sub(1).unwrap_or(0)..=max {
+            let current_index = t.checked_sub(1).unwrap_or(0);
+            for i in current_index..=max {
                 let input = self.get_input(inputs, i);
                 let prev_s_i = if  i == 0 {
                     arr_zeros_with_shape(&[self.hidden_dim, 1])
                 } else {
-                    layers[i-1].s.clone()
+                    layers[current_index].s.clone()
                 };
 
                 let (
