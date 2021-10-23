@@ -23,10 +23,11 @@ impl Init {
 impl LossFN for Init {
     fn output<'a>(&self, a: &'a Arr, y: &'a Arr) -> Arr {
         let probs = self.softmax_forward(a);
-        let mut loss = arr_zeros_with_shape(y.shape());
+        let mut loss = arr_zeros_with_shape(&[1, y.shape()[1]]);
         let inv_shape = &[probs.shape()[1], probs.shape()[0]];
-        iterate_throgh_2d(inv_shape, |(i, _j)| { 
-           loss[(0, i)] = probs[(y[(0, i)] as usize, i)].log(2.); 
+        iterate_throgh_2d(inv_shape, |(i, j)| { 
+            let amount = y[(j,i)] * probs[(j,i)].log(2.); 
+            loss[(0,i)] -= amount;
         });
         loss
     }
@@ -48,8 +49,8 @@ mod tests {
 
     #[test]
     fn cross_entroy_forward_success(){
-        let mut a : Arr = arr2(&[[0.2, 0.1, 0.7], [0.123, 0.407, 0.48]]);
-        let y: Arr = arr2(&[[1., 0., 0.], [0., 0., 1.]]);
+        let mut a : Arr = arr2(&[[0.2, 0.1, 0.7], [0.123, 0.407, 0.48]]).t().to_owned();
+        let y: Arr = arr2(&[[1., 0., 0.], [0., 0., 1.]]).t().to_owned();
         let result: Arr = arr2(&[[2.321928], [1.058894]]);
         assert_eq!(CROSS_ENTROPY.output(&mut a, &y).mapv(|x| round_decimal(6, x)), result);
     }
