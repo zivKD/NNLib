@@ -25,10 +25,10 @@ impl LossFN for Init {
         let probs = self.softmax_forward(a);
         let mut loss = arr_zeros_with_shape(&[1, y.shape()[1]]);
         let inv_shape = &[probs.shape()[1], probs.shape()[0]];
-        iterate_throgh_2d(inv_shape, |(i, j)| { 
-            let amount = y[(j,i)] * probs[(j,i)].log(2.); 
-            loss[(0,i)] -= amount;
-        });
+        for i in 0..probs.shape()[1] {
+            loss[(0,i)] -= probs[(y[(0, i)] as usize, i)].ln();
+        }
+
         loss
     }
 
