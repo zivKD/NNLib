@@ -1,4 +1,5 @@
-use crate::{ArrView, logic::utils::gradient_clipping};
+use ndarray::Zip;
+use crate::{ArrView, logic::{layers::base_layer::Layer, utils::gradient_clipping}};
 use ndarray::Slice;
 use std::{cell::RefMut, ops::DerefMut};
 use ndarray::{Axis, Order, s};
@@ -17,12 +18,33 @@ pub struct Network<'a> {
     hidden_dim: usize,
     gradient_decent: &'a dyn GradientDecent,
     activation_fn: &'a dyn ActivationFN,
+    loss_fn: &'a dyn LossFN,
+}
+
+pub struct NetworkRunParams<'a> {
     input_weights: RefMut<'a, &'a mut Arr>,
     state_weights: RefMut<'a, &'a mut Arr>,
     output_weights: RefMut<'a, &'a mut Arr>,
     state_biases: RefMut<'a, &'a mut Arr>,
     output_biases: RefMut<'a, &'a mut Arr>,
-    loss_fn: &'a dyn LossFN,
+}
+
+impl NetworkRunParams<'_> {
+    pub fn new<'a>(
+        input_weights: RefMut<'a, &'a mut Arr>,
+        state_weights: RefMut<'a, &'a mut Arr>,
+        output_weights: RefMut<'a, &'a mut Arr>,
+        state_biases: RefMut<'a, &'a mut Arr>,
+        output_biases: RefMut<'a, &'a mut Arr>,
+    ) -> NetworkRunParams<'a> {
+        NetworkRunParams {
+            input_weights,
+            state_weights,
+            output_weights,
+            state_biases,
+            output_biases
+        }
+    }
 }
 
 impl Network<'_> {
@@ -36,13 +58,9 @@ impl Network<'_> {
         hidden_dim: usize,
         gradient_decent: &'a dyn GradientDecent,
         activation_fn: &'a dyn ActivationFN,
-        input_weights: RefMut<'a, &'a mut Arr>,
-        state_weights: RefMut<'a, &'a mut Arr>,
-        output_weights: RefMut<'a, &'a mut Arr>,
-        state_biases: RefMut<'a, &'a mut Arr>,
-        output_biases: RefMut<'a, &'a mut Arr>,
         loss_fn: &'a dyn LossFN,
     ) -> Network<'a> {
+
         Network {
             data_set,
             labels_set,
@@ -53,16 +71,11 @@ impl Network<'_> {
             hidden_dim,
             gradient_decent,
             activation_fn,
-            input_weights,
-            state_weights,
-            output_weights,
-            state_biases,
-            output_biases,
             loss_fn,
         }
     }
 
-    pub fn run(&mut self, print_result: bool) {
+    pub fn run(&self, smoth_loss: &mut Arr, mut params: NetworkRunParams) {
         let mut iteration = 1;
         let mut lower_bound = 0;
         let size: usize = self.sequence_size * self.word_dim;
@@ -77,7 +90,7 @@ impl Network<'_> {
                 Slice::from((iteration-1)*self.sequence_size..iteration*self.sequence_size)
             ).to_owned();
 
-            self.run_single_step(&mini_batch, &mini_batch_lbs);
+            self.run_single_step(&mini_batch, &mini_batch_lbs, smoth_loss, &mut params);
 
             iteration+=1;
             lower_bound = (iteration - 1) * size;
@@ -85,42 +98,64 @@ impl Network<'_> {
         }
     }
 
-    fn run_single_step(&mut self, inputs: &Arr, labels: &Arr) {
+    pub fn run_single_step(&self, inputs: &Arr, labels: &Arr, smoth_loss: &mut Arr, params: &mut NetworkRunParams) {
+        let NetworkRunParams { 
+            input_weights, 
+            state_weights, 
+            output_weights, 
+            state_biases, 
+            output_biases
+        } = params;
+
         let mut prev_s = arr_zeros_with_shape(&[self.hidden_dim, self.mini_batch_size]);
         let mut layers = Vec::new();
 
         let mut inputs_sliced = Vec::new();
+        let mut lables_sliced = Vec::new();
         for t in 0..self.sequence_size {
             inputs_sliced.push(self.get_input(inputs, t));
+            lables_sliced.push(self.get_layer_lables(&labels, t).to_owned());
         }
 
+
+        let mut states = Vec::new();
+        let mut outputs = Vec::new();
+
         for t in 0..self.sequence_size {
-            let mut layer = rnn_step::Init::new(
-                &self.state_weights,
-                &self.input_weights,
-                &self.output_weights,
-                &self.state_biases,
-                &self.output_biases,
+            let layer = rnn_step::Init::new(
+                &state_weights,
+                &input_weights,
+                &output_weights,
+                &state_biases,
+                &output_biases,
                 self.activation_fn
             );
 
-            layer.feedforward((&inputs_sliced[t], prev_s.view()));
-            prev_s = layer.s.clone();
+            let (w_frd, u_frd, add, state, output) = 
+                layer.feedforward((&inputs_sliced[t], prev_s.view()));
+            states.push(state);
+            outputs.push(output);
             layers.push(layer);
         }
 
 
-        let mut du = arr_zeros_with_shape(self.input_weights.shape());
-        let mut dw = arr_zeros_with_shape(self.state_weights.shape());
-        let mut dv = arr_zeros_with_shape(self.output_weights.shape());
-        let mut dbs = arr_zeros_with_shape(self.state_biases.shape());
-        let mut dbo = arr_zeros_with_shape(self.output_biases.shape());
-        let mut prev_s_t = arr_zeros_with_shape(&[self.hidden_dim, self.mini_batch_size]);
+        let mut loss = arr_zeros_with_shape(smoth_loss.shape());
+        for t in 0..self.sequence_size {
+             loss = loss + self.loss_fn.output(&outputs[t], &lables_sliced[t]);
+        }
+
+        Zip::from(smoth_loss).and(&loss).for_each(|sl, &l| *sl = 0.999 * *sl + 0.001*l);
+
+        let mut du = arr_zeros_with_shape(input_weights.shape());
+        let mut dw = arr_zeros_with_shape(state_weights.shape());
+        let mut dv = arr_zeros_with_shape(output_weights.shape());
+        let mut dbs = arr_zeros_with_shape(state_biases.shape());
+        let mut dbo = arr_zeros_with_shape(output_biases.shape());
+        let mut prev_s_t = &arr_zeros_with_shape(&[self.hidden_dim, self.mini_batch_size]);
         let diff_s = arr_zeros_with_shape(&[self.hidden_dim, self.mini_batch_size]);
 
         for t in (0..self.sequence_size).rev() {
-            let last_layer_labels = self.get_layer_lables(&labels, t).to_owned();
-            let dmulv = self.loss_fn.propogate(&mut DEFAULT(), &layers[t].mulv, &last_layer_labels); 
+            let dmulv = self.loss_fn.propogate(&mut DEFAULT(), &outputs[t], &lables_sliced[t]); 
             let (
                 mut dprev_s, 
                 mut du_t, 
@@ -129,13 +164,13 @@ impl Network<'_> {
                 mut dbs_t,
                 mut dbo_t
             ) = 
-                    layers[t].propogate(&inputs_sliced[t], &prev_s_t, &diff_s, &dmulv);
-            prev_s_t = layers[t].s.clone();
+                    layers[t].propogate(&states[t], &inputs_sliced[t], &prev_s_t, &diff_s, &dmulv);
+            prev_s_t = &states[t];
             let dmulv = arr_zeros_with_shape(&[self.word_dim, self.mini_batch_size]); 
             let bptt_amount = t as i8 - self.bptt_truncate - 1;
             let max = i8::max(0, bptt_amount) as usize;
             let current_index = t.checked_sub(1).unwrap_or(0);
-            let ht_clone = layers[current_index].s.clone();
+            let ht_clone = &states[current_index];
             let prev_s_zero = arr_zeros_with_shape(&[self.hidden_dim, self.mini_batch_size]);
             for i in current_index..=max {
                 let input = self.get_input(inputs, i);
@@ -153,7 +188,7 @@ impl Network<'_> {
                     dbs_i,
                     dbo_i
                 ) = 
-                        layers[i].propogate(&input, &prev_s_i, &dprev_s, &dmulv);
+                        layers[i].propogate(&states[i], &input, &prev_s_i, &dprev_s, &dmulv);
 
                 dprev_s = new_dprev_s;
                 du_t = du_t + du_i;
@@ -177,11 +212,11 @@ impl Network<'_> {
         let cilpped_dbs = gradient_clipping(&dbs, min_clipping_value, max_clipping_value);
         let cilpped_dbo = gradient_clipping(&dbo, min_clipping_value, max_clipping_value);
 
-        self.gradient_decent.change_weights(self.input_weights.deref_mut(), &clipped_du);
-        self.gradient_decent.change_weights(self.state_weights.deref_mut(), &clipped_dw);
-        self.gradient_decent.change_weights(self.output_weights.deref_mut(), &clipped_dv);
-        self.gradient_decent.change_biases(self.state_biases.deref_mut(), &cilpped_dbs);
-        self.gradient_decent.change_weights(self.output_biases.deref_mut(), &cilpped_dbo);
+        self.gradient_decent.change_weights(input_weights.deref_mut(), &clipped_du);
+        self.gradient_decent.change_weights(state_weights.deref_mut(), &clipped_dw);
+        self.gradient_decent.change_weights(output_weights.deref_mut(), &clipped_dv);
+        self.gradient_decent.change_biases(state_biases.deref_mut(), &cilpped_dbs);
+        self.gradient_decent.change_weights(output_biases.deref_mut(), &cilpped_dbo);
     }
 
     fn get_input<'k>(&self, inputs: &'k Arr, t: usize) -> ArrView<'k> {

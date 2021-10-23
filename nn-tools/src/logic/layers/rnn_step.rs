@@ -11,11 +11,6 @@ pub struct Init<'a> {
     state_biases: &'a Arr,
     output_biases: &'a Arr,
     hidden_activation_fn: &'a dyn ActivationFN,
-    mulu : Arr,
-    mulw : Arr,
-    add : Arr,
-    pub s: Arr,
-    pub mulv: Arr,
 }
 
 impl Init<'_> {
@@ -27,7 +22,6 @@ impl Init<'_> {
         output_biases: &'a Arr,
         hidden_activation_fn: &'a dyn ActivationFN,
     ) -> Init<'a> {
-        let default_val = DEFAULT();
         Init {
             state_weights,
             input_weights,
@@ -35,17 +29,12 @@ impl Init<'_> {
             state_biases,
             output_biases,
             hidden_activation_fn,
-            mulu: default_val.clone(),
-            mulw: default_val.clone(),
-            add: default_val.clone(),
-            s: default_val.clone(),
-            mulv: default_val.clone(),
         }
     }
 }
 
 impl Init<'_> {
-    pub fn feedforward(&mut self, inputs: (&ArrView, ArrView)) {
+    pub fn feedforward(&self, inputs: (&ArrView, ArrView)) -> (Arr, Arr, Arr, Arr, Arr) {
         let (inputs_embadding, hidden_state) = inputs;
         let u_frd = self.input_weights.dot(inputs_embadding);
         let w_frd = self.state_weights.dot(&hidden_state);
@@ -60,21 +49,17 @@ impl Init<'_> {
             &(self.output_biases.shape()[0], ht_activated.shape()[1])
         );
         let yt= self.output_weights.dot(&ht_activated) + repeated_biases;
-        self.mulw = w_frd;
-        self.mulu = u_frd;
-        self.add = sum_s;
-        self.s = ht_activated;
-        self.mulv = yt;
+
+        (w_frd, u_frd, sum_s, ht_activated, yt)
     }
 
-    pub fn propogate(
-        &mut self, inputs: &ArrView, prev_s: &Arr, diff_s: &Arr, dmulv: &Arr) -> 
+    pub fn propogate(&self, state: &Arr, inputs: &ArrView, prev_s: &Arr, diff_s: &Arr, dmulv: &Arr) -> 
         (Arr, Arr, Arr, Arr, Arr, Arr) {
         let (dv, dsv) = 
-            self.multiplication_backward(self.output_weights, &self.s, dmulv);
+            self.multiplication_backward(self.output_weights, &state, dmulv);
         let ds = dsv + diff_s;
         let dbo = dmulv.sum_axis(Axis(1)).into_shape((dmulv.shape()[0], 1)).unwrap();
-        let dadd = self.hidden_activation_fn.propogate(&self.add) * ds;
+        let dadd = self.hidden_activation_fn.propogate(&state) * ds;
         let (dw, dprev_s) = self.multiplication_backward(self.state_weights, prev_s, &dadd);
         let (du, _) = self.multiplication_backward(self.input_weights, &inputs.to_owned(), &dadd);
         let dbs = dadd.sum_axis(Axis(1)).into_shape((dadd.shape()[0], 1)).unwrap();
