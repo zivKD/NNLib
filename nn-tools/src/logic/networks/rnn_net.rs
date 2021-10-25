@@ -95,7 +95,7 @@ impl Network<'_> {
             ).to_owned();
 
             let def_value = default_arr_value();
-            let mut gradients = (def_value.clone(), def_value.clone(), def_value.clone(), def_value.clone(), def_value.clone());
+            let mut gradients= (def_value.clone(), def_value.clone(), def_value.clone(), def_value.clone(), def_value.clone());
             {
 
                 let iw = input_weights.borrow();
@@ -142,12 +142,12 @@ impl Network<'_> {
 
 
     fn forward(&self, inputs: &Vec<ArrView>, rnn_unit: &rnn_step::Init) -> (Vec<Arr>, Vec<Arr>) {
-        let mut prev_s = arr_zeros_with_shape(&[self.hidden_dim, self.mini_batch_size]);
+        let prev_s = arr_zeros_with_shape(&[self.hidden_dim, self.mini_batch_size]);
         let mut states = Vec::new();
         let mut outputs = Vec::new();
 
         for t in 0..self.sequence_size {
-            let (w_frd, u_frd, add, state, output) = 
+            let (_w_frd, _u_frd, _add, state, output) = 
                 rnn_unit.feedforward((&inputs[t], prev_s.view()));
             states.push(state);
             outputs.push(output);

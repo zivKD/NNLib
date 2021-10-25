@@ -1,12 +1,11 @@
 use ndarray_rand::rand_distr::Normal;
-use ndarray_stats::QuantileExt;
 use nntools::logic::gradient_decents::adagrad;
 use nntools::logic::networks::rnn_net::NetworkRunParams;
 use nntools::logic::utils::arr_zeros_with_shape;
 use nntools::logic::utils::gradient_clipping;
 use nntools::{Arr};
 use core::cell::RefCell;
-use nntools::{data::datasets::warandpeace::loader::{Loader}, logic::{activations_fns::tanh, gradient_decents::stochastic, networks::rnn_net::{self}}};
+use nntools::{data::datasets::warandpeace::loader::{Loader}, logic::{activations_fns::tanh, networks::rnn_net::{self}}};
 use ndarray_rand::{RandomExt};
 use nntools::logic::{loss_fns::cross_entropy, utils::one_hot_encoding};
 
