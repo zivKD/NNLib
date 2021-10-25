@@ -42,14 +42,14 @@ mod tests {
     use super::*;
     use crate::Arr;
     use crate::logic::utils::round_decimal;
-    use ndarray::arr2;
+    use ndarray::{arr2, arr1};
     const CROSS_ENTROPY: Init = Init {};
 
     #[test]
     fn cross_entroy_forward_success(){
-        let mut a : Arr = arr2(&[[0.2, 0.1, 0.7], [0.123, 0.407, 0.48]]).t().to_owned();
-        let y: Arr = arr2(&[[1., 0., 0.], [0., 0., 1.]]).t().to_owned();
-        let result: Arr = arr2(&[[2.321928], [1.058894]]);
+        let mut a : Arr = arr2(&[[3., 4., 1.], [0.1, 0.4, 0.5]]).t().to_owned();
+        let y: Arr = arr2(&[[0., 2.]]);
+        let result: Arr = arr1(&[1.349012, 0.945911]).insert_axis(Axis(0));
         assert_eq!(CROSS_ENTROPY.output(&mut a, &y).mapv(|x| round_decimal(6, x)), result);
     }
 

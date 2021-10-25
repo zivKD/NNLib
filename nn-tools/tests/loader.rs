@@ -1,6 +1,5 @@
 use ndarray::Zip;
 use ndarray::ShapeBuilder; // Needed for .strides() method
-use nntools::Arr;
 use mnist::MnistBuilder;
 use ndarray_stats::QuantileExt;
 use nntools::ArrUsize;
