@@ -1,7 +1,8 @@
+use std::cell::{RefCell, RefMut};
+
 use ndarray::Zip;
-use crate::{ArrView, logic::{layers::base_layer::Layer, utils::gradient_clipping}};
+use crate::{ArrView};
 use ndarray::Slice;
-use std::{cell::RefMut, ops::DerefMut};
 use ndarray::{Axis, Order, s};
 
 use crate::{Arr, DEFAULT, logic::{activations_fns::{base_activation_fn::ActivationFN,}, loss_fns::base_loss_fn::LossFN, utils::arr_zeros_with_shape}};
@@ -16,33 +17,32 @@ pub struct Network<'a> {
     bptt_truncate: i8,
     word_dim: usize,
     hidden_dim: usize,
-    gradient_decent: &'a dyn GradientDecent,
     activation_fn: &'a dyn ActivationFN,
     loss_fn: &'a dyn LossFN,
 }
 
 pub struct NetworkRunParams<'a> {
-    input_weights: RefMut<'a, &'a mut Arr>,
-    state_weights: RefMut<'a, &'a mut Arr>,
-    output_weights: RefMut<'a, &'a mut Arr>,
-    state_biases: RefMut<'a, &'a mut Arr>,
-    output_biases: RefMut<'a, &'a mut Arr>,
+    input_weights: &'a RefCell<&'a mut Arr>,
+    state_weights: &'a RefCell<&'a mut Arr>,
+    output_weights: &'a RefCell<&'a mut Arr>,
+    state_biases: &'a RefCell<&'a mut Arr>,
+    output_biases: &'a RefCell<&'a mut Arr>,
 }
 
 impl NetworkRunParams<'_> {
     pub fn new<'a>(
-        input_weights: RefMut<'a, &'a mut Arr>,
-        state_weights: RefMut<'a, &'a mut Arr>,
-        output_weights: RefMut<'a, &'a mut Arr>,
-        state_biases: RefMut<'a, &'a mut Arr>,
-        output_biases: RefMut<'a, &'a mut Arr>,
+        input_weights: &'a RefCell<&'a mut Arr>,
+        state_weights: &'a RefCell<&'a mut Arr>,
+        output_weights: &'a RefCell<&'a mut Arr>,
+        state_biases: &'a RefCell<&'a mut Arr>,
+        output_biases: &'a RefCell<&'a mut Arr>,
     ) -> NetworkRunParams<'a> {
         NetworkRunParams {
             input_weights,
             state_weights,
             output_weights,
             state_biases,
-            output_biases
+            output_biases,
         }
     }
 }
@@ -56,7 +56,6 @@ impl Network<'_> {
         bptt_truncate: i8,
         word_dim: usize,
         hidden_dim: usize,
-        gradient_decent: &'a dyn GradientDecent,
         activation_fn: &'a dyn ActivationFN,
         loss_fn: &'a dyn LossFN,
     ) -> Network<'a> {
@@ -69,13 +68,21 @@ impl Network<'_> {
             bptt_truncate,
             word_dim,
             hidden_dim,
-            gradient_decent,
             activation_fn,
             loss_fn,
         }
     }
 
-    pub fn run(&self, smoth_loss: &mut Arr, mut params: NetworkRunParams) {
+    pub fn run<T: FnMut((Arr,Arr,Arr,Arr,Arr))>(&self, smoth_loss: &mut Arr, mut gradient_decent: T, mut params: NetworkRunParams) {
+        let NetworkRunParams { 
+            input_weights,
+            state_weights, 
+            output_weights, 
+            state_biases, 
+            output_biases
+        } = params;
+
+
         let mut iteration = 1;
         let mut lower_bound = 0;
         let size: usize = self.sequence_size * self.word_dim;
@@ -90,7 +97,45 @@ impl Network<'_> {
                 Slice::from((iteration-1)*self.sequence_size..iteration*self.sequence_size)
             ).to_owned();
 
-            self.run_single_step(&mini_batch, &mini_batch_lbs, smoth_loss, &mut params);
+            let def_value = DEFAULT();
+            let mut gradients = (def_value.clone(), def_value.clone(), def_value.clone(), def_value.clone(), def_value.clone());
+            {
+
+                let iw = input_weights.borrow();
+                let sw = state_weights.borrow();
+                let ow = output_weights.borrow();
+                let sb = state_biases.borrow(); 
+                let ob = output_biases.borrow();
+
+                let shapes = (
+                    iw.shape(), 
+                    sw.shape(), 
+                    ow.shape(), 
+                    sb.shape(), 
+                    ob.shape()
+                );
+
+                let rnn_unit = rnn_step::Init::new(
+                    &sw, 
+                    &iw, 
+                    &ow, 
+                    &sb,
+                    &ob,
+                    self.activation_fn
+                );
+                let mut inputs_sliced = Vec::new();
+                let mut labels_sliced = Vec::new();
+                for t in 0..self.sequence_size {
+                    inputs_sliced.push(self.get_input(&mini_batch, t));
+                    labels_sliced.push(self.get_layer_lables(&mini_batch_lbs, t).to_owned());
+                }
+
+                let (states, outputs) = self.forward(&inputs_sliced, &rnn_unit);
+                self.calculate_loss(smoth_loss, &labels_sliced, &outputs);
+                gradients = self.propogate(&inputs_sliced, &rnn_unit, &labels_sliced, &outputs, &states, shapes);
+            }
+
+            gradient_decent(gradients);
 
             iteration+=1;
             lower_bound = (iteration - 1) * size;
@@ -98,64 +143,45 @@ impl Network<'_> {
         }
     }
 
-    pub fn run_single_step(&self, inputs: &Arr, labels: &Arr, smoth_loss: &mut Arr, params: &mut NetworkRunParams) {
-        let NetworkRunParams { 
-            input_weights, 
-            state_weights, 
-            output_weights, 
-            state_biases, 
-            output_biases
-        } = params;
 
+    fn forward(&self, inputs: &Vec<ArrView>, rnn_unit: &rnn_step::Init) -> (Vec<Arr>, Vec<Arr>) {
         let mut prev_s = arr_zeros_with_shape(&[self.hidden_dim, self.mini_batch_size]);
-        let mut layers = Vec::new();
-
-        let mut inputs_sliced = Vec::new();
-        let mut lables_sliced = Vec::new();
-        for t in 0..self.sequence_size {
-            inputs_sliced.push(self.get_input(inputs, t));
-            lables_sliced.push(self.get_layer_lables(&labels, t).to_owned());
-        }
-
-
         let mut states = Vec::new();
         let mut outputs = Vec::new();
 
         for t in 0..self.sequence_size {
-            let layer = rnn_step::Init::new(
-                &state_weights,
-                &input_weights,
-                &output_weights,
-                &state_biases,
-                &output_biases,
-                self.activation_fn
-            );
-
             let (w_frd, u_frd, add, state, output) = 
-                layer.feedforward((&inputs_sliced[t], prev_s.view()));
+                rnn_unit.feedforward((&inputs[t], prev_s.view()));
             states.push(state);
             outputs.push(output);
-            layers.push(layer);
         }
 
+        (states, outputs)
+    }
 
+    fn calculate_loss(&self, smoth_loss: &mut Arr, labels: &Vec<Arr>, outputs: &Vec<Arr>) {
         let mut loss = arr_zeros_with_shape(smoth_loss.shape());
         for t in 0..self.sequence_size {
-             loss = loss + self.loss_fn.output(&outputs[t], &lables_sliced[t]);
+             loss = loss + self.loss_fn.output(&outputs[t], &labels[t]);
         }
 
         Zip::from(smoth_loss).and(&loss).for_each(|sl, &l| *sl = 0.999 * *sl + 0.001*l);
+    }
 
-        let mut du = arr_zeros_with_shape(input_weights.shape());
-        let mut dw = arr_zeros_with_shape(state_weights.shape());
-        let mut dv = arr_zeros_with_shape(output_weights.shape());
-        let mut dbs = arr_zeros_with_shape(state_biases.shape());
-        let mut dbo = arr_zeros_with_shape(output_biases.shape());
+    fn propogate(&self, inputs: &Vec<ArrView>, rnn_unit: &rnn_step::Init, labels: &Vec<Arr>, outputs: &Vec<Arr>, states: &Vec<Arr>, shapes: (&[usize],&[usize],&[usize],&[usize],&[usize],)) -> 
+        (Arr, Arr, Arr, Arr, Arr) {
+        
+        let (iw_shape, sw_shape, ow_shape, sb_shape, ob_shape) = shapes;
+        let mut du = arr_zeros_with_shape(iw_shape);
+        let mut dw = arr_zeros_with_shape(sw_shape);
+        let mut dv = arr_zeros_with_shape(ow_shape);
+        let mut dbs = arr_zeros_with_shape(sb_shape);
+        let mut dbo = arr_zeros_with_shape(ob_shape);
         let mut prev_s_t = &arr_zeros_with_shape(&[self.hidden_dim, self.mini_batch_size]);
         let diff_s = arr_zeros_with_shape(&[self.hidden_dim, self.mini_batch_size]);
 
         for t in (0..self.sequence_size).rev() {
-            let dmulv = self.loss_fn.propogate(&mut DEFAULT(), &outputs[t], &lables_sliced[t]); 
+            let dmulv = self.loss_fn.propogate(&mut DEFAULT(), &outputs[t], &labels[t]); 
             let (
                 mut dprev_s, 
                 mut du_t, 
@@ -164,7 +190,7 @@ impl Network<'_> {
                 mut dbs_t,
                 mut dbo_t
             ) = 
-                    layers[t].propogate(&states[t], &inputs_sliced[t], &prev_s_t, &diff_s, &dmulv);
+                    rnn_unit.propogate(&states[t], &inputs[t], &prev_s_t, &diff_s, &dmulv);
             prev_s_t = &states[t];
             let dmulv = arr_zeros_with_shape(&[self.word_dim, self.mini_batch_size]); 
             let bptt_amount = t as i8 - self.bptt_truncate - 1;
@@ -173,7 +199,6 @@ impl Network<'_> {
             let ht_clone = &states[current_index];
             let prev_s_zero = arr_zeros_with_shape(&[self.hidden_dim, self.mini_batch_size]);
             for i in current_index..=max {
-                let input = self.get_input(inputs, i);
                 let prev_s_i = if  i == 0 {
                     &prev_s_zero
                 } else {
@@ -188,7 +213,7 @@ impl Network<'_> {
                     dbs_i,
                     dbo_i
                 ) = 
-                        layers[i].propogate(&states[i], &input, &prev_s_i, &dprev_s, &dmulv);
+                        rnn_unit.propogate(&states[i], &inputs[i], &prev_s_i, &dprev_s, &dmulv);
 
                 dprev_s = new_dprev_s;
                 du_t = du_t + du_i;
@@ -204,19 +229,7 @@ impl Network<'_> {
             dbo = dbo + dbo_t;
         }
 
-        let min_clipping_value = -5.;
-        let max_clipping_value = 5.;
-        let clipped_du = gradient_clipping(&du, min_clipping_value, max_clipping_value);
-        let clipped_dw = gradient_clipping(&dw, min_clipping_value, max_clipping_value);
-        let clipped_dv = gradient_clipping(&dv, min_clipping_value, max_clipping_value);
-        let cilpped_dbs = gradient_clipping(&dbs, min_clipping_value, max_clipping_value);
-        let cilpped_dbo = gradient_clipping(&dbo, min_clipping_value, max_clipping_value);
-
-        self.gradient_decent.change_weights(input_weights.deref_mut(), &clipped_du);
-        self.gradient_decent.change_weights(state_weights.deref_mut(), &clipped_dw);
-        self.gradient_decent.change_weights(output_weights.deref_mut(), &clipped_dv);
-        self.gradient_decent.change_biases(state_biases.deref_mut(), &cilpped_dbs);
-        self.gradient_decent.change_weights(output_biases.deref_mut(), &cilpped_dbo);
+        (du, dw, dv, dbs, dbo)
     }
 
     fn get_input<'k>(&self, inputs: &'k Arr, t: usize) -> ArrView<'k> {
