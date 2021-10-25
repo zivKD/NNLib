@@ -1,6 +1,5 @@
 use crate::logic::activations_fns::base_activation_fn::ActivationFN;
 use crate::Arr;
-
 pub struct Init {}
 
 impl ActivationFN for Init {

@@ -1,7 +1,6 @@
-use crate::DEFAULT;
-use ndarray::{Axis, Zip};
+use ndarray::{Axis};
 use ndarray_stats::QuantileExt;
-use crate::logic::utils::{arr_zeros_with_shape, iterate_throgh_2d};
+use crate::logic::utils::{arr_zeros_with_shape};
 use crate::{Arr};
 use crate::logic::loss_fns::base_loss_fn::LossFN; 
 
@@ -24,7 +23,6 @@ impl LossFN for Init {
     fn output<'a>(&self, a: &'a Arr, y: &'a Arr) -> Arr {
         let probs = self.softmax_forward(a);
         let mut loss = arr_zeros_with_shape(&[1, y.shape()[1]]);
-        let inv_shape = &[probs.shape()[1], probs.shape()[0]];
         for i in 0..probs.shape()[1] {
             loss[(0,i)] -= probs[(y[(0, i)] as usize, i)].ln();
         }

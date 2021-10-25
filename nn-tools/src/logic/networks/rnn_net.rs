@@ -1,13 +1,10 @@
-use std::cell::{RefCell, RefMut};
-
+use std::cell::{RefCell};
 use ndarray::Zip;
 use crate::{ArrView};
 use ndarray::Slice;
 use ndarray::{Axis, Order, s};
-
-use crate::{Arr, DEFAULT, logic::{activations_fns::{base_activation_fn::ActivationFN,}, loss_fns::base_loss_fn::LossFN, utils::arr_zeros_with_shape}};
+use crate::{Arr, default_arr_value, logic::{activations_fns::{base_activation_fn::ActivationFN,}, loss_fns::base_loss_fn::LossFN, utils::arr_zeros_with_shape}};
 use crate::logic::layers::rnn_step;
-use crate::logic::gradient_decents::base_gradient_decent::GradientDecent;
 
 pub struct Network<'a> {
     data_set: &'a Arr,
@@ -73,7 +70,7 @@ impl Network<'_> {
         }
     }
 
-    pub fn run<T: FnMut((Arr,Arr,Arr,Arr,Arr))>(&self, smoth_loss: &mut Arr, mut gradient_decent: T, mut params: NetworkRunParams) {
+    pub fn run<T: FnMut((Arr,Arr,Arr,Arr,Arr))>(&self, smoth_loss: &mut Arr, mut gradient_decent: T, params: NetworkRunParams) {
         let NetworkRunParams { 
             input_weights,
             state_weights, 
@@ -97,7 +94,7 @@ impl Network<'_> {
                 Slice::from((iteration-1)*self.sequence_size..iteration*self.sequence_size)
             ).to_owned();
 
-            let def_value = DEFAULT();
+            let def_value = default_arr_value();
             let mut gradients = (def_value.clone(), def_value.clone(), def_value.clone(), def_value.clone(), def_value.clone());
             {
 
@@ -181,7 +178,7 @@ impl Network<'_> {
         let diff_s = arr_zeros_with_shape(&[self.hidden_dim, self.mini_batch_size]);
 
         for t in (0..self.sequence_size).rev() {
-            let dmulv = self.loss_fn.propogate(&mut DEFAULT(), &outputs[t], &labels[t]); 
+            let dmulv = self.loss_fn.propogate(&mut default_arr_value(), &outputs[t], &labels[t]); 
             let (
                 mut dprev_s, 
                 mut du_t, 
