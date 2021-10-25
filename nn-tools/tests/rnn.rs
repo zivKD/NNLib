@@ -10,11 +10,7 @@ use ndarray_rand::{RandomExt};
 use nntools::logic::{loss_fns::cross_entropy, utils::one_hot_encoding};
 
 /* TODOs:
-    1. loader should return in usize not in f64
-    2. functions with performence issues:
-        - decouple rnn from softmax and cross_entropy
-        - cross_entroy_loss_with_softmax
-        - arr.dot which affects feedforward and propogation
+    arr.dot has performence issues
 */
 
 #[test]
@@ -65,12 +61,14 @@ fn success_in_running_rnn() {
     let mut state_biases = arr_zeros_with_shape(&[hidden_dim, 1]);
     let mut output_biases = arr_zeros_with_shape(&[word_dim, 1]);
 
-    let encoded_trn_data = one_hot_encoding(&trn_data, word_dim);
+    let f64_trn_data = trn_data.map(|x| *x as f64);
+    let f64_trn_lbs = trn_lbls.map(|x| *x as f64);
+    let encoded_trn_data = one_hot_encoding(&f64_trn_data, word_dim);
     let cross_entropy = cross_entropy::Init {};
 
     let rnn_net = rnn_net::Network::new(
         &encoded_trn_data,
-        &trn_lbls,
+        &f64_trn_lbs,
         new_mini_batch_size,
         sequence_size,
         bptt_truncate,

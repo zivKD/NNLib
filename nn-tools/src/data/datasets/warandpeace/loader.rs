@@ -1,7 +1,7 @@
 use ndarray::{Order, s};
 use ndarray::ShapeBuilder; // Needed for .strides() method
 
-use crate::Arr;
+use crate::ArrUsize;
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::{self, BufRead};
@@ -37,7 +37,7 @@ impl Loader<'_> {
     }
 
 
-    pub fn build(&self) -> (Arr, Arr, Arr, Arr, Arr, Arr, usize) {
+    pub fn build(&self) -> (ArrUsize, ArrUsize, ArrUsize, ArrUsize, ArrUsize, ArrUsize, usize) {
         let mut total_size = 0;
         let mut token_to_index: HashMap<char, usize> = HashMap::new();
         for line in self.read_lines(self.file_path) {
@@ -55,9 +55,9 @@ impl Loader<'_> {
         let test_size = (self.test_set_frac as f64 / 100.) * total_size as f64;
         let validation_size = (self.validation_set_frac as f64 / 100.) * total_size as f64;
 
-        let mut train_set = Arr::zeros((train_size as usize, 1));
-        let mut test_set = Arr::zeros((test_size as usize, 1));
-        let mut validation_set = Arr::zeros((validation_size as usize, 1));
+        let mut train_set = ArrUsize::zeros((train_size as usize, 1));
+        let mut test_set = ArrUsize::zeros((test_size as usize, 1));
+        let mut validation_set = ArrUsize::zeros((validation_size as usize, 1));
 
         let splits = [&mut train_set, &mut test_set, &mut validation_set];
         let mut split_idx = 0;
@@ -72,7 +72,7 @@ impl Loader<'_> {
                     break;
                 }
 
-                let numerical_value = *token_to_index.get(&char).unwrap() as f64;
+                let numerical_value = *token_to_index.get(&char).unwrap();
                 splits[split_idx][(cur_idx, 0)] = numerical_value;
                 cur_idx += 1;
 
@@ -90,7 +90,7 @@ impl Loader<'_> {
         (trn_data, trn_lbls, tst_data, tst_lbls, val_data, val_lbls, word_dim)
     }
 
-    fn get_ordered_data_and_label_sets(&self, set: &Arr) -> (Arr, Arr) {
+    fn get_ordered_data_and_label_sets(&self, set: &ArrUsize) -> (ArrUsize, ArrUsize) {
         let size = set.len();
         let mut cur_size = self.batch_size;
         if self.batch_size * self.seq_size > (size - 1) {

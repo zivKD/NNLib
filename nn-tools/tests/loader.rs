@@ -3,6 +3,7 @@ use ndarray::ShapeBuilder; // Needed for .strides() method
 use nntools::Arr;
 use mnist::MnistBuilder;
 use ndarray_stats::QuantileExt;
+use nntools::ArrUsize;
 use nntools::data::datasets::{self};
 
 #[test]
@@ -72,18 +73,18 @@ fn warandpeace_loader() {
         5
     );
 
-    let expected_trn_data = vec!(1., 2., 3., 2., 4., 2., 5., 2., 6., 2., 7., 2., 8., 2., 9., 2., 10., 2., 11., 2.);
-    let expected_trn_data = Arr::from_shape_vec((10, 2).strides((1, 10)), expected_trn_data).unwrap();
-    let expected_trn_lbls = vec!(2., 3., 2., 4., 2., 5., 2., 6., 2., 7., 2., 8., 2., 9., 2., 10., 2., 11., 2., 12.);
-    let expected_trn_lbls = Arr::from_shape_vec((10, 2).strides((1,10)), expected_trn_lbls).unwrap();
-    let expected_tst_data = vec!(15., 2., 16., 2., 17., 2., 18., 2., 19., 2.);
-    let expected_tst_data = Arr::from_shape_vec((5, 2).strides((1,5)), expected_tst_data).unwrap();
-    let expected_tst_lbls = vec!(2., 16., 2., 17., 2., 18., 2., 19., 2., 20.);
-    let expected_tst_lbls = Arr::from_shape_vec((5, 2).strides((1,5)), expected_tst_lbls).unwrap();
-    let expected_val_data = vec!(2., 22., 2., 23., 2., 24., 2., 25., 2., 26.);
-    let expected_val_data = Arr::from_shape_vec((5, 2).strides((1,5)), expected_val_data).unwrap();
-    let expected_val_lbls = vec!(22., 2., 23., 2., 24., 2., 25., 2., 26., 2.);
-    let expected_val_lbls = Arr::from_shape_vec((5, 2).strides((1,5)), expected_val_lbls).unwrap();
+    let expected_trn_data = vec!(1, 2, 3, 2, 4, 2, 5, 2, 6, 2, 7, 2, 8, 2, 9, 2, 10, 2, 11, 2);
+    let expected_trn_data = ArrUsize::from_shape_vec((10, 2).strides((1, 10)), expected_trn_data).unwrap();
+    let expected_trn_lbls = vec!(2, 3, 2, 4, 2, 5, 2, 6, 2, 7, 2, 8, 2, 9, 2, 10, 2, 11, 2, 12);
+    let expected_trn_lbls = ArrUsize::from_shape_vec((10, 2).strides((1,10)), expected_trn_lbls).unwrap();
+    let expected_tst_data = vec!(15, 2, 16, 2, 17, 2, 18, 2, 19, 2);
+    let expected_tst_data = ArrUsize::from_shape_vec((5, 2).strides((1,5)), expected_tst_data).unwrap();
+    let expected_tst_lbls = vec!(2, 16, 2, 17, 2, 18, 2, 19, 2, 20);
+    let expected_tst_lbls = ArrUsize::from_shape_vec((5, 2).strides((1,5)), expected_tst_lbls).unwrap();
+    let expected_val_data = vec!(2, 22, 2, 23, 2, 24, 2, 25, 2, 26);
+    let expected_val_data = ArrUsize::from_shape_vec((5, 2).strides((1,5)), expected_val_data).unwrap();
+    let expected_val_lbls = vec!(22, 2, 23, 2, 24, 2, 25, 2, 26, 2);
+    let expected_val_lbls = ArrUsize::from_shape_vec((5, 2).strides((1,5)), expected_val_lbls).unwrap();
     let (
         trn_data, 
         trn_lbls,
@@ -103,7 +104,7 @@ fn warandpeace_loader() {
     assert_eq(val_lbls, expected_val_lbls, "val-lbls");
 } 
 
-fn assert_eq(set1: Arr, set2: Arr, name: &str) {
+fn assert_eq(set1: ArrUsize, set2: ArrUsize, name: &str) {
     let num_of_equals = Zip::from(&set1).and(&set2).map_collect(|x, y| *x == *y).iter().filter(|b| **b).collect::<Vec<&bool>>().len();
     assert_eq!(set1.len(), num_of_equals, "assert {} is equal", name);
 }
