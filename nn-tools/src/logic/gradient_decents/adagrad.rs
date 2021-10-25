@@ -1,4 +1,4 @@
-use crate::{Arr, DEFAULT};
+use crate::{Arr};
 use ndarray::Zip;
 
 pub struct Init {
@@ -18,7 +18,7 @@ impl Init {
         let rate = self.learning_rate / self.mini_batch_size as f64;
         Zip::from(gradient).and(mem).and(w).for_each(|x, y, w| {
             *y += x*x;
-            *w - ((rate * x) / (*y + 1e-8).sqrt());
+            *w -= (rate * x) / ((*y + 1e-8).sqrt());
         });
     }
 
@@ -26,7 +26,7 @@ impl Init {
         let rate = self.learning_rate / self.mini_batch_size as f64;
         Zip::from(gradient).and(mem).and(b).for_each(|x, y, w| {
             *y += x*x;
-            *w - ((rate * x) / (*y + 1e-8).sqrt());
+            *w -= (rate * x) / ((*y + 1e-8).sqrt());
         });
     }
 }
